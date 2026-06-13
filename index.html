@@ -1484,8 +1484,23 @@ function payNameFee(){
       set('dash-approved-name', name1);
       set('dash-approved-date', new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}));
 
-      // Store payment ID for reference
-      console.log('Payment ID:', response.razorpay_payment_id);
+      // Save application to localStorage for admin panel
+      saveApplicationToAdmin({
+        payment_status: 'paid',
+        razorpay_id: response.razorpay_payment_id,
+        paid_at: new Date().toISOString(),
+        filing_status: 'name_pending',
+        entity_type: selectedEntity,
+        applicant_name: currentUser.name,
+        applicant_email: currentUser.email,
+        applicant_mobile: currentUser.mobile,
+        name_option1: name1,
+        name_option2: name2,
+        nic_code: nicVal||'—',
+        main_object_1: document.getElementById('obj-clause-0')?.value||'',
+        main_object_2: document.getElementById('obj-clause-1')?.value||'',
+        main_object_3: document.getElementById('obj-clause-2')?.value||''
+      });
 
       showScreen('dashboard');
       // Show success notice
@@ -1838,10 +1853,85 @@ function verifyDIN(n){
 
 // ===================== PAYMENT =====================
 function submitPayment(){
-  // Final payment — balance fees (to be activated after KYC approved on Razorpay)
+  // Save company + director data to existing application record
+  updateApplicationInAdmin();
   alert('Final payment gateway will be activated once your Razorpay account is fully KYC approved.\n\nFor now, your application details have been recorded and our team will contact you within 24 hours.');
-  loginUser(currentUser.name?currentUser:{name:'Test User',email:'test@example.com',mobile:'+91 99999 99999'});
   showScreen('dashboard');
+}
+
+// ===================== ADMIN DATA STORAGE =====================
+const STORAGE_KEY = 'sthapnacorp_applications';
+
+function saveApplicationToAdmin(data){
+  try {
+    const apps = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+    const app = {
+      id: 'APP-'+Date.now(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      ...data
+    };
+    apps.unshift(app); // newest first
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(apps));
+    localStorage.setItem('sthapnacorp_last_app_id', app.id);
+    console.log('Application saved to admin:', app.id);
+  } catch(e){ console.error('Save failed:', e); }
+}
+
+function updateApplicationInAdmin(){
+  try {
+    const apps = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+    const lastId = localStorage.getItem('sthapnacorp_last_app_id');
+    const idx = lastId ? apps.findIndex(a=>a.id===lastId) : 0;
+    if(idx === -1) return;
+
+    // Collect company details
+    apps[idx].company_email   = document.getElementById('co-email')?.value||'';
+    apps[idx].company_mobile  = document.getElementById('co-mobile')?.value||'';
+    apps[idx].office_address  = document.getElementById('office-address')?.value||'';
+    const stateEl = document.getElementById('office-state');
+    apps[idx].office_state    = stateEl?.options[stateEl?.selectedIndex]?.text||'';
+    apps[idx].ownership       = document.getElementById('ownership-type')?.value||'';
+    apps[idx].auth_capital    = document.getElementById('auth-capital')?.value||'';
+    apps[idx].paidup_capital  = document.getElementById('paidup-capital')?.value||'';
+    apps[idx].face_value      = document.getElementById('face-value')?.value||'10';
+
+    // Section 5
+    apps[idx].section5 = {
+      s5a_din:   parseInt(document.getElementById('s5a-din')?.value)||0,
+      s5a_nodin: parseInt(document.getElementById('s5a-nodin')?.value)||0,
+      s5b_nodin: parseInt(document.getElementById('s5b-nodin')?.value)||0,
+      s5c_din:   parseInt(document.getElementById('s5c-din')?.value)||0,
+      s5c_nodin: parseInt(document.getElementById('s5c-nodin')?.value)||0,
+      s5d_din:   parseInt(document.getElementById('s5d-din')?.value)||0,
+      s5d_nodin: parseInt(document.getElementById('s5d-nodin')?.value)||0
+    };
+
+    // Directors
+    const dirs = [];
+    const container = document.getElementById('directors-container');
+    if(container){
+      container.querySelectorAll('[id^="dir-card-"]').forEach((card, i) => {
+        const n = card.id.replace('dir-card-','');
+        dirs.push({
+          name:       document.getElementById('dir'+n+'-name')?.value||'',
+          din:        document.getElementById('dir'+n+'-din')?.value||'',
+          din_status: document.getElementById('dir'+n+'-din-status')?.textContent||'',
+          email:      document.getElementById('dir'+n+'-email')?.value||'',
+          mobile:     document.getElementById('dir'+n+'-mobile')?.value||'',
+          dsc:        document.querySelector('[id^="dsc-'+n+'"].selected')?.dataset?.val||'unknown',
+          shares:     document.getElementById('dir'+n+'-shares')?.value||'',
+          role:       card.querySelector('[data-role]')?.dataset?.role||''
+        });
+      });
+    }
+    apps[idx].directors  = dirs;
+    apps[idx].filing_status = 'details_received';
+    apps[idx].updated_at = new Date().toISOString();
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(apps));
+    console.log('Application updated with company details');
+  } catch(e){ console.error('Update failed:', e); }
 }
 
 // ===================== INIT =====================
