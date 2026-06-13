@@ -20,6 +20,98 @@
   --shadow-lg:0 4px 24px rgba(28,26,23,0.12);
 }
 html{scroll-behavior:smooth}
+
+@media(max-width:768px){
+  .process-step{padding:16px}
+  .process-step h3{font-size:14px}
+  .hero h1{font-size:28px !important}
+
+  /* HERO */
+  .hero{grid-template-columns:1fr;padding:40px 20px 36px;gap:32px}
+  .hero-right{display:none}
+  .hero h1{font-size:32px}
+  .hero-sub{font-size:16px}
+  .hero-btns{flex-direction:column;gap:10px}
+  .hero-btns .btn{width:100%;justify-content:center}
+
+  /* LANDING SECTIONS */
+  .process-grid{grid-template-columns:1fr 1fr;gap:16px}
+  .process-grid::before{display:none}
+  .entity-cards{grid-template-columns:1fr}
+  .trust-grid{grid-template-columns:1fr}
+  .section-wrap{padding:48px 20px}
+
+  /* AUTH */
+  .auth-wrap{grid-template-columns:1fr;min-height:100vh}
+  .auth-left{display:none}
+  .auth-right{padding:32px 20px;min-height:100vh}
+  .auth-form-wrap{max-width:100%}
+  .auth-title{font-size:24px}
+
+  /* APP LAYOUT */
+  .app-layout{grid-template-columns:1fr;min-height:unset}
+  .app-sidebar{display:none}
+  .app-main{padding:16px}
+  .step-title{font-size:22px}
+
+  /* STEP PANELS */
+  .form-grid-2{grid-template-columns:1fr}
+  .entity-selection{grid-template-columns:1fr}
+  .form-card{padding:16px}
+  .form-card-title{font-size:16px}
+
+  /* APP NAV */
+  .app-nav{padding:0 16px}
+  .app-nav-title{font-size:15px}
+  .app-nav-right .btn{display:none}
+  .app-nav-right .nav-avatar{display:flex}
+
+  /* STEP ACTIONS */
+  .step-actions{flex-direction:column;gap:10px;padding:16px}
+  .step-actions .btn{width:100%;justify-content:center}
+  .step-actions-right{width:100%}
+  .step-actions-right .btn{width:100%;justify-content:center}
+
+  /* DASHBOARD */
+  .dash-grid{grid-template-columns:1fr}
+  .dash-nav{padding:0 16px}
+  .dash-body{padding:16px}
+  .dash-title{font-size:22px}
+  .right-panel{margin-top:0}
+
+  /* PAYMENT SUMMARY */
+  .pay-layout{grid-template-columns:1fr !important;gap:20px}
+  .pay-right{position:static !important}
+
+  /* UPLOAD GRID */
+  .upload-grid{grid-template-columns:1fr}
+
+  /* SECTION 5 TABLE */
+  .s5-table{font-size:12px}
+  .s5-table th,.s5-table td{padding:8px 6px}
+
+  /* NOTICES */
+  .notice{font-size:13px}
+
+  /* MODAL */
+  .modal-overlay{padding:0}
+  .modal{border-radius:0;min-height:100vh}
+  .modal-header{padding:14px 16px}
+  .modal-body{padding:16px}
+
+  /* FORM INPUTS */
+  .form-input,.form-select{font-size:16px}
+  select.form-input{font-size:16px}
+  textarea.form-input{font-size:16px}
+
+  /* GENERAL */
+  .btn{font-size:14px}
+  .form-card+.form-card{margin-top:16px}
+  .progress-step .ps-info{display:none}
+  .progress-steps{flex-direction:row;overflow-x:auto;padding:10px 16px;gap:8px}
+  .progress-step{flex-direction:column;align-items:center;gap:4px;min-width:48px}
+  .ps-num{width:32px;height:32px;font-size:13px}
+}
 body{font-family:'Crimson Pro',Georgia,serif;background:var(--cream);color:var(--ink);line-height:1.6;font-size:16px}
 h1,h2,h3{font-family:'Playfair Display',serif;line-height:1.2;font-weight:600}
 .screen{display:none;min-height:100vh}.screen.active{display:flex;flex-direction:column}
@@ -122,7 +214,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;line-height:1.2;font-weight:600}
 .form-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--ink4);font-size:13px}
 .form-divider::before,.form-divider::after{content:'';flex:1;height:1px;background:var(--cream3)}
 select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6960' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
-.otp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.otp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;max-width:320px}
 .otp-input{text-align:center;padding:12px 0;font-size:20px;font-family:'DM Mono',monospace;border:1.5px solid var(--cream3);border-radius:var(--r);background:var(--cream);color:var(--ink);transition:all 0.2s;width:100%}
 .otp-input:focus{outline:none;border-color:var(--navy);background:var(--white);box-shadow:0 0 0 3px rgba(13,27,62,0.07)}
 /* App form */
