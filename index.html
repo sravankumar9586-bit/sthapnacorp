@@ -1208,6 +1208,174 @@ let directorCount = 0;
 let nocText = '';
 let rentalText = '';
 
+// ===================== AUTH =====================
+function switchAuthTab(tab){
+  const ts = document.getElementById('tab-signup');
+  const tl = document.getElementById('tab-login');
+  const as = document.getElementById('auth-signup');
+  const al = document.getElementById('auth-login');
+  if(ts) ts.className='auth-tab'+(tab==='signup'?' active':'');
+  if(tl) tl.className='auth-tab'+(tab==='login'?' active':'');
+  if(as) as.style.display=(tab==='signup')?'block':'none';
+  if(al) al.style.display=(tab==='login')?'block':'none';
+}
+
+function sendOtp(){
+  const name=document.getElementById('signup-name')?.value.trim();
+  const m=document.getElementById('signup-mobile')?.value.trim();
+  if(!name){alert('Please enter your full name.');return;}
+  if(!m||m.replace(/\D/g,'').length<10){alert('Please enter a valid 10-digit mobile number.');return;}
+  const s1=document.getElementById('signup-step1');
+  const s2=document.getElementById('signup-step2');
+  const md=document.getElementById('otp-mobile-display');
+  if(s1)s1.style.display='none';
+  if(s2)s2.style.display='block';
+  if(md)md.textContent=m;
+  buildOtpGrid();
+}
+
+function buildOtpGrid(){
+  const g=document.getElementById('otp-grid');
+  if(!g)return;
+  g.innerHTML='';
+  for(let i=0;i<6;i++){
+    const inp=document.createElement('input');
+    inp.type='text';inp.maxLength=1;inp.className='otp-input';inp.id='otp'+i;inp.inputMode='numeric';
+    inp.addEventListener('input',e=>{
+      e.target.value=e.target.value.replace(/\D/g,'');
+      if(e.target.value&&i<5)document.getElementById('otp'+(i+1))?.focus();
+    });
+    inp.addEventListener('keydown',e=>{
+      if(e.key==='Backspace'&&!e.target.value&&i>0)document.getElementById('otp'+(i-1))?.focus();
+    });
+    g.appendChild(inp);
+  }
+  document.getElementById('otp0')?.focus();
+}
+
+function verifyOtp(){
+  let otp='';
+  for(let i=0;i<6;i++)otp+=(document.getElementById('otp'+i)?.value||'');
+  if(otp!=='123456'){
+    const err=document.getElementById('otp-error');
+    if(err)err.style.display='flex';
+    return;
+  }
+  const name=document.getElementById('signup-name')?.value.trim()||'User';
+  const email=document.getElementById('signup-email')?.value.trim()||'';
+  const mobile=document.getElementById('signup-mobile')?.value.trim()||'';
+  loginUser({name,email,mobile});
+}
+
+function resendOtp(){alert('OTP resent! (Demo: use 123456)');}
+
+function loginDemo(){
+  loginUser({name:'Sravan Kumar',email:'sravankumar9586@gmail.com',mobile:'+91 89192 32657'});
+}
+
+function loginUser(user){
+  currentUser=user;
+  const initials=user.name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  set('app-nav-name',user.name);set('app-nav-avatar',initials);
+  set('dash-nav-name',user.name);set('dash-nav-avatar',initials);
+  set('dash-user-name',user.name.split(' ')[0]);
+  showScreen('app');
+  initDirectors();
+  goAppStep(1);
+}
+
+// ===================== ENTITY SELECTION =====================
+const entityConfig = {
+  pvt:{suffix:'Private Limited',ph1:'e.g. TechNova Solutions Private Limited',ph2:'e.g. Innovara Tech Private Limited',notice:'Names must end with <strong>"Private Limited"</strong> as required for a Private Limited Company.'},
+  llp:{suffix:'LLP',ph1:'e.g. TechNova Solutions LLP',ph2:'e.g. Innovara Tech LLP',notice:'Names must end with <strong>"LLP"</strong> as required for a Limited Liability Partnership.'},
+  opc:{suffix:'OPC Private Limited',ph1:'e.g. TechNova Solutions OPC Private Limited',ph2:'e.g. Innovara Tech OPC Private Limited',notice:'Names must end with <strong>"OPC Private Limited"</strong> as required for a One Person Company.'}
+};
+
+function getRequiredSuffix(){ return (entityConfig[selectedEntity]||entityConfig.pvt).suffix; }
+
+function updateNamePlaceholders(){
+  const cfg=entityConfig[selectedEntity]||entityConfig.pvt;
+  const n1=document.getElementById('co-name1');
+  const n2=document.getElementById('co-name2');
+  const nt=document.getElementById('name-suffix-text');
+  if(n1)n1.placeholder=cfg.ph1;
+  if(n2)n2.placeholder=cfg.ph2;
+  if(nt)nt.innerHTML=cfg.notice;
+  validateNameSuffix('co-name1','name1-err');
+  validateNameSuffix('co-name2','name2-err');
+}
+
+function validateNameSuffix(inputId,errId){
+  const el=document.getElementById(inputId);
+  const err=document.getElementById(errId);
+  if(!el||!err)return true;
+  const val=el.value.trim();
+  if(!val){err.style.display='none';el.style.borderColor='';return true;}
+  const suffix=getRequiredSuffix();
+  if(!val.endsWith(suffix)){
+    err.textContent=`Name must end with "${suffix}"`;
+    err.style.display='block';el.style.borderColor='var(--red)';return false;
+  } else {
+    err.style.display='none';el.style.borderColor='#A8D5B8';return true;
+  }
+}
+
+function selectLandingOpt(type){
+  document.querySelectorAll('.entity-opt').forEach(c=>c.classList.remove('sel'));
+  const el=document.getElementById('lopt-'+type);if(el)el.classList.add('sel');
+}
+
+function selEntity(type){
+  selectedEntity=type;
+  document.querySelectorAll('.ent-sel-card').forEach(c=>c.classList.remove('selected'));
+  const el=document.getElementById('esel-'+type);if(el)el.classList.add('selected');
+  ['pvt','llp','opc'].forEach(t=>{
+    const n=document.getElementById('entity-notice-'+t);
+    if(n)n.style.display=(t===type)?'flex':'none';
+  });
+  updateNamePlaceholders();
+}
+
+// ===================== CAPITAL COMPUTATION =====================
+function computeCapital(){
+  const auth=parseFloat(document.getElementById('auth-capital')?.value)||0;
+  const paidup=parseFloat(document.getElementById('paidup-capital')?.value)||0;
+  const fv=parseFloat(document.getElementById('face-value')?.value)||10;
+  const notice=document.getElementById('capital-notice');
+  const totalEl=document.getElementById('total-shares');
+  if(paidup>0&&fv>0&&totalEl) totalEl.value=Math.floor(paidup/fv).toLocaleString('en-IN')+' shares';
+  else if(totalEl) totalEl.value='';
+  document.querySelectorAll('[id$="-fv"]').forEach(el=>{el.value=fv>0?'₹'+fv+' per share':'';});
+  document.querySelectorAll('[id$="-shares"]').forEach(el=>{
+    const n=el.id.replace('dir','').replace('-shares','');computeSubscription(n);
+  });
+  if(!notice)return;
+  if(paidup>auth){
+    notice.style.display='block';
+    notice.innerHTML='<div class="notice notice-danger"><span class="notice-icon">⚠</span><span><strong>Paid-up capital cannot exceed authorised capital.</strong></span></div>';
+  } else if(auth>0&&paidup>0){
+    notice.style.display='block';
+    const govtFee=auth<=100000?500:auth<=500000?2000:auth<=2500000?4000:8000;
+    notice.innerHTML='<div class="notice notice-success"><span class="notice-icon">✓</span><span>Capital valid. Estimated MCA filing fee: <strong>₹'+govtFee.toLocaleString('en-IN')+'</strong>.</span></div>';
+  } else { notice.style.display='none'; }
+}
+
+function computeSubscription(n){
+  const sharesEl=document.getElementById('dir'+n+'-shares');
+  const totalEl=document.getElementById('dir'+n+'-sub-total');
+  const pctEl=document.getElementById('dir'+n+'-pct');
+  const fvEl=document.getElementById('dir'+n+'-fv');
+  if(!sharesEl||!totalEl)return;
+  const shares=parseFloat(sharesEl.value)||0;
+  const fv=parseFloat(document.getElementById('face-value')?.value)||10;
+  const paidup=parseFloat(document.getElementById('paidup-capital')?.value)||0;
+  const totalShares=paidup>0&&fv>0?Math.floor(paidup/fv):0;
+  if(fvEl)fvEl.value='₹'+fv+' per share';
+  if(totalEl)totalEl.value=shares>0?'₹'+(shares*fv).toLocaleString('en-IN'):'';
+  if(pctEl)pctEl.value=shares>0&&totalShares>0?((shares/totalShares)*100).toFixed(2)+'%':'';
+}
+
 // ===================== NAV =====================
 function showScreen(id, sub){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
