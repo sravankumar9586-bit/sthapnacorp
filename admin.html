@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SthapnaCorp — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Crimson+Pro:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1C1A17;--ink2:#4A4640;--ink3:#8A857C;--ink4:#C4BFB8;
+  --cream:#FAF8F4;--cream2:#F2EFE9;--cream3:#E8E3DA;
+  --gold:#C9A84C;--gold2:#E8C96A;--gold3:#F5E8C0;
+  --navy:#0D1B3E;--navy2:#1A2F5A;--navylight:#E8EDF5;
+  --green:#1A5C3A;--greenlight:#E8F3ED;
+  --red:#8B1A1A;--redlight:#F5E8E8;
+  --white:#FFFFFF;--r:6px;--r-lg:10px;--r-xl:16px;
+  --shadow:0 1px 3px rgba(28,26,23,0.08),0 4px 16px rgba(28,26,23,0.06);
+}
+body{font-family:"Crimson Pro",Georgia,serif;background:var(--cream);color:var(--ink);font-size:15px;line-height:1.6}
+h1,h2,h3{font-family:"Playfair Display",serif}
+
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--navy)}
+.login-box{background:var(--white);border-radius:var(--r-xl);padding:48px 40px;width:380px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;justify-content:center}
+.login-logo-icon{width:36px;height:36px;border-radius:8px;background:#0D1B3E;display:flex;align-items:flex-end;justify-content:center;gap:2px;padding:5px 5px 0;position:relative;overflow:hidden}
+.login-logo-icon::after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:#C9A84C}
+.b1{width:5px;height:10px;background:#4A6FA5;border-radius:1px 1px 0 0}
+.b2{width:5px;height:14px;background:#7A9CC5;border-radius:1px 1px 0 0}
+.b3{width:5px;height:19px;background:#fff;border-radius:1px 1px 0 0}
+.dot{position:absolute;top:4px;right:5px;width:4px;height:4px;border-radius:50%;background:#C9A84C}
+.login-title{font-family:"Playfair Display",serif;font-size:24px;color:var(--navy);text-align:center;margin-bottom:4px}
+.login-sub{font-size:14px;color:var(--ink3);text-align:center;margin-bottom:28px}
+.form-group{margin-bottom:16px}
+.form-label{font-size:13px;color:var(--ink2);font-weight:500;display:block;margin-bottom:6px}
+.form-input{width:100%;padding:11px 14px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream);color:var(--ink);font-size:15px;font-family:"Crimson Pro",serif;transition:all 0.2s}
+.form-input:focus{outline:none;border-color:var(--navy);background:var(--white);box-shadow:0 0 0 3px rgba(13,27,62,0.07)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 22px;border-radius:var(--r);font-size:14px;font-weight:500;cursor:pointer;border:1.5px solid transparent;transition:all 0.2s;font-family:"Crimson Pro",serif}
+.btn-navy{background:var(--navy);color:var(--white);border-color:var(--navy)}.btn-navy:hover{background:var(--navy2)}
+.btn-ghost{background:transparent;border-color:var(--cream3);color:var(--ink2)}.btn-ghost:hover{border-color:var(--ink3)}
+.btn-sm{padding:6px 14px;font-size:13px}
+.btn-danger{border-color:#E8B4B4;color:var(--red);background:transparent}.btn-danger:hover{background:var(--redlight)}
+.login-err{display:none;background:var(--redlight);border:1px solid #E8B4B4;border-radius:var(--r);padding:10px 14px;font-size:13px;color:var(--red);margin-top:12px;text-align:center}
+
+/* ADMIN LAYOUT */
+#admin-screen{display:none;min-height:100vh}
+.admin-nav{background:var(--navy);padding:0 32px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.admin-nav-left{display:flex;align-items:center;gap:10px}
+.admin-nav-title{font-family:"Playfair Display",serif;font-size:17px;color:var(--white)}
+.admin-nav-badge{font-size:11px;background:rgba(201,168,76,0.2);color:var(--gold2);border:1px solid rgba(201,168,76,0.3);border-radius:20px;padding:2px 8px}
+.admin-nav-right{display:flex;align-items:center;gap:12px}
+.admin-body{padding:32px}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.admin-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--white);border:1px solid var(--cream3);border-radius:var(--r-xl);padding:20px;text-align:center;box-shadow:var(--shadow)}
+.stat-num{font-family:"Playfair Display",serif;font-size:28px;font-weight:700;color:var(--navy)}
+.stat-lbl{font-size:12px;color:var(--ink3);margin-top:3px}
+
+/* TABLE */
+.table-wrap{background:var(--white);border:1px solid var(--cream3);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--shadow)}
+.table-header{padding:16px 20px;border-bottom:1px solid var(--cream3);display:flex;align-items:center;justify-content:space-between}
+.table-title{font-family:"Playfair Display",serif;font-size:16px;color:var(--navy)}
+.search-input{padding:8px 12px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream);font-size:14px;font-family:"Crimson Pro",serif;width:260px}
+.search-input:focus{outline:none;border-color:var(--navy)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+thead tr{background:var(--navylight);border-bottom:2px solid #c5cce8}
+th{padding:12px 16px;text-align:left;font-family:"Playfair Display",serif;font-size:13px;color:var(--navy);font-weight:600;white-space:nowrap}
+td{padding:12px 16px;border-bottom:1px solid var(--cream3);vertical-align:middle}
+tbody tr:hover{background:#fafaf8;cursor:pointer}
+tbody tr:last-child td{border-bottom:none}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-pending{background:#FFF7E6;color:#b8600a;border:1px solid #F5DCA0}
+.badge-approved{background:var(--greenlight);color:var(--green);border:1px solid #A8D5B8}
+.badge-filed{background:var(--navylight);color:var(--navy);border:1px solid #c5cce8}
+.badge-coi{background:var(--gold3);color:#7A5200;border:1px solid #E8C96A}
+.badge-paid{background:var(--greenlight);color:var(--green);border:1px solid #A8D5B8}
+.badge-unpaid{background:var(--redlight);color:var(--red);border:1px solid #E8B4B4}
+.mono{font-family:"DM Mono",monospace;font-size:12px}
+.empty-state{text-align:center;padding:60px 20px;color:var(--ink3)}
+.empty-icon{font-size:40px;margin-bottom:12px}
+.empty-title{font-family:"Playfair Display",serif;font-size:18px;color:var(--ink2);margin-bottom:6px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(13,27,62,0.5);z-index:200;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:var(--r-xl);width:100%;max-width:820px;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.modal-header{padding:20px 28px;border-bottom:1px solid var(--cream3);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);border-radius:var(--r-xl) var(--r-xl) 0 0;z-index:1}
+.modal-title{font-family:"Playfair Display",serif;font-size:20px;color:var(--navy)}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink3);padding:4px 8px;border-radius:var(--r)}
+.modal-close:hover{background:var(--cream2)}
+.modal-body{padding:28px}
+.section-title{font-family:"Playfair Display",serif;font-size:14px;color:var(--navy);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--cream3);text-transform:uppercase;letter-spacing:0.06em}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:24px}
+.detail-row{display:flex;flex-direction:column;padding:10px 0;border-bottom:1px solid var(--cream3)}
+.detail-row:nth-child(odd){padding-right:20px}
+.detail-key{font-size:12px;color:var(--ink3);font-weight:500;margin-bottom:2px}
+.detail-val{font-size:14px;color:var(--ink);font-weight:500}
+.detail-val.mono{font-family:"DM Mono",monospace;font-size:13px}
+.detail-full{grid-column:1/-1}
+.status-select{padding:8px 12px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream);font-size:14px;font-family:"Crimson Pro",serif;color:var(--ink);cursor:pointer}
+.status-select:focus{outline:none;border-color:var(--navy)}
+.director-card{background:var(--cream2);border:1px solid var(--cream3);border-radius:var(--r-lg);padding:16px;margin-bottom:10px}
+.director-name{font-family:"Playfair Display",serif;font-size:15px;color:var(--navy);margin-bottom:8px}
+.subs-mini-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:8px}
+.subs-mini-table th{background:var(--navylight);color:var(--navy);padding:8px 12px;text-align:center;border:1px solid #c5cce8;font-size:12px}
+.subs-mini-table th:first-child{text-align:left}
+.subs-mini-table td{padding:8px 12px;border:1px solid var(--cream3);text-align:center}
+.subs-mini-table td:first-child{text-align:left;background:var(--cream2);font-size:12px;color:var(--ink2)}
+.notes-area{width:100%;padding:10px 12px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream);font-size:14px;font-family:"Crimson Pro",serif;resize:vertical;min-height:80px}
+.notes-area:focus{outline:none;border-color:var(--navy)}
+.modal-footer{padding:16px 28px;border-top:1px solid var(--cream3);display:flex;align-items:center;justify-content:space-between;background:var(--cream2);border-radius:0 0 var(--r-xl) var(--r-xl)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon"><div class="b1"></div><div class="b2"></div><div class="b3"></div><div class="dot"></div></div>
+      <span style="font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);font-weight:700">SthapnaCorp</span>
+    </div>
+    <h2 class="login-title">Admin Panel</h2>
+    <p class="login-sub">Sign in to manage all applications</p>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="admin-pass" placeholder="Enter admin password"
+        onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn btn-navy" style="width:100%;justify-content:center;padding:13px;font-size:15px" onclick="doLogin()">
+      Sign in →
+    </button>
+    <div class="login-err" id="login-err">Incorrect password. Please try again.</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-screen">
+  <nav class="admin-nav">
+    <div class="admin-nav-left">
+      <div class="login-logo-icon" style="width:30px;height:30px;padding:4px 4px 0;border-radius:6px"><div class="b1"></div><div class="b2"></div><div class="b3"></div><div class="dot"></div></div>
+      <span class="admin-nav-title">SthapnaCorp Admin</span>
+      <span class="admin-nav-badge">Internal use only</span>
+    </div>
+    <div class="admin-nav-right">
+      <span style="font-size:13px;color:rgba(255,255,255,0.6)" id="last-refresh"></span>
+      <button class="btn btn-sm" style="border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);background:transparent" onclick="loadApplications()">↺ Refresh</button>
+      <button class="btn btn-sm" style="border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);background:transparent" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn btn-sm" style="border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);background:transparent" onclick="doLogout()">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="admin-body">
+    <div class="admin-header">
+      <div>
+        <h1 style="font-size:26px;color:var(--navy)">Applications</h1>
+        <p style="font-size:14px;color:var(--ink3);margin-top:3px">All incorporation applications received via sthapnacorp.com</p>
+      </div>
+      <div style="font-size:13px;color:var(--ink3)" id="app-count"></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="admin-stats">
+      <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-lbl">Total applications</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-paid" style="color:var(--green)">0</div><div class="stat-lbl">Name fee paid</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-pending" style="color:#b8600a">0</div><div class="stat-lbl">Name pending</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-approved" style="color:var(--navy)">0</div><div class="stat-lbl">Name approved</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-coi" style="color:var(--gold)">0</div><div class="stat-lbl">COI issued</div></div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <div class="table-header">
+        <div class="table-title">All Applications</div>
+        <input class="search-input" type="text" placeholder="🔍 Search by name, email, company..." oninput="filterTable(this.value)">
+      </div>
+      <div style="overflow-x:auto">
+        <table id="apps-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Applied on</th>
+              <th>Applicant</th>
+              <th>Company name (Option 1)</th>
+              <th>Entity</th>
+              <th>Payment</th>
+              <th>Filing status</th>
+              <th>Payment ID</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="apps-tbody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="empty-state" style="display:none">
+        <div class="empty-icon">📋</div>
+        <div class="empty-title">No applications yet</div>
+        <p style="font-size:14px">Applications will appear here once clients complete the name application and payment on sthapnacorp.com</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-company-name">Application Details</div>
+        <div style="font-size:13px;color:var(--ink3);margin-top:2px" id="modal-app-date"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <div style="display:flex;gap:10px;align-items:center">
+        <span style="font-size:13px;color:var(--ink3)">Filing status:</span>
+        <select class="status-select" id="modal-status-select" onchange="updateStatus(this.value)">
+          <option value="name_pending">⏳ Name approval pending</option>
+          <option value="name_approved">✅ Name approved</option>
+          <option value="details_received">📋 Details received</option>
+          <option value="spice_filed">📤 SPICe+ filed</option>
+          <option value="roc_review">🔍 ROC under review</option>
+          <option value="coi_issued">🎉 COI issued</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-danger btn-sm" onclick="deleteApplication()">🗑 Delete</button>
+        <button class="btn btn-navy btn-sm" onclick="saveNotes()">💾 Save notes</button>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ADMIN_PASS = 'Welcome@3';
+const STORAGE_KEY = 'sthapnacorp_applications';
+let allApps = [];
+let currentAppId = null;
+
+// ── AUTH ──
+function doLogin(){
+  const pass = document.getElementById('admin-pass').value;
+  if(pass === ADMIN_PASS){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('admin-screen').style.display='block';
+    loadApplications();
+  } else {
+    document.getElementById('login-err').style.display='block';
+    document.getElementById('admin-pass').value='';
+    document.getElementById('admin-pass').focus();
+  }
+}
+function doLogout(){
+  document.getElementById('admin-screen').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('admin-pass').value='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+// ── LOAD DATA ──
+function loadApplications(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  allApps = raw ? JSON.parse(raw) : [];
+  renderTable(allApps);
+  updateStats(allApps);
+  const el=document.getElementById('last-refresh');
+  if(el)el.textContent='Last updated: '+new Date().toLocaleTimeString('en-IN');
+}
+
+function updateStats(apps){
+  document.getElementById('stat-total').textContent = apps.length;
+  document.getElementById('stat-paid').textContent   = apps.filter(a=>a.payment_status==='paid').length;
+  document.getElementById('stat-pending').textContent= apps.filter(a=>a.filing_status==='name_pending').length;
+  document.getElementById('stat-approved').textContent=apps.filter(a=>['name_approved','details_received','spice_filed','roc_review'].includes(a.filing_status)).length;
+  document.getElementById('stat-coi').textContent    = apps.filter(a=>a.filing_status==='coi_issued').length;
+  const el=document.getElementById('app-count');
+  if(el)el.textContent=apps.length+' application'+(apps.length!==1?'s':'');
+}
+
+function renderTable(apps){
+  const tbody=document.getElementById('apps-tbody');
+  const empty=document.getElementById('empty-state');
+  if(!apps.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  tbody.innerHTML = apps.map((a,i)=>`
+    <tr onclick="openModal('${a.id}')">
+      <td class="mono" style="color:var(--ink3)">${String(i+1).padStart(3,'0')}</td>
+      <td class="mono" style="font-size:12px">${formatDate(a.created_at)}</td>
+      <td>
+        <div style="font-weight:600">${esc(a.applicant_name||'—')}</div>
+        <div style="font-size:12px;color:var(--ink3)">${esc(a.applicant_email||'—')}</div>
+      </td>
+      <td>
+        <div style="font-weight:500;color:var(--navy)">${esc(a.name_option1||'—')}</div>
+        ${a.name_option2?`<div style="font-size:12px;color:var(--ink3)">Alt: ${esc(a.name_option2)}</div>`:''}
+      </td>
+      <td><span style="font-size:13px">${entityLabel(a.entity_type)}</span></td>
+      <td><span class="badge ${a.payment_status==='paid'?'badge-paid':'badge-unpaid'}">${a.payment_status==='paid'?'✓ ₹2,000 paid':'Unpaid'}</span></td>
+      <td><span class="badge ${statusBadgeClass(a.filing_status)}">${statusLabel(a.filing_status)}</span></td>
+      <td class="mono" style="font-size:11px;color:var(--ink3)">${a.razorpay_id||'—'}</td>
+      <td onclick="event.stopPropagation()">
+        <button class="btn btn-ghost btn-sm" onclick="openModal('${a.id}')">View →</button>
+      </td>
+    </tr>`).join('');
+}
+
+function filterTable(q){
+  if(!q.trim()){renderTable(allApps);return;}
+  const lq=q.toLowerCase();
+  renderTable(allApps.filter(a=>
+    (a.applicant_name||'').toLowerCase().includes(lq)||
+    (a.applicant_email||'').toLowerCase().includes(lq)||
+    (a.name_option1||'').toLowerCase().includes(lq)||
+    (a.name_option2||'').toLowerCase().includes(lq)||
+    (a.razorpay_id||'').toLowerCase().includes(lq)
+  ));
+}
+
+// ── MODAL ──
+function openModal(id){
+  const app=allApps.find(a=>a.id===id);
+  if(!app)return;
+  currentAppId=id;
+  document.getElementById('modal-company-name').textContent=app.name_option1||'Application';
+  document.getElementById('modal-app-date').textContent='Submitted on '+formatDate(app.created_at)+' · ID: '+app.id;
+  document.getElementById('modal-status-select').value=app.filing_status||'name_pending';
+
+  const dirs = app.directors||[];
+  const s5 = app.section5||{};
+
+  document.getElementById('modal-body').innerHTML = `
+    <!-- Applicant -->
+    <div class="section-title">👤 Applicant details</div>
+    <div class="detail-grid" style="margin-bottom:20px">
+      <div class="detail-row"><span class="detail-key">Full name</span><span class="detail-val">${esc(app.applicant_name||'—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Email</span><span class="detail-val mono">${esc(app.applicant_email||'—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Mobile</span><span class="detail-val mono">${esc(app.applicant_mobile||'—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Applied on</span><span class="detail-val">${formatDate(app.created_at)}</span></div>
+    </div>
+
+    <!-- Name Application -->
+    <div class="section-title">🏢 Name application</div>
+    <div class="detail-grid" style="margin-bottom:20px">
+      <div class="detail-row"><span class="detail-key">Entity type</span><span class="detail-val">${entityLabel(app.entity_type)}</span></div>
+      <div class="detail-row"><span class="detail-key">NIC code</span><span class="detail-val mono">${esc(app.nic_code||'—')}</span></div>
+      <div class="detail-row detail-full"><span class="detail-key">Name Option 1 (preferred)</span><span class="detail-val" style="color:var(--navy);font-size:16px">${esc(app.name_option1||'—')}</span></div>
+      <div class="detail-row detail-full"><span class="detail-key">Name Option 2 (alternate)</span><span class="detail-val">${esc(app.name_option2||'—')}</span></div>
+      <div class="detail-row detail-full"><span class="detail-key">Main Object 1</span><span class="detail-val">${esc(app.main_object_1||'—')}</span></div>
+      ${app.main_object_2?`<div class="detail-row detail-full"><span class="detail-key">Main Object 2</span><span class="detail-val">${esc(app.main_object_2)}</span></div>`:''}
+      ${app.main_object_3?`<div class="detail-row detail-full"><span class="detail-key">Main Object 3</span><span class="detail-val">${esc(app.main_object_3)}</span></div>`:''}
+    </div>
+
+    <!-- Payment -->
+    <div class="section-title">💳 Payment</div>
+    <div class="detail-grid" style="margin-bottom:20px">
+      <div class="detail-row"><span class="detail-key">Name fee (₹2,000)</span><span class="detail-val"><span class="badge ${app.payment_status==='paid'?'badge-paid':'badge-unpaid'}">${app.payment_status==='paid'?'✓ Paid':'Unpaid'}</span></span></div>
+      <div class="detail-row"><span class="detail-key">Razorpay Payment ID</span><span class="detail-val mono">${esc(app.razorpay_id||'—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Payment time</span><span class="detail-val">${app.paid_at?formatDate(app.paid_at):'—'}</span></div>
+      <div class="detail-row"><span class="detail-key">Filing status</span><span class="detail-val"><span class="badge ${statusBadgeClass(app.filing_status)}">${statusLabel(app.filing_status)}</span></span></div>
+    </div>
+
+    <!-- Company Details (if filled) -->
+    ${app.company_email ? `
+    <div class="section-title">🏛 Company details</div>
+    <div class="detail-grid" style="margin-bottom:20px">
+      <div class="detail-row"><span class="detail-key">Company email</span><span class="detail-val mono">${esc(app.company_email||'—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Company mobile</span><span class="detail-val mono">${esc(app.company_mobile||'—')}</span></div>
+      <div class="detail-row detail-full"><span class="detail-key">Registered office address</span><span class="detail-val">${esc(app.office_address||'—')}</span></div>
+      <div class="detail-row"><span class="detail-key">State / ROC</span><span class="detail-val">${esc(app.office_state||'—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Office ownership</span><span class="detail-val">${esc(app.ownership||'—')}</span></div>
+      <div class="detail-row"><span class="detail-key">Authorised capital</span><span class="detail-val mono">₹${Number(app.auth_capital||0).toLocaleString('en-IN')}</span></div>
+      <div class="detail-row"><span class="detail-key">Paid-up capital</span><span class="detail-val mono">₹${Number(app.paidup_capital||0).toLocaleString('en-IN')}</span></div>
+      <div class="detail-row"><span class="detail-key">Face value per share</span><span class="detail-val mono">₹${esc(app.face_value||10)}</span></div>
+    </div>` : '<div style="padding:12px 0 20px;font-size:14px;color:var(--ink3);font-style:italic">Company details not yet filled — awaiting name approval.</div>'}
+
+    <!-- Section 5 -->
+    ${s5.s5a_din !== undefined ? `
+    <div class="section-title">📊 SPICe+ Section 5 — Subscribers & directors</div>
+    <table class="subs-mini-table" style="margin-bottom:20px">
+      <thead><tr><th>Description</th><th>Having DIN</th><th>Not having DIN</th></tr></thead>
+      <tbody>
+        <tr><td>(a) Total first subscribers</td><td>${s5.s5a_din||0}</td><td>${s5.s5a_nodin||0}</td></tr>
+        <tr><td>(b) Non-individual subscribers</td><td>N/A</td><td>${s5.s5b_nodin||0}</td></tr>
+        <tr><td>(c) Individual subscriber-cum-directors</td><td>${s5.s5c_din||0}</td><td>${s5.s5c_nodin||0}</td></tr>
+        <tr><td>(d) Total directors</td><td>${s5.s5d_din||0}</td><td>${s5.s5d_nodin||0}</td></tr>
+      </tbody>
+    </table>` : ''}
+
+    <!-- Directors -->
+    ${dirs.length ? `
+    <div class="section-title">👥 Director details (${dirs.length})</div>
+    <div style="margin-bottom:20px">
+      ${dirs.map((d,i)=>`
+      <div class="director-card">
+        <div class="director-name">Director ${i+1} — ${esc(d.name||'—')} <span style="font-size:12px;color:var(--ink3);font-family:'Crimson Pro',serif;font-weight:400">${esc(d.role||'')}</span></div>
+        <div class="detail-grid">
+          <div class="detail-row"><span class="detail-key">DIN</span><span class="detail-val mono">${esc(d.din||'Not yet assigned')}</span></div>
+          <div class="detail-row"><span class="detail-key">DIN status</span><span class="detail-val">${esc(d.din_status||'—')}</span></div>
+          <div class="detail-row"><span class="detail-key">Personal email</span><span class="detail-val mono">${esc(d.email||'—')}</span></div>
+          <div class="detail-row"><span class="detail-key">Personal mobile</span><span class="detail-val mono">${esc(d.mobile||'—')}</span></div>
+          <div class="detail-row"><span class="detail-key">DSC</span><span class="detail-val">${d.dsc==='yes'?'✅ Has DSC':'❌ To be arranged'}</span></div>
+          ${d.shares?`<div class="detail-row"><span class="detail-key">Shares subscribing</span><span class="detail-val mono">${Number(d.shares).toLocaleString('en-IN')}</span></div>`:''}
+        </div>
+      </div>`).join('')}
+    </div>` : ''}
+
+    <!-- Admin notes -->
+    <div class="section-title">📝 Internal notes</div>
+    <textarea class="notes-area" id="admin-notes" placeholder="Add internal notes, SRN number, CA/CS assigned, follow-up actions...">${esc(app.admin_notes||'')}</textarea>
+  `;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('open');
+  currentAppId=null;
+}
+
+function updateStatus(val){
+  if(!currentAppId)return;
+  const idx=allApps.findIndex(a=>a.id===currentAppId);
+  if(idx===-1)return;
+  allApps[idx].filing_status=val;
+  allApps[idx].updated_at=new Date().toISOString();
+  saveApps();
+  renderTable(allApps);
+  updateStats(allApps);
+}
+
+function saveNotes(){
+  if(!currentAppId)return;
+  const notes=document.getElementById('admin-notes')?.value||'';
+  const idx=allApps.findIndex(a=>a.id===currentAppId);
+  if(idx===-1)return;
+  allApps[idx].admin_notes=notes;
+  allApps[idx].updated_at=new Date().toISOString();
+  saveApps();
+  alert('Notes saved ✅');
+}
+
+function deleteApplication(){
+  if(!currentAppId)return;
+  if(!confirm('Delete this application permanently? This cannot be undone.'))return;
+  allApps=allApps.filter(a=>a.id!==currentAppId);
+  saveApps();
+  closeModal();
+  renderTable(allApps);
+  updateStats(allApps);
+}
+
+function saveApps(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(allApps));
+}
+
+// ── EXPORT CSV ──
+function exportCSV(){
+  if(!allApps.length){alert('No applications to export.');return;}
+  const headers=['ID','Date','Applicant','Email','Mobile','Entity','Name Option 1','Name Option 2','NIC Code','Main Object','Payment','Razorpay ID','Filing Status','Office Address','State','Auth Capital','Paidup Capital','Notes'];
+  const rows=allApps.map(a=>[
+    a.id,formatDate(a.created_at),a.applicant_name,a.applicant_email,a.applicant_mobile,
+    entityLabel(a.entity_type),a.name_option1,a.name_option2,a.nic_code,a.main_object_1,
+    a.payment_status==='paid'?'Paid':'Unpaid',a.razorpay_id||'',
+    statusLabel(a.filing_status),a.office_address,a.office_state,
+    a.auth_capital,a.paidup_capital,a.admin_notes||''
+  ].map(v=>'"'+(v||'').toString().replace(/"/g,'""')+'"'));
+  const csv=[headers.join(','),...rows.map(r=>r.join(','))].join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='sthapnacorp_applications_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+// ── HELPERS ──
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatDate(d){ if(!d)return '—'; return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+function entityLabel(t){ return t==='pvt'?'Private Limited':t==='llp'?'LLP':t==='opc'?'OPC':'—'; }
+function statusLabel(s){
+  return {name_pending:'⏳ Name pending',name_approved:'✅ Name approved',details_received:'📋 Details received',spice_filed:'📤 SPICe+ filed',roc_review:'🔍 ROC review',coi_issued:'🎉 COI issued'}[s]||'⏳ Name pending';
+}
+function statusBadgeClass(s){
+  return {name_pending:'badge-pending',name_approved:'badge-approved',details_received:'badge-filed',spice_filed:'badge-filed',roc_review:'badge-filed',coi_issued:'badge-coi'}[s]||'badge-pending';
+}
+
+// Auto-login check
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('admin-pass').focus();
+});
+</script>
+</body>
+</html>
