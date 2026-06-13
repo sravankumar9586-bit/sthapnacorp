@@ -1416,7 +1416,10 @@ function goAppStep(n){
 function populatePaymentSummary(){
   const name1=document.getElementById('co-name1')?.value||'—';
   const name2=document.getElementById('co-name2')?.value||'—';
-  const nicText = confirmedNIC.code ? confirmedNIC.code+' — '+confirmedNIC.desc : '—';
+  const nicEl = document.getElementById('office-nic-step2');
+  const nicVal = nicEl?.value === 'other' ? document.getElementById('nic-manual')?.value : nicEl?.value;
+  const nicLabel = nicEl?.value === 'other' ? (document.getElementById('nic-manual')?.value||'—') : (nicEl?.options[nicEl?.selectedIndex]?.text||'—');
+  const nicText = nicVal ? nicLabel : '—';
   const obj = (document.getElementById('obj-clause-0')?.value||'').substring(0,80)||'—';
   const entityMap={'pvt':'Private Limited Company','llp':'LLP','opc':'One Person Company'};
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
@@ -1430,20 +1433,23 @@ function populatePaymentSummary(){
 // ===================== NAME FEE PAYMENT =====================
 function payNameFee(){
   const name1 = document.getElementById('co-name1')?.value.trim();
-  const biz   = document.getElementById('biz-description')?.value.trim();
+  const biz   = document.getElementById('obj-clause-0')?.value.trim();
   if(!name1){alert('Please enter at least one proposed company name.');goAppStep(2);return;}
   const n1ok  = validateNameSuffix('co-name1','name1-err');
   const n2val = document.getElementById('co-name2')?.value.trim();
   const n2ok  = !n2val || validateNameSuffix('co-name2','name2-err');
   if(!n1ok||!n2ok){alert('One or both names do not end with the required suffix ("'+getRequiredSuffix()+'"). Please correct before proceeding.');goAppStep(2);return;}
-  if(!biz){alert('Please describe your business activity first.');goAppStep(2);return;}
+  if(!biz){alert('Please enter at least one main object of the company in Step 2.');goAppStep(2);return;}
   const nic = document.getElementById('office-nic-step2')?.value || document.getElementById('nic-manual')?.value;
   if(!nic){alert('Please select a NIC code for your business activity.');goAppStep(2);return;}
-  const obj0 = document.getElementById('obj-clause-0')?.value.trim();
-  if(!obj0){alert('Please enter at least one main object of the company.');goAppStep(2);return;}
+
+
 
   const name2   = document.getElementById('co-name2')?.value.trim()||'—';
-  const nicText = confirmedNIC.code ? confirmedNIC.code+' — '+confirmedNIC.desc : '—';
+  const nicEl = document.getElementById('office-nic-step2');
+  const nicVal = nicEl?.value === 'other' ? document.getElementById('nic-manual')?.value : nicEl?.value;
+  const nicLabel = nicEl?.value === 'other' ? (document.getElementById('nic-manual')?.value||'—') : (nicEl?.options[nicEl?.selectedIndex]?.text||'—');
+  const nicText = nicVal ? nicLabel : '—';
   const entityMap = {'pvt':'Private Limited Company','llp':'LLP','opc':'One Person Company'};
   const entityLabel = entityMap[selectedEntity]||'Private Limited Company';
 
