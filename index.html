@@ -641,11 +641,12 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
       <div class="progress-steps">
         <div class="progress-step active" id="ps1" onclick="goAppStep(1)"><div class="ps-num" id="psn1">1</div><div class="ps-info"><div class="ps-title">Entity type</div><div class="ps-sub">Choose your structure</div></div></div>
         <div class="progress-step" id="ps2" onclick="goAppStep(2)"><div class="ps-num" id="psn2">2</div><div class="ps-info"><div class="ps-title">Name application</div><div class="ps-sub">Names, objects, NIC</div></div></div>
-        <div class="progress-step" id="ps3" onclick="goAppStep(3)"><div class="ps-num" id="psn3">3</div><div class="ps-info"><div class="ps-title">Name application fee</div><div class="ps-sub">₹2,000 · SPICe+ Part A</div></div></div>
+        <div class="progress-step" id="ps3" onclick="goAppStep(3)"><div class="ps-num" id="psn3">3</div><div class="ps-info"><div class="ps-title">Name application fee</div><div class="ps-sub" id="ps3-sub">₹2,000 · SPICe+ Part A</div></div></div>
         <div class="progress-step locked" id="ps4"><div class="ps-num" id="psn4">🔒</div><div class="ps-info"><div class="ps-title">Company details</div><div class="ps-sub">Unlocks after name approved</div></div></div>
         <div class="progress-step locked" id="ps5"><div class="ps-num" id="psn5">🔒</div><div class="ps-info"><div class="ps-title">Subscribers &amp; directors</div><div class="ps-sub">Section 5</div></div></div>
         <div class="progress-step locked" id="ps6"><div class="ps-num" id="psn6">🔒</div><div class="ps-info"><div class="ps-title">Director details</div><div class="ps-sub">DIN, KYC, DSC</div></div></div>
-        <div class="progress-step locked" id="ps7"><div class="ps-num" id="psn7">🔒</div><div class="ps-info"><div class="ps-title">Final payment</div><div class="ps-sub">Balance fees</div></div></div>
+        <div class="progress-step locked" id="ps7"><div class="ps-num" id="psn7">🔒</div><div class="ps-info"><div class="ps-title">Documents</div><div class="ps-sub">KYC & office proof</div></div></div>
+        <div class="progress-step locked" id="ps8"><div class="ps-num" id="psn8">🔒</div><div class="ps-info"><div class="ps-title">Final payment</div><div class="ps-sub">Balance fees</div></div></div>
       </div>
       <div class="sidebar-divider"></div>
       <div class="sidebar-help">
@@ -697,8 +698,20 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
               <label class="form-label">Option 2 — Alternative name <span class="req">*</span></label>
               <input class="form-input" id="co-name2" placeholder="e.g. Innovara Tech Private Limited"
                 oninput="validateNameSuffix('co-name2','name2-err')" onblur="validateNameSuffix('co-name2','name2-err')">
-              <span class="form-hint">Strongly recommended. Used automatically if Option 1 is unavailable — avoids delays and re-filing.</span>
+              <span class="form-hint">Strongly recommended. Used automatically if Option 1 is unavailable.</span>
               <span id="name2-err" style="font-size:12px;color:var(--red);display:none;margin-top:3px"></span>
+            </div>
+            <div class="form-group form-full">
+              <label class="form-label">Option 3 <span style="color:var(--ink3);font-weight:400">(optional)</span></label>
+              <input class="form-input" id="co-name3" placeholder="e.g. Nexora Solutions Private Limited"
+                oninput="validateNameSuffix('co-name3','name3-err')" onblur="validateNameSuffix('co-name3','name3-err')">
+              <span id="name3-err" style="font-size:12px;color:var(--red);display:none;margin-top:3px"></span>
+            </div>
+            <div class="form-group form-full">
+              <label class="form-label">Option 4 <span style="color:var(--ink3);font-weight:400">(optional)</span></label>
+              <input class="form-input" id="co-name4" placeholder="e.g. Vantara Tech Private Limited"
+                oninput="validateNameSuffix('co-name4','name4-err')" onblur="validateNameSuffix('co-name4','name4-err')">
+              <span id="name4-err" style="font-size:12px;color:var(--red);display:none;margin-top:3px"></span>
             </div>
           </div>
         </div>
@@ -725,6 +738,32 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
               style="resize:vertical;line-height:1.7;font-size:15px"></textarea>
           </div>
           <div class="notice notice-info" style="margin-top:4px"><span class="notice-icon">ℹ</span><span>Our CA/CS will review and refine these objects before filing to ensure ROC acceptance. You can provide a rough description — we will perfect the language.</span></div>
+        </div>
+
+        <div class="form-card">
+          <div class="form-card-title">Trademark disclosure</div>
+          <div class="form-card-sub">Required disclosure under MCA name application rules.</div>
+          <div class="form-group">
+            <label class="form-label">Is the proposed name based on a registered trademark or pending trademark application? <span class="req">*</span></label>
+            <div style="display:flex;gap:10px;margin-top:4px">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;border:1.5px solid var(--cream3);border-radius:var(--r);padding:10px 16px;flex:1;transition:all 0.2s" id="tm-no-label" onclick="handleTrademark('no')">
+                <input type="radio" name="trademark" value="no" style="accent-color:var(--navy)" checked>
+                <span>No</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;border:1.5px solid var(--cream3);border-radius:var(--r);padding:10px 16px;flex:1;transition:all 0.2s" id="tm-yes-label" onclick="handleTrademark('yes')">
+                <input type="radio" name="trademark" value="yes" style="accent-color:var(--navy)">
+                <span>Yes</span>
+              </label>
+            </div>
+          </div>
+          <div id="tm-details" style="display:none">
+            <div class="form-group">
+              <label class="form-label">Trademark particulars <span class="req">*</span></label>
+              <textarea class="form-input" id="trademark-details" rows="2"
+                placeholder="e.g. Trade Mark No. 123456 filed on 01/01/2024 at Trade Marks Registry, Mumbai. Application pending."></textarea>
+              <span class="form-hint">Provide registration number, application number, and jurisdiction (India / outside India)</span>
+            </div>
+          </div>
         </div>
 
         <div class="form-card">
@@ -812,7 +851,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <div class="step-header">
           <div class="step-eyebrow">Step 3 of 7</div>
           <h2 class="step-title">Name application fee</h2>
-          <p class="step-sub">Pay ₹2,000 to submit your name application (SPICe+ Part A) to MCA. Once paid, our CA/CS will file within 24 hours. Approval takes 5–7 working days.</p>
+          <p class="step-sub" id="step3-sub">Pay ₹2,000 to submit your name application (SPICe+ Part A) to MCA. Once paid, our CA/CS will file within 24 hours. Approval takes 5–7 working days.</p>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start">
@@ -1112,6 +1151,83 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         </div>
       </div>
 
+      <!-- STEP 8: Documents -->
+      <div class="step-panel" id="appstep8">
+        <div class="step-header">
+          <div class="step-eyebrow">Step 6 of 7</div>
+          <h2 class="step-title">Documents required</h2>
+          <p class="step-sub">Please keep the following documents ready. Upload them to our secure Google Drive folder or send via WhatsApp/email after this step.</p>
+        </div>
+
+        <div class="form-card">
+          <div class="form-card-title">📋 Documents checklist — Per director/partner</div>
+          <div class="form-card-sub">Required for each director/partner/shareholder for DSC, DIN, and SPICe+ filing.</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+            <label style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--cream2);border-radius:var(--r);cursor:pointer">
+              <input type="checkbox" id="doc-pan" style="margin-top:3px;accent-color:var(--navy)">
+              <div><div style="font-weight:600;font-size:14px">PAN card copy</div><div style="font-size:13px;color:var(--ink3)">Self-attested. Mandatory for all directors, shareholders and partners.</div></div>
+            </label>
+            <label style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--cream2);border-radius:var(--r);cursor:pointer">
+              <input type="checkbox" id="doc-aadhaar" style="margin-top:3px;accent-color:var(--navy)">
+              <div><div style="font-weight:600;font-size:14px">Aadhaar card / ID proof</div><div style="font-size:13px;color:var(--ink3)">Self-attested Aadhaar / Voter ID / Passport / Driving Licence.</div></div>
+            </label>
+            <label style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--cream2);border-radius:var(--r);cursor:pointer">
+              <input type="checkbox" id="doc-address" style="margin-top:3px;accent-color:var(--navy)">
+              <div><div style="font-weight:600;font-size:14px">Address proof — not older than 2 months</div><div style="font-size:13px;color:var(--ink3)">Bank statement / Mobile bill / Telephone bill / Electricity bill. Must be recent.</div></div>
+            </label>
+            <label style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--cream2);border-radius:var(--r);cursor:pointer">
+              <input type="checkbox" id="doc-photo" style="margin-top:3px;accent-color:var(--navy)">
+              <div><div style="font-weight:600;font-size:14px">Passport size photograph (.jpg)</div><div style="font-size:13px;color:var(--ink3)">Recent colour photo, white background. Required for all directors/partners.</div></div>
+            </label>
+            <label style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--cream2);border-radius:var(--r);cursor:pointer">
+              <input type="checkbox" id="doc-dsc" style="margin-top:3px;accent-color:var(--navy)">
+              <div><div style="font-weight:600;font-size:14px">DSC (if already available)</div><div style="font-size:13px;color:var(--ink3)">Class 3 Digital Signature Certificate. If not available, we will arrange one.</div></div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <div class="form-card-title">🏛 Registered office documents</div>
+          <div class="form-card-sub">Required to prove registered office address for SPICe+ filing.</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+            <label style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--cream2);border-radius:var(--r);cursor:pointer">
+              <input type="checkbox" id="doc-office-proof" style="margin-top:3px;accent-color:var(--navy)">
+              <div><div style="font-weight:600;font-size:14px">Rent / Lease agreement OR NOC from owner</div><div style="font-size:13px;color:var(--ink3)">If owned — Sale deed / Property tax receipt. If rented — Rent agreement + NOC from landlord.</div></div>
+            </label>
+            <label style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--cream2);border-radius:var(--r);cursor:pointer">
+              <input type="checkbox" id="doc-utility" style="margin-top:3px;accent-color:var(--navy)">
+              <div><div style="font-weight:600;font-size:14px">Utility bill of registered office — not older than 2 months</div><div style="font-size:13px;color:var(--ink3)">Electricity bill / Gas bill / Water bill / Telephone bill in the name of owner.</div></div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-card" style="background:var(--navylight);border-color:#c5cce8">
+          <div class="form-card-title" style="color:var(--navy)">📤 How to submit documents</div>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <div style="width:32px;height:32px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0">1</div>
+              <div>
+                <div style="font-weight:600;font-size:14px;color:var(--navy)">WhatsApp</div>
+                <div style="font-size:13px;color:var(--ink2)">Send all documents to <strong>+91 89192 32657</strong> via WhatsApp. Mention your company name in the first message.</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <div style="width:32px;height:32px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0">2</div>
+              <div>
+                <div style="font-weight:600;font-size:14px;color:var(--navy)">Email</div>
+                <div style="font-size:13px;color:var(--ink2)">Email to <strong>sthapnacorp@gmail.com</strong> with subject: <em>"Documents — [Your Company Name]"</em></div>
+              </div>
+            </div>
+          </div>
+          <div class="notice notice-warn" style="margin-top:14px"><span class="notice-icon">⚠</span><span>Documents must be submitted within <strong>48 hours</strong> of payment to avoid delays in filing.</span></div>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn btn-ghost" onclick="goAppStep(6)">← Back</button>
+          <div class="step-actions-right"><button class="btn btn-navy" onclick="goAppStep(7)">Continue to final payment →</button></div>
+        </div>
+      </div>
+
       <!-- STEP 5: Payment -->
       <div class="step-panel" id="appstep7">
         <div class="step-header">
@@ -1121,20 +1237,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         </div>
         <div class="form-card">
           <div class="form-card-title">Fee breakdown</div>
-          <table style="width:100%;border-collapse:collapse;font-size:15px">
-            <thead><tr style="border-bottom:2px solid var(--cream3)"><th style="text-align:left;padding:10px 0;color:var(--ink3);font-weight:500;font-family:'Crimson Pro',serif">Item</th><th style="text-align:right;padding:10px 0;color:var(--ink3);font-weight:500;font-family:'Crimson Pro',serif">Amount</th></tr></thead>
-            <tbody>
-              <tr style="border-bottom:1px solid var(--cream3)"><td style="padding:12px 0;color:var(--ink2)">SPICe+ filing fee (MCA)</td><td style="text-align:right;padding:12px 0;font-family:'DM Mono',monospace">₹2,000</td></tr>
-              <tr style="border-bottom:1px solid var(--cream3)"><td style="padding:12px 0;color:var(--ink2)">PAN + TAN application</td><td style="text-align:right;padding:12px 0;font-family:'DM Mono',monospace">₹572</td></tr>
-              <tr style="border-bottom:1px solid var(--cream3)"><td style="padding:12px 0;color:var(--ink2)">Stamp duty (Telangana)</td><td style="text-align:right;padding:12px 0;font-family:'DM Mono',monospace">₹500</td></tr>
-              <tr style="border-bottom:1px solid var(--cream3)"><td style="padding:12px 0;color:var(--ink2)">Professional fee (CA/CS)</td><td style="text-align:right;padding:12px 0;font-family:'DM Mono',monospace">₹8,000</td></tr>
-              <tr style="border-bottom:1px solid var(--cream3)"><td style="padding:12px 0;color:var(--ink3);font-size:13px;padding-left:12px">— MOA &amp; AOA drafting</td><td style="text-align:right;padding:12px 0;font-size:13px;color:var(--ink3);font-family:'DM Mono',monospace">included</td></tr>
-              <tr style="border-bottom:1px solid var(--cream3)"><td style="padding:12px 0;color:var(--ink3);font-size:13px;padding-left:12px">— DIR-2, INC-9 preparation</td><td style="text-align:right;padding:12px 0;font-size:13px;color:var(--ink3);font-family:'DM Mono',monospace">included</td></tr>
-              <tr style="border-bottom:1px solid var(--cream3)"><td style="padding:12px 0;color:var(--ink3);font-size:13px;padding-left:12px">— SPICe+ filing on MCA21</td><td style="text-align:right;padding:12px 0;font-size:13px;color:var(--ink3);font-family:'DM Mono',monospace">included</td></tr>
-              <tr style="border-bottom:2px solid var(--cream3)"><td style="padding:12px 0;color:var(--ink3);font-size:13px;padding-left:12px">— Follow-ups until COI issued</td><td style="text-align:right;padding:12px 0;font-size:13px;color:var(--ink3);font-family:'DM Mono',monospace">included</td></tr>
-              <tr><td style="padding:14px 0;font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--navy)">Total</td><td style="text-align:right;padding:14px 0;font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:var(--navy)">₹11,072</td></tr>
-            </tbody>
-          </table>
+          <div id="final-fee-table"></div>
           <div class="notice notice-info" style="margin-top:16px"><span class="notice-icon">ℹ</span><span>GST registration and current account opening are offered separately after incorporation. Our team will reach out once your COI is received.</span></div>
         </div>
         <div class="form-card">
@@ -1153,10 +1256,10 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
           </div>
         </div>
         <div style="display:flex;justify-content:flex-end;margin-top:20px">
-          <button class="btn btn-gold btn-lg" onclick="submitPayment()">Complete incorporation — Pay balance →</button>
+          <button class="btn btn-gold btn-lg" onclick="submitPayment()" id="final-pay-btn">Complete incorporation — Pay balance →</button>
         </div>
         <div class="step-actions">
-          <button class="btn btn-ghost" onclick="goAppStep(6)">← Back to director details</button>
+          <button class="btn btn-ghost" onclick="goAppStep(5)">← Back to subscriber count</button>
           <div></div>
         </div>
       </div>
@@ -1186,7 +1289,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
     <div class="app-sidebar">
       <div class="progress-label">Filing progress</div>
       <div class="progress-steps">
-        <div class="progress-step completed"><div class="ps-num">✓</div><div class="ps-info"><div class="ps-title">Name application filed</div><div class="ps-sub">₹2,000 paid · SPICe+ Part A</div></div></div>
+        <div class="progress-step completed"><div class="ps-num">✓</div><div class="ps-info"><div class="ps-title">Name application filed</div><div class="ps-sub" id="dash-name-paid-sub">₹2,000 paid · SPICe+ Part A</div></div></div>
         <div class="progress-step" id="dash-ps-name"><div class="ps-num" id="dash-psn-name">2</div><div class="ps-info"><div class="ps-title" id="dash-name-title">Name approval</div><div class="ps-sub" id="dash-name-sub">Pending MCA · 5–7 working days</div></div></div>
         <div class="progress-step" id="dash-ps-details"><div class="ps-num">3</div><div class="ps-info"><div class="ps-title">Company details</div><div class="ps-sub" id="dash-details-sub">Locked until name approved</div></div></div>
         <div class="progress-step" id="dash-ps-filing"><div class="ps-num">4</div><div class="ps-info"><div class="ps-title">SPICe+ filing</div><div class="ps-sub">After details submitted</div></div></div>
@@ -1427,6 +1530,7 @@ function selEntity(type){
     if(n)n.style.display=(t===type)?'flex':'none';
   });
   updateNamePlaceholders();
+  updateNameFeeDisplay();
 }
 
 // ===================== CAPITAL COMPUTATION =====================
@@ -1530,7 +1634,11 @@ function payNameFee(){
   const n1ok  = validateNameSuffix('co-name1','name1-err');
   const n2val = document.getElementById('co-name2')?.value.trim();
   const n2ok  = !n2val || validateNameSuffix('co-name2','name2-err');
-  if(!n1ok||!n2ok){alert('One or both names do not end with the required suffix ("'+getRequiredSuffix()+'"). Please correct before proceeding.');goAppStep(2);return;}
+  const n3val = document.getElementById('co-name3')?.value.trim();
+  const n4val = document.getElementById('co-name4')?.value.trim();
+  const n3ok  = !n3val || validateNameSuffix('co-name3','name3-err');
+  const n4ok  = !n4val || validateNameSuffix('co-name4','name4-err');
+  if(!n1ok||!n2ok||!n3ok||!n4ok){alert('One or more names do not end with the required suffix ("'+getRequiredSuffix()+'"). Please correct before proceeding.');goAppStep(2);return;}
   if(!biz){alert('Please enter at least one main object of the company in Step 2.');goAppStep(2);return;}
   const nic = document.getElementById('office-nic-step2')?.value || document.getElementById('nic-manual')?.value;
   if(!nic){alert('Please select a NIC code for your business activity.');goAppStep(2);return;}
@@ -1548,10 +1656,10 @@ function payNameFee(){
   // Launch Razorpay checkout
   const options = {
     key: 'rzp_test_T11YDLfN1r2MuO',
-    amount: 200000, // ₹2,000 in paise
+    amount: FEES[getEntityFeeKey()].name.total * 100, // dynamic paise
     currency: 'INR',
     name: 'SthapnaCorp',
-    description: 'Name Application Fee — SPICe+ Part A',
+    description: 'Name Application Fee — '+FEES[getEntityFeeKey()].name.form,
     image: '', // logo URL can be added later
     prefill: {
       name:  currentUser.name  || '',
@@ -1588,12 +1696,19 @@ function payNameFee(){
         applicant_mobile: currentUser.mobile,
         name_option1: name1,
         name_option2: name2,
+        name_option3: document.getElementById('co-name3')?.value.trim()||'',
+        name_option4: document.getElementById('co-name4')?.value.trim()||'',
+        trademark: document.querySelector('input[name="trademark"]:checked')?.value||'no',
+        trademark_details: document.getElementById('trademark-details')?.value||'',
         nic_code: nicVal||'—',
         main_object_1: document.getElementById('obj-clause-0')?.value||'',
         main_object_2: document.getElementById('obj-clause-1')?.value||'',
         main_object_3: document.getElementById('obj-clause-2')?.value||''
       });
 
+      // Update dashboard sidebar
+      const dpSub = document.getElementById('dash-name-paid-sub');
+      if(dpSub) dpSub.textContent = '₹'+FEES[getEntityFeeKey()].name.total.toLocaleString('en-IN')+' paid · '+FEES[getEntityFeeKey()].name.form;
       showScreen('dashboard');
       // Show success notice
       const notice = document.getElementById('dash-pending');
@@ -1677,6 +1792,182 @@ function continueApplication(){
   });
   showScreen('app');
   goAppStep(4);
+}
+
+// ===================== FEE CALCULATION ENGINE =====================
+const FEES = {
+  company: {
+    name: { mca: 1000, prof: 1000, total: 2000, form: 'SPICe+ Part A', label: 'MCA name reservation fee (SPICe+ Part A)' },
+    incorp: function(authCapital){
+      const cap = parseFloat(authCapital)||100000;
+      const mca = cap > 1500000 ? 500 : 0;
+      const prof = 10000;
+      return { mca, prof, total: mca+prof, form: 'SPICe+ Part B', cap };
+    }
+  },
+  llp: {
+    name: { mca: 200, prof: 200, total: 400, form: 'RUN-LLP', label: 'MCA name reservation fee (RUN-LLP)' },
+    incorp: function(contribution){
+      const c = parseFloat(contribution)||100000;
+      let mca = 500;
+      if(c > 10000000) mca = 25000;
+      else if(c > 2500000) mca = 10000;
+      else if(c > 1000000) mca = 5000;
+      else if(c > 500000) mca = 4000;
+      else if(c > 100000) mca = 2000;
+      else mca = 500;
+      const prof = 7000;
+      return { mca, prof, total: mca+prof, form: 'FiLLiP', contribution: c };
+    }
+  },
+  opc: {
+    name: { mca: 1000, prof: 1000, total: 2000, form: 'SPICe+ Part A', label: 'MCA name reservation fee (SPICe+ Part A)' },
+    incorp: function(authCapital){
+      const cap = parseFloat(authCapital)||100000;
+      const mca = cap > 1500000 ? 500 : 0;
+      const prof = 10000;
+      return { mca, prof, total: mca+prof, form: 'SPICe+ Part B', cap };
+    }
+  }
+};
+
+function getEntityFeeKey(){ return selectedEntity==='llp' ? 'llp' : selectedEntity==='opc' ? 'opc' : 'company'; }
+
+function updateNameFeeDisplay(){
+  const key = getEntityFeeKey();
+  const fee = FEES[key].name;
+  const isLLP = key === 'llp';
+
+  // Sidebar step 3
+  const ps3sub = document.getElementById('ps3-sub');
+  if(ps3sub) ps3sub.textContent = '₹'+fee.total.toLocaleString('en-IN')+' · '+fee.form;
+
+  // Step 3 header sub
+  const step3sub = document.getElementById('step3-sub');
+  if(step3sub) step3sub.textContent = 'Pay ₹'+fee.total.toLocaleString('en-IN')+' to submit your name application ('+fee.form+') to MCA. Once paid, our CA/CS will file within 24 hours. Approval takes 5–7 working days.';
+
+  // Fee card
+  const disp = document.getElementById('step3-amount-display');
+  if(disp) disp.textContent = '₹'+fee.total.toLocaleString('en-IN');
+  const lbl = document.getElementById('step3-fee-label');
+  if(lbl) lbl.textContent = 'MCA fee ₹'+fee.mca.toLocaleString('en-IN')+' + Professional fee ₹'+fee.prof.toLocaleString('en-IN')+' · '+fee.form;
+  const mcaLbl = document.getElementById('step3-mca-label');
+  if(mcaLbl) mcaLbl.textContent = isLLP ? 'MCA name reservation fee (RUN-LLP)' : 'MCA name reservation fee (SPICe+ Part A)';
+  const mcaAmt = document.getElementById('step3-mca-amt');
+  if(mcaAmt) mcaAmt.textContent = '₹'+fee.mca.toLocaleString('en-IN');
+  const profAmt = document.getElementById('step3-prof-amt');
+  if(profAmt) profAmt.textContent = '₹'+fee.prof.toLocaleString('en-IN');
+  const totalAmt = document.getElementById('step3-total-amt');
+  if(totalAmt) totalAmt.textContent = '₹'+fee.total.toLocaleString('en-IN');
+  const formLbl = document.getElementById('step3-form-label');
+  if(formLbl) formLbl.textContent = '✓ '+fee.form+' filing by CA/CS';
+  const payBtn = document.getElementById('step3-pay-btn');
+  if(payBtn) payBtn.textContent = '🔒 Pay ₹'+fee.total.toLocaleString('en-IN')+' via Razorpay';
+}
+
+function buildFinalFeeTable(){
+  const key = getEntityFeeKey();
+  const isLLP = key === 'llp';
+
+  // Get capital/contribution
+  let capVal = 0;
+  if(isLLP){
+    // Sum contributions from all partners
+    let total = 0;
+    for(let i=1; i<=directorCount; i++){
+      total += parseFloat(document.getElementById('dir'+i+'-contribution')?.value)||0;
+    }
+    capVal = total || parseFloat(document.getElementById('paidup-capital')?.value) || 100000;
+  } else {
+    capVal = parseFloat(document.getElementById('auth-capital')?.value)||100000;
+  }
+
+  const fee = FEES[key].incorp(capVal);
+  const nameFee = FEES[key].name;
+
+  let rows = '';
+  if(isLLP){
+    rows = `
+      <tr style="border-bottom:1px solid var(--cream3)">
+        <td style="padding:12px 0;color:var(--ink2)">FiLLiP filing fee (MCA) <span style="font-size:12px;color:var(--ink3)">· Contribution: ₹${capVal.toLocaleString('en-IN')}</span></td>
+        <td style="text-align:right;padding:12px 0;font-family:'DM Mono',monospace">₹${fee.mca.toLocaleString('en-IN')}</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--cream3)">
+        <td style="padding:12px 0;color:var(--ink2)">Professional fee (CA/CS)</td>
+        <td style="text-align:right;padding:12px 0;font-family:'DM Mono',monospace">₹${fee.prof.toLocaleString('en-IN')}</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--cream3);color:var(--ink3);font-size:13px">
+        <td style="padding:8px 0 8px 14px">— LLP Agreement drafting</td><td style="text-align:right;font-family:'DM Mono',monospace">included</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--cream3);color:var(--ink3);font-size:13px">
+        <td style="padding:8px 0 8px 14px">— Form 9 (Consent) preparation</td><td style="text-align:right;font-family:'DM Mono',monospace">included</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--cream3);color:var(--ink3);font-size:13px">
+        <td style="padding:8px 0 8px 14px">— FiLLiP filing on MCA21</td><td style="text-align:right;font-family:'DM Mono',monospace">included</td>
+      </tr>
+      <tr style="border-bottom:2px solid var(--cream3);color:var(--ink3);font-size:13px">
+        <td style="padding:8px 0 8px 14px">— Follow-ups until COI issued</td><td style="text-align:right;font-family:'DM Mono',monospace">included</td>
+      </tr>`;
+  } else {
+    rows = `
+      <tr style="border-bottom:1px solid var(--cream3)">
+        <td style="padding:12px 0;color:var(--ink2)">SPICe+ Part B filing fee (MCA) <span style="font-size:12px;color:var(--ink3)">· Auth capital: ₹${capVal.toLocaleString('en-IN')}</span></td>
+        <td style="text-align:right;padding:12px 0;font-family:'DM Mono',monospace">${fee.mca===0?'NIL':'₹'+fee.mca.toLocaleString('en-IN')}</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--cream3)">
+        <td style="padding:12px 0;color:var(--ink2)">PAN + TAN application</td>
+        <td style="text-align:right;padding:12px 0;font-family:'DM Mono',monospace">₹572</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--cream3)">
+        <td style="padding:12px 0;color:var(--ink2)">Stamp duty (state-dependent)</td>
+        <td style="text-align:right;padding:12px 0;font-family:'DM Mono',monospace">₹500</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--cream3)">
+        <td style="padding:12px 0;color:var(--ink2)">Professional fee (CA/CS)</td>
+        <td style="text-align:right;padding:12px 0;font-family:'DM Mono',monospace">₹${fee.prof.toLocaleString('en-IN')}</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--cream3);color:var(--ink3);font-size:13px">
+        <td style="padding:8px 0 8px 14px">— MOA &amp; AOA drafting</td><td style="text-align:right;font-family:'DM Mono',monospace">included</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--cream3);color:var(--ink3);font-size:13px">
+        <td style="padding:8px 0 8px 14px">— DIR-2, INC-9 preparation</td><td style="text-align:right;font-family:'DM Mono',monospace">included</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--cream3);color:var(--ink3);font-size:13px">
+        <td style="padding:8px 0 8px 14px">— SPICe+ Part B + AGILE-PRO-S filing</td><td style="text-align:right;font-family:'DM Mono',monospace">included</td>
+      </tr>
+      <tr style="border-bottom:2px solid var(--cream3);color:var(--ink3);font-size:13px">
+        <td style="padding:8px 0 8px 14px">— Follow-ups until COI issued</td><td style="text-align:right;font-family:'DM Mono',monospace">included</td>
+      </tr>`;
+  }
+
+  // Additional fixed costs for company
+  const extraCosts = isLLP ? 0 : 1072; // PAN+TAN+Stamp
+  const grandTotal = fee.total + extraCosts;
+
+  const html = `
+    <table style="width:100%;border-collapse:collapse;font-size:15px">
+      <thead>
+        <tr style="border-bottom:2px solid var(--cream3)">
+          <th style="text-align:left;padding:10px 0;color:var(--ink3);font-weight:500;font-family:'Crimson Pro',serif">Item</th>
+          <th style="text-align:right;padding:10px 0;color:var(--ink3);font-weight:500;font-family:'Crimson Pro',serif">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows}
+        <tr>
+          <td style="padding:14px 0;font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--navy)">Total balance payable</td>
+          <td style="text-align:right;padding:14px 0;font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:var(--navy)">₹${grandTotal.toLocaleString('en-IN')}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="notice notice-info" style="margin-top:12px"><span class="notice-icon">ℹ</span><span>Amount already paid: ₹${nameFee.total.toLocaleString('en-IN')} (name application). The above is the balance payable for incorporation.</span></div>`;
+
+  const container = document.getElementById('final-fee-table');
+  if(container) container.innerHTML = html;
+
+  // Update pay button text
+  const payBtn = document.getElementById('final-pay-btn');
+  if(payBtn) payBtn.textContent = 'Complete incorporation — Pay ₹'+grandTotal.toLocaleString('en-IN')+' →';
 }
 
 // ===================== OBJECTS & NIC (manual) =====================
@@ -1803,85 +2094,114 @@ function addDirector(){
 function addDirectorWithType(role, hasDin, isFirst){
   directorCount++;
   const n=directorCount;
+  const isLLP = selectedEntity==='llp';
+  const personLabel = isLLP ? 'Partner' : 'Director';
   const div=document.createElement('div');
   div.className='form-card';div.id='dir-card-'+n;
-  div.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+  div.innerHTML=`
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
     <div>
-      <div class="form-card-title" style="margin:0">Director ${n}</div>
-      <div style="font-size:12px;color:var(--ink3);margin-top:3px;font-weight:500">${role}</div>
+      <div class="form-card-title" style="margin:0">${personLabel} ${n}</div>
+      <div style="font-size:12px;color:var(--ink3);margin-top:3px;font-weight:500" data-role="${role}">${role}</div>
     </div>
     ${n>1?'<button class="btn btn-danger btn-sm" onclick="removeDirector('+n+')">✕ Remove</button>':''}
   </div>
+
+  <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--cream3);text-transform:uppercase;letter-spacing:0.05em">A. Personal Information</div>
   <div class="form-grid-2">
-    <div class="form-group"><label class="form-label">Full name <span class="req">*</span></label><input class="form-input" id="dir${n}-name" placeholder="As on PAN card"></div>
-    <div class="form-group"><label class="form-label">Designation</label>
-      <select class="form-input"><option>Managing Director</option><option selected>Director</option><option>Whole-time Director</option><option>Nominee Director</option></select>
+    <div class="form-group"><label class="form-label">Full name <span class="req">*</span></label><input class="form-input" id="dir${n}-name" placeholder="As appearing on PAN card"></div>
+    <div class="form-group"><label class="form-label">Father's name <span class="req">*</span></label><input class="form-input" id="dir${n}-fname" placeholder="As on official documents"></div>
+    <div class="form-group"><label class="form-label">Date of birth <span class="req">*</span></label><input class="form-input" type="date" id="dir${n}-dob"></div>
+    <div class="form-group"><label class="form-label">Place of birth <span class="req">*</span></label><input class="form-input" id="dir${n}-pob" placeholder="City, State"></div>
+    <div class="form-group"><label class="form-label">Nationality <span class="req">*</span></label>
+      <select class="form-input" id="dir${n}-nationality">
+        <option value="Indian" selected>Indian</option>
+        <option value="NRI">NRI (Non-Resident Indian)</option>
+        <option value="Foreign">Foreign National</option>
+      </select>
     </div>
-    <div class="form-group" style="grid-column:1/-1">
-      <label class="form-label">DIN ${hasDin?'<span style=\\"color:var(--green);font-size:12px\\">● Has DIN</span>':'<span style=\\"color:#b8600a;font-size:12px\\">● New DIN required</span>'}</label>
+    <div class="form-group"><label class="form-label">Occupation <span class="req">*</span></label>
+      <select class="form-input" id="dir${n}-occupation">
+        <option value="">-- Select --</option>
+        <option>Business</option><option>Professional</option><option>Service</option>
+        <option>Retired</option><option>Student</option><option>Home maker</option><option>Others</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Educational qualification</label>
+      <select class="form-input" id="dir${n}-qual">
+        <option value="">-- Select --</option>
+        <option>Below 10th</option><option>10th Pass</option><option>12th Pass</option>
+        <option>Graduate</option><option>Post Graduate</option><option>Doctorate</option><option>Professional (CA/CS/CMA)</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Designation</label>
+      <select class="form-input" id="dir${n}-desig">
+        <option>Managing Director</option><option selected>Director</option>
+        <option>Whole-time Director</option><option>Nominee Director</option>
+        <option>Independent Director</option>
+      </select>
+    </div>
+  </div>
+
+  <div style="font-size:13px;font-weight:600;color:var(--navy);margin:16px 0 12px;padding-top:16px;border-top:1px solid var(--cream3);text-transform:uppercase;letter-spacing:0.05em">B. Identity Numbers</div>
+  <div class="form-grid-2">
+    <div class="form-group"><label class="form-label">PAN number <span class="req">*</span></label><input class="form-input" id="dir${n}-pan" placeholder="ABCDE1234F" style="text-transform:uppercase;font-family:'DM Mono',monospace;letter-spacing:1px" maxlength="10"></div>
+    <div class="form-group"><label class="form-label">Aadhaar number <span class="req">*</span></label><input class="form-input" id="dir${n}-aadhaar" placeholder="XXXX XXXX XXXX" style="font-family:'DM Mono',monospace;letter-spacing:1px" maxlength="14"></div>
+    <div class="form-group"><label class="form-label">Passport number <span style="color:var(--ink3);font-weight:400">(if any)</span></label><input class="form-input" id="dir${n}-passport" placeholder="A1234567" style="font-family:'DM Mono',monospace"></div>
+    <div class="form-group form-full">
+      <label class="form-label">DIN ${hasDin?'<span style=\"color:var(--green);font-size:12px\">● Has DIN</span>':'<span style=\"color:#b8600a;font-size:12px\">● New DIN required</span>'}</label>
       ${hasDin
-        ? `<div style="display:flex;gap:8px"><input class="form-input" id="dir${n}-din" placeholder="Enter 8-digit DIN" style="flex:1;font-family:\'DM Mono\',monospace;letter-spacing:1px"><button class="btn btn-ghost btn-sm" onclick="verifyDIN(${n})" style="white-space:nowrap;height:46px">Verify</button></div>
-           <div class="form-hint" style="margin-top:4px">DIN verification required before filing</div>`
-        : `<div class="notice notice-info" style="font-size:13px;margin-top:4px"><span class="notice-icon">ℹ</span><span>This director does not have a DIN. A new DIN will be applied via SPICe+ at the time of filing. PAN and Aadhaar are mandatory.</span></div>
-           <input class="form-input" id="dir${n}-din" type="hidden" value="">`
+        ? `<div style="display:flex;gap:8px"><input class="form-input" id="dir${n}-din" placeholder="Enter 8-digit DIN" style="flex:1;font-family:'DM Mono',monospace;letter-spacing:1px" maxlength="8"><button class="btn btn-ghost btn-sm" onclick="verifyDIN(${n})" style="white-space:nowrap;height:46px">Verify</button></div>
+           <div id="din-status-${n}" style="margin-top:6px;display:none"></div>`
+        : `<div class="notice notice-info" style="font-size:13px"><span class="notice-icon">ℹ</span><span>No DIN yet — a new DIN will be applied via SPICe+ at filing. PAN and Aadhaar are mandatory.</span></div>
+           <input type="hidden" id="dir${n}-din" value=""><div id="din-status-${n}" style="display:none"></div>`
       }
     </div>
-    <div id="din-status-${n}" style="grid-column:1/-1;display:none"></div>
-    <div class="form-group"><label class="form-label">PAN number <span class="req">*</span></label><input class="form-input" placeholder="ABCDE1234F"></div>
-    <div class="form-group"><label class="form-label">Date of birth</label><input class="form-input" type="date"></div>
-    <div class="form-group"><label class="form-label">Personal email <span class="req">*</span></label><input class="form-input" type="email" id="dir${n}-email" placeholder="personal@gmail.com"><span class="form-hint">Personal — not company email</span></div>
-    <div class="form-group"><label class="form-label">Personal mobile <span class="req">*</span></label><input class="form-input" type="tel" id="dir${n}-mobile" placeholder="+91 99999 99999"><span class="form-hint">Personal — not company mobile</span></div>
-    <div class="form-group form-full"><label class="form-label">Residential address <span class="req">*</span></label><input class="form-input" placeholder="Full address with pin code"></div>
+    <div class="form-group"><label class="form-label">No. of companies where director</label><input class="form-input" type="number" id="dir${n}-cos" placeholder="0" min="0" value="0"></div>
+    <div class="form-group"><label class="form-label">No. of LLPs where partner</label><input class="form-input" type="number" id="dir${n}-llps" placeholder="0" min="0" value="0"></div>
   </div>
-  ${role.includes('Subscriber') ? `
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--cream3)">
-    <div style="font-weight:600;color:var(--navy);font-family:'Playfair Display',serif;margin-bottom:4px;font-size:15px">Share subscription details</div>
-    <div style="font-size:13px;color:var(--ink3);margin-bottom:14px;font-weight:300">As a subscriber to the MOA, this person is taking shares at the time of incorporation.</div>
-    <div class="form-grid-2">
-      <div class="form-group">
-        <label class="form-label">Number of shares subscribing <span class="req">*</span></label>
-        <input class="form-input" type="number" min="1" id="dir${n}-shares" placeholder="e.g. 5000"
-          oninput="computeSubscription(${n})">
-        <span class="form-hint">Must be consistent with paid-up capital in Step 2</span>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Face value per share (₹)</label>
-        <input class="form-input" type="text" id="dir${n}-fv" readonly
-          style="background:var(--cream2);color:var(--ink2);cursor:default"
-          placeholder="Auto-filled from Step 2">
-        <span class="form-hint">As set in company details</span>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Total subscription amount (₹)</label>
-        <input class="form-input" type="text" id="dir${n}-sub-total" readonly
-          style="background:var(--cream2);color:var(--ink2);cursor:default"
-          placeholder="Auto-calculated">
-        <span class="form-hint">Shares × face value</span>
-      </div>
-      <div class="form-group">
-        <label class="form-label">% shareholding</label>
-        <input class="form-input" type="text" id="dir${n}-pct" readonly
-          style="background:var(--cream2);color:var(--ink2);cursor:default"
-          placeholder="Auto-calculated">
-        <span class="form-hint">This subscriber's shares ÷ total shares</span>
-      </div>
+
+  <div style="font-size:13px;font-weight:600;color:var(--navy);margin:16px 0 12px;padding-top:16px;border-top:1px solid var(--cream3);text-transform:uppercase;letter-spacing:0.05em">C. Contact & Address</div>
+  <div class="form-grid-2">
+    <div class="form-group"><label class="form-label">Personal email <span class="req">*</span></label><input class="form-input" type="email" id="dir${n}-email" placeholder="personal@gmail.com"><span class="form-hint">Must differ from company email</span></div>
+    <div class="form-group"><label class="form-label">Official email <span style="color:var(--ink3);font-weight:400">(if any)</span></label><input class="form-input" type="email" id="dir${n}-offemail" placeholder="official@company.com"><span class="form-hint">Different from personal email</span></div>
+    <div class="form-group"><label class="form-label">Personal mobile <span class="req">*</span></label><input class="form-input" type="tel" id="dir${n}-mobile" placeholder="+91 99999 99999"></div>
+    <div class="form-group form-full"><label class="form-label">Present residential address <span class="req">*</span></label><textarea class="form-input" id="dir${n}-addr" rows="2" placeholder="Full address with PIN code" style="resize:vertical"></textarea></div>
+    <div class="form-group form-full"><label class="form-label">Permanent address <span style="color:var(--ink3);font-weight:400">(if different from present)</span></label><textarea class="form-input" id="dir${n}-permaddr" rows="2" placeholder="Leave blank if same as present address" style="resize:vertical"></textarea></div>
+    <div class="form-group"><label class="form-label">Duration at present address</label><input class="form-input" id="dir${n}-duration" placeholder="e.g. 3 years"></div>
+  </div>
+
+  ${role.includes('Subscriber') || role.includes('Partner') ? `
+  <div style="font-size:13px;font-weight:600;color:var(--navy);margin:16px 0 12px;padding-top:16px;border-top:1px solid var(--cream3);text-transform:uppercase;letter-spacing:0.05em">D. ${isLLP?'Contribution':'Share Subscription'} Details</div>
+  <div class="form-grid-2">
+    ${isLLP ? `
+    <div class="form-group"><label class="form-label">Contribution amount (₹) <span class="req">*</span></label><input class="form-input" type="number" id="dir${n}-contribution" placeholder="e.g. 50000"></div>
+    <div class="form-group"><label class="form-label">Form of contribution</label>
+      <select class="form-input" id="dir${n}-contrib-type"><option value="cash">Cash</option><option value="other">Other than cash</option></select>
     </div>
+    <div class="form-group"><label class="form-label">Profit sharing ratio (%)</label><input class="form-input" id="dir${n}-profit-ratio" placeholder="e.g. 50"></div>
+    <div class="form-group"><label class="form-label">Nominee name</label><input class="form-input" id="dir${n}-nominee" placeholder="Name of nominee partner"></div>
+    ` : `
+    <div class="form-group"><label class="form-label">Number of shares subscribing <span class="req">*</span></label><input class="form-input" type="number" min="1" id="dir${n}-shares" placeholder="e.g. 5000" oninput="computeSubscription(${n})"></div>
+    <div class="form-group"><label class="form-label">Face value per share (₹)</label><input class="form-input" type="text" id="dir${n}-fv" readonly style="background:var(--cream2);color:var(--ink2)" placeholder="Auto-filled from Step 4"></div>
+    <div class="form-group"><label class="form-label">Total subscription amount (₹)</label><input class="form-input" type="text" id="dir${n}-sub-total" readonly style="background:var(--cream2);color:var(--ink2)" placeholder="Auto-calculated"></div>
+    <div class="form-group"><label class="form-label">% shareholding</label><input class="form-input" type="text" id="dir${n}-pct" readonly style="background:var(--cream2);color:var(--ink2)" placeholder="Auto-calculated"></div>
+    `}
   </div>` : ''}
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--cream3)">
-    <div style="font-weight:600;color:var(--navy);font-family:'Playfair Display',serif;margin-bottom:8px;font-size:15px">Digital Signature Certificate (DSC)</div>
-    <div class="notice notice-info" style="font-size:13px;margin-bottom:12px"><span class="notice-icon">🔐</span><span>A Class 3 DSC is mandatory to sign and file SPICe+ on MCA21. It must be in the director's name.</span></div>
-    <div style="display:flex;gap:10px">
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;border:1.5px solid var(--cream3);border-radius:var(--r);padding:10px 16px;flex:1;transition:all 0.2s" id="dsc-yes-label-${n}" onclick="handleDSC(${n},'yes')">
-        <input type="radio" name="dsc-${n}" value="yes" style="accent-color:var(--navy)">
-        <span>✅ Yes, I have a DSC</span>
-      </label>
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;border:1.5px solid var(--cream3);border-radius:var(--r);padding:10px 16px;flex:1;transition:all 0.2s" id="dsc-no-label-${n}" onclick="handleDSC(${n},'no')">
-        <input type="radio" name="dsc-${n}" value="no" style="accent-color:var(--navy)">
-        <span>❌ No — please arrange one</span>
-      </label>
-    </div>
-    <div id="dsc-msg-${n}" style="margin-top:10px;display:none"></div>
-  </div>`;
+
+  <div style="font-size:13px;font-weight:600;color:var(--navy);margin:16px 0 12px;padding-top:16px;border-top:1px solid var(--cream3);text-transform:uppercase;letter-spacing:0.05em">E. Digital Signature Certificate (DSC)</div>
+  <div class="notice notice-info" style="font-size:13px;margin-bottom:12px"><span class="notice-icon">🔐</span><span>A Class 3 DSC is mandatory to sign and file on MCA21. Must be in the director's/partner's name.</span></div>
+  <div style="display:flex;gap:10px">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;border:1.5px solid var(--cream3);border-radius:var(--r);padding:10px 16px;flex:1;transition:all 0.2s" id="dsc-yes-label-${n}" onclick="handleDSC(${n},'yes')">
+      <input type="radio" name="dsc-${n}" value="yes" style="accent-color:var(--navy)">
+      <span>✅ Yes — I have a DSC</span>
+    </label>
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;border:1.5px solid var(--cream3);border-radius:var(--r);padding:10px 16px;flex:1;transition:all 0.2s" id="dsc-no-label-${n}" onclick="handleDSC(${n},'no')">
+      <input type="radio" name="dsc-${n}" value="no" style="accent-color:var(--navy)">
+      <span>❌ No — please arrange one</span>
+    </label>
+  </div>
+  <div id="dsc-msg-${n}" style="margin-top:10px;display:none"></div>`;
   document.getElementById('directors-container').appendChild(div);
 }
 
