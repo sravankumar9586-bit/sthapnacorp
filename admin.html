@@ -434,7 +434,7 @@ function closeModal(){
 async function updateStatus(val){
   if(!currentAppId)return;
   try {
-    await fetch('/api/applications/'+currentAppId, {
+    await fetch('/api/applications?id='+currentAppId, {
       method: 'PATCH',
       headers: {'Content-Type':'application/json','x-admin-password':ADMIN_PASS},
       body: JSON.stringify({filing_status: val})
@@ -449,7 +449,7 @@ async function saveNotes(){
   if(!currentAppId)return;
   const notes=document.getElementById('admin-notes')?.value||'';
   try {
-    await fetch('/api/applications/'+currentAppId, {
+    await fetch('/api/applications?id='+currentAppId, {
       method: 'PATCH',
       headers: {'Content-Type':'application/json','x-admin-password':ADMIN_PASS},
       body: JSON.stringify({admin_notes: notes})
@@ -464,7 +464,7 @@ async function deleteApplication(){
   if(!currentAppId)return;
   if(!confirm('Delete this application permanently? This cannot be undone.'))return;
   try {
-    await fetch('/api/applications/'+currentAppId, {
+    await fetch('/api/applications?id='+currentAppId, {
       method: 'DELETE',
       headers: {'x-admin-password': ADMIN_PASS}
     });
