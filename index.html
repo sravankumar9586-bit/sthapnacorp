@@ -2279,28 +2279,30 @@ function submitPayment(){
 // ===================== ADMIN DATA STORAGE =====================
 const STORAGE_KEY = 'sthapnacorp_applications';
 
-function saveApplicationToAdmin(data){
+async function saveApplicationToAdmin(data){
+  const id = 'APP-'+Date.now();
+  localStorage.setItem('sthapnacorp_last_app_id', id);
   try {
+    const resp = await fetch('/api/applications', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ id, ...data })
+    });
+    const result = await resp.json();
+    console.log('Application saved to Railway:', id, result);
+  } catch(e){
+    console.error('Railway save failed, falling back to localStorage:', e);
+    // Fallback to localStorage
     const apps = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
-    const app = {
-      id: 'APP-'+Date.now(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      ...data
-    };
-    apps.unshift(app); // newest first
+    apps.unshift({ id, created_at: new Date().toISOString(), ...data });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(apps));
-    localStorage.setItem('sthapnacorp_last_app_id', app.id);
-    console.log('Application saved to admin:', app.id);
-  } catch(e){ console.error('Save failed:', e); }
+  }
 }
 
-function updateApplicationInAdmin(){
+async function updateApplicationInAdmin(){
+  const lastId = localStorage.getItem('sthapnacorp_last_app_id');
+  if(!lastId) return;
   try {
-    const apps = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
-    const lastId = localStorage.getItem('sthapnacorp_last_app_id');
-    const idx = lastId ? apps.findIndex(a=>a.id===lastId) : 0;
-    if(idx === -1) return;
 
     // Collect company details
     apps[idx].company_email   = document.getElementById('co-email')?.value||'';
@@ -2346,9 +2348,60 @@ function updateApplicationInAdmin(){
     apps[idx].filing_status = 'details_received';
     apps[idx].updated_at = new Date().toISOString();
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(apps));
-    console.log('Application updated with company details');
-  } catch(e){ console.error('Update failed:', e); }
+    const payload = {
+      company_email:   document.getElementById('co-email')?.value||'',
+      company_mobile:  document.getElementById('co-mobile')?.value||'',
+      office_address:  document.getElementById('office-address')?.value||'',
+      office_state:    (()=>{const s=document.getElementById('office-state');return s?.options[s.selectedIndex]?.text||'';})(),
+      ownership:       document.getElementById('ownership-type')?.value||'',
+      auth_capital:    document.getElementById('auth-capital')?.value||'',
+      paidup_capital:  document.getElementById('paidup-capital')?.value||'',
+      face_value:      document.getElementById('face-value')?.value||'10',
+      section5: {
+        s5a_din:   parseInt(document.getElementById('s5a-din')?.value)||0,
+        s5a_nodin: parseInt(document.getElementById('s5a-nodin')?.value)||0,
+        s5b_nodin: parseInt(document.getElementById('s5b-nodin')?.value)||0,
+        s5c_din:   parseInt(document.getElementById('s5c-din')?.value)||0,
+        s5c_nodin: parseInt(document.getElementById('s5c-nodin')?.value)||0,
+        s5d_din:   parseInt(document.getElementById('s5d-din')?.value)||0,
+        s5d_nodin: parseInt(document.getElementById('s5d-nodin')?.value)||0
+      },
+      directors: (()=>{
+        const dirs=[];
+        const container=document.getElementById('directors-container');
+        if(container){
+          container.querySelectorAll('[id^="dir-card-"]').forEach((card,i)=>{
+            const n=card.id.replace('dir-card-','');
+            dirs.push({
+              name:document.getElementById('dir'+n+'-name')?.value||'',
+              father_name:document.getElementById('dir'+n+'-fname')?.value||'',
+              dob:document.getElementById('dir'+n+'-dob')?.value||'',
+              pob:document.getElementById('dir'+n+'-pob')?.value||'',
+              nationality:document.getElementById('dir'+n+'-nationality')?.value||'',
+              occupation:document.getElementById('dir'+n+'-occupation')?.value||'',
+              pan:document.getElementById('dir'+n+'-pan')?.value||'',
+              aadhaar:document.getElementById('dir'+n+'-aadhaar')?.value||'',
+              passport:document.getElementById('dir'+n+'-passport')?.value||'',
+              din:document.getElementById('dir'+n+'-din')?.value||'',
+              email:document.getElementById('dir'+n+'-email')?.value||'',
+              mobile:document.getElementById('dir'+n+'-mobile')?.value||'',
+              address:document.getElementById('dir'+n+'-addr')?.value||'',
+              shares:document.getElementById('dir'+n+'-shares')?.value||'',
+              contribution:document.getElementById('dir'+n+'-contribution')?.value||'',
+            });
+          });
+        }
+        return dirs;
+      })(),
+      filing_status: 'details_received'
+    };
+    await fetch('/api/applications/'+lastId, {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    console.log('Application updated in Railway:', lastId);
+  } catch(e){ console.error('Railway update failed:', e); }
 }
 
 // ===================== INIT =====================
