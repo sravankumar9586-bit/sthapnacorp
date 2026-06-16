@@ -379,6 +379,20 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 @keyframes spin{to{transform:rotate(360deg)}}
 .spin{display:inline-block;animation:spin 1s linear infinite}
 </style><script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyA7OqVv-1QWzKn4WQSt8lHttJ4NkJ38sew",
+  authDomain: "sthapnacorp-7f99e.firebaseapp.com",
+  projectId: "sthapnacorp-7f99e",
+  storageBucket: "sthapnacorp-7f99e.firebasestorage.app",
+  messagingSenderId: "503648592562",
+  appId: "1:503648592562:web:b0de802570dcf252b79fab"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+</script>
 </head>
 <body>
 
@@ -609,8 +623,9 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
           <div id="signup-step2" style="display:none">
             <h2 class="auth-title">Verify your mobile</h2>
             <p class="auth-sub">Enter the 6-digit OTP sent to <span id="otp-mobile-display" style="font-weight:600;color:var(--navy)"></span></p>
+            <div id="recaptcha-container" style="margin-bottom:12px"></div>
             <div class="otp-grid" id="otp-grid"></div>
-            <div id="otp-error" style="display:none;margin-top:10px" class="notice notice-danger"><span class="notice-icon">⚠</span><span>Incorrect OTP. Use <strong>123456</strong> for demo.</span></div>
+            <div id="otp-error" style="display:none;margin-top:10px" class="notice notice-danger"><span class="notice-icon">⚠</span><span id="otp-error-msg">Incorrect OTP. Please try again.</span></div>
             <button class="btn btn-navy" style="width:100%;justify-content:center;padding:13px;font-size:15px;margin-top:16px" onclick="verifyOtp()">Verify &amp; continue →</button>
             <div style="text-align:center;margin-top:14px;font-size:13px;color:var(--ink3)">Didn't receive it? <span style="color:var(--navy);cursor:pointer;font-weight:500" onclick="resendOtp()">Resend OTP</span></div>
           </div>
@@ -618,9 +633,11 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <div id="auth-login" style="display:none">
           <h2 class="auth-title">Welcome back</h2>
           <p class="auth-sub">Sign in to continue your application</p>
-          <div class="form-group"><label class="form-label">Email address</label><input class="form-input" type="email" placeholder="you@example.com"></div>
-          <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" placeholder="Your password"></div>
-          <button class="btn btn-navy" style="width:100%;justify-content:center;padding:13px;font-size:15px;margin-top:4px" onclick="loginDemo()">Sign in →</button>
+          <div class="form-group"><label class="form-label">Email address</label><input class="form-input" type="email" id="login-email" placeholder="you@example.com"></div>
+          <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="login-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+          <div id="login-err" style="display:none;font-size:13px;color:var(--red);margin-bottom:8px;padding:10px;background:var(--redlight);border-radius:var(--r)"></div>
+          <button class="btn btn-navy" style="width:100%;justify-content:center;padding:13px;font-size:15px;margin-top:4px" onclick="doLogin()">Sign in →</button>
+          <div style="text-align:center;margin-top:10px;font-size:13px;color:var(--ink3)"><span style="color:var(--navy);cursor:pointer" onclick="forgotPassword()">Forgot password?</span></div>
           <div class="form-divider">or</div>
           <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="switchAuthTab('signup')">Create a new account</button>
         </div>
@@ -1408,7 +1425,10 @@ let directorCount = 0;
 let nocText = '';
 let rentalText = '';
 
-// ===================== AUTH =====================
+// ===================== AUTH (Firebase) =====================
+let confirmationResult = null;
+let recaptchaVerifier = null;
+
 function switchAuthTab(tab){
   const ts = document.getElementById('tab-signup');
   const tl = document.getElementById('tab-login');
@@ -1420,57 +1440,132 @@ function switchAuthTab(tab){
   if(al) al.style.display=(tab==='login')?'block':'none';
 }
 
-function sendOtp(){
-  const name=document.getElementById('signup-name')?.value.trim();
-  const m=document.getElementById('signup-mobile')?.value.trim();
-  if(!name){alert('Please enter your full name.');return;}
-  if(!m||m.replace(/\D/g,'').length<10){alert('Please enter a valid 10-digit mobile number.');return;}
-  const s1=document.getElementById('signup-step1');
-  const s2=document.getElementById('signup-step2');
-  const md=document.getElementById('otp-mobile-display');
-  if(s1)s1.style.display='none';
-  if(s2)s2.style.display='block';
-  if(md)md.textContent=m;
-  buildOtpGrid();
+async function sendOtp(){
+  const name  = document.getElementById('signup-name')?.value.trim();
+  const email = document.getElementById('signup-email')?.value.trim();
+  const pass  = document.getElementById('signup-pass')?.value.trim();
+  const m     = document.getElementById('signup-mobile')?.value.trim();
+
+  if(!name)  { alert('Please enter your full name.'); return; }
+  if(!email) { alert('Please enter your email address.'); return; }
+  if(!pass || pass.length < 8) { alert('Password must be at least 8 characters.'); return; }
+  if(!m || m.replace(/\D/g,'').length < 10) { alert('Please enter a valid 10-digit mobile number.'); return; }
+
+  // Format mobile with country code
+  let mobile = m.replace(/\s/g,'');
+  if(!mobile.startsWith('+')) mobile = '+91' + mobile.replace(/^0/,'');
+
+  try {
+    // First create the account with email+password
+    const userCred = await auth.createUserWithEmailAndPassword(email, pass);
+    await userCred.user.updateProfile({ displayName: name });
+
+    // Then send phone OTP for verification
+    if(!recaptchaVerifier){
+      recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+        size: 'normal',
+        callback: () => {}
+      });
+    }
+
+    confirmationResult = await auth.signInWithPhoneNumber(mobile, recaptchaVerifier);
+
+    // Show OTP step
+    document.getElementById('signup-step1').style.display = 'none';
+    document.getElementById('signup-step2').style.display = 'block';
+    document.getElementById('otp-mobile-display').textContent = mobile;
+    buildOtpGrid();
+
+  } catch(err){
+    console.error(err);
+    if(err.code === 'auth/email-already-in-use'){
+      alert('This email is already registered. Please sign in instead.');
+      switchAuthTab('login');
+    } else if(err.code === 'auth/invalid-phone-number'){
+      alert('Invalid mobile number. Please enter with country code e.g. +91 98765 43210');
+    } else {
+      alert('Error: ' + err.message);
+    }
+    // Reset recaptcha on error
+    if(recaptchaVerifier){ try{ recaptchaVerifier.clear(); }catch(e){} recaptchaVerifier=null; }
+  }
 }
 
 function buildOtpGrid(){
-  const g=document.getElementById('otp-grid');
-  if(!g)return;
-  g.innerHTML='';
+  const g = document.getElementById('otp-grid');
+  if(!g) return;
+  g.innerHTML = '';
   for(let i=0;i<6;i++){
-    const inp=document.createElement('input');
-    inp.type='text';inp.maxLength=1;inp.className='otp-input';inp.id='otp'+i;inp.inputMode='numeric';
-    inp.addEventListener('input',e=>{
-      e.target.value=e.target.value.replace(/\D/g,'');
-      if(e.target.value&&i<5)document.getElementById('otp'+(i+1))?.focus();
+    const inp = document.createElement('input');
+    inp.type='text'; inp.maxLength=1; inp.className='otp-input'; inp.id='otp'+i; inp.inputMode='numeric';
+    inp.addEventListener('input', e=>{
+      e.target.value = e.target.value.replace(/\D/g,'');
+      if(e.target.value && i<5) document.getElementById('otp'+(i+1))?.focus();
     });
-    inp.addEventListener('keydown',e=>{
-      if(e.key==='Backspace'&&!e.target.value&&i>0)document.getElementById('otp'+(i-1))?.focus();
+    inp.addEventListener('keydown', e=>{
+      if(e.key==='Backspace'&&!e.target.value&&i>0) document.getElementById('otp'+(i-1))?.focus();
     });
     g.appendChild(inp);
   }
   document.getElementById('otp0')?.focus();
 }
 
-function verifyOtp(){
-  let otp='';
-  for(let i=0;i<6;i++)otp+=(document.getElementById('otp'+i)?.value||'');
-  if(otp!=='123456'){
-    const err=document.getElementById('otp-error');
-    if(err)err.style.display='flex';
-    return;
+async function verifyOtp(){
+  let otp = '';
+  for(let i=0;i<6;i++) otp += (document.getElementById('otp'+i)?.value||'');
+  if(otp.length < 6){ alert('Please enter all 6 digits.'); return; }
+
+  try {
+    await confirmationResult.confirm(otp);
+    const user = auth.currentUser;
+    const name   = document.getElementById('signup-name')?.value.trim() || user.displayName || 'User';
+    const email  = document.getElementById('signup-email')?.value.trim() || user.email || '';
+    const mobile = document.getElementById('signup-mobile')?.value.trim() || '';
+    loginUser({ name, email, mobile });
+  } catch(err){
+    console.error(err);
+    const errEl = document.getElementById('otp-error');
+    const msgEl = document.getElementById('otp-error-msg');
+    if(msgEl) msgEl.textContent = 'Incorrect OTP. Please try again.';
+    if(errEl) errEl.style.display = 'flex';
   }
-  const name=document.getElementById('signup-name')?.value.trim()||'User';
-  const email=document.getElementById('signup-email')?.value.trim()||'';
-  const mobile=document.getElementById('signup-mobile')?.value.trim()||'';
-  loginUser({name,email,mobile});
 }
 
-function resendOtp(){alert('OTP resent! (Demo: use 123456)');}
+async function resendOtp(){
+  if(recaptchaVerifier){ try{ recaptchaVerifier.clear(); }catch(e){} recaptchaVerifier=null; }
+  alert('Please click Send OTP again to resend.');
+  document.getElementById('signup-step2').style.display='none';
+  document.getElementById('signup-step1').style.display='block';
+}
+
+async function doLogin(){
+  const email = document.getElementById('login-email')?.value.trim();
+  const pass  = document.getElementById('login-pass')?.value.trim();
+  const errEl = document.getElementById('login-err');
+  if(!email||!pass){ if(errEl){errEl.textContent='Please enter email and password.';errEl.style.display='block';} return; }
+  try {
+    const userCred = await auth.signInWithEmailAndPassword(email, pass);
+    const user = userCred.user;
+    if(errEl) errEl.style.display='none';
+    loginUser({ name: user.displayName||email.split('@')[0], email: user.email, mobile: user.phoneNumber||'' });
+  } catch(err){
+    if(errEl){ errEl.textContent = err.code==='auth/invalid-credential'?'Incorrect email or password. Please try again.':err.message; errEl.style.display='block';}
+  }
+}
+
+async function forgotPassword(){
+  const email = document.getElementById('login-email')?.value.trim();
+  if(!email){ alert('Please enter your email address first.'); return; }
+  try {
+    await auth.sendPasswordResetEmail(email);
+    alert('Password reset email sent to '+email+'. Check your inbox.');
+  } catch(err){
+    alert('Error: '+err.message);
+  }
+}
 
 function loginDemo(){
-  loginUser({name:'Sravan Kumar',email:'sravankumar9586@gmail.com',mobile:'+91 89192 32657'});
+  doLogin();
 }
 
 function loginUser(user){
@@ -2395,7 +2490,7 @@ async function updateApplicationInAdmin(){
       })(),
       filing_status: 'details_received'
     };
-    await fetch('/api/applications?id='+lastId, {
+    await fetch('/api/applications/'+lastId, {
       method: 'PATCH',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(payload)
