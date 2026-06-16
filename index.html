@@ -2395,7 +2395,7 @@ async function updateApplicationInAdmin(){
       })(),
       filing_status: 'details_received'
     };
-    await fetch('/api/applications/'+lastId, {
+    await fetch('/api/applications?id='+lastId, {
       method: 'PATCH',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(payload)
