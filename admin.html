@@ -261,13 +261,25 @@ function doLogout(){
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
 // ── LOAD DATA ──
-function loadApplications(){
-  const raw = localStorage.getItem(STORAGE_KEY);
-  allApps = raw ? JSON.parse(raw) : [];
-  renderTable(allApps);
-  updateStats(allApps);
-  const el=document.getElementById('last-refresh');
-  if(el)el.textContent='Last updated: '+new Date().toLocaleTimeString('en-IN');
+async function loadApplications(){
+  try {
+    const resp = await fetch('/api/applications', {
+      headers: {'x-admin-password': ADMIN_PASS}
+    });
+    if(resp.status===401){ doLogout(); return; }
+    allApps = await resp.json();
+    renderTable(allApps);
+    updateStats(allApps);
+    const el=document.getElementById('last-refresh');
+    if(el)el.textContent='Last updated: '+new Date().toLocaleTimeString('en-IN');
+  } catch(e){
+    console.error('Failed to load applications:', e);
+    // Fallback to localStorage
+    const raw = localStorage.getItem(STORAGE_KEY);
+    allApps = raw ? JSON.parse(raw) : [];
+    renderTable(allApps);
+    updateStats(allApps);
+  }
 }
 
 function updateStats(apps){
@@ -419,41 +431,49 @@ function closeModal(){
   currentAppId=null;
 }
 
-function updateStatus(val){
+async function updateStatus(val){
   if(!currentAppId)return;
-  const idx=allApps.findIndex(a=>a.id===currentAppId);
-  if(idx===-1)return;
-  allApps[idx].filing_status=val;
-  allApps[idx].updated_at=new Date().toISOString();
-  saveApps();
-  renderTable(allApps);
-  updateStats(allApps);
+  try {
+    await fetch('/api/applications/'+currentAppId, {
+      method: 'PATCH',
+      headers: {'Content-Type':'application/json','x-admin-password':ADMIN_PASS},
+      body: JSON.stringify({filing_status: val})
+    });
+    const idx=allApps.findIndex(a=>a.id===currentAppId);
+    if(idx!==-1){allApps[idx].filing_status=val;}
+    renderTable(allApps);updateStats(allApps);
+  } catch(e){ alert('Failed to update status: '+e.message); }
 }
 
-function saveNotes(){
+async function saveNotes(){
   if(!currentAppId)return;
   const notes=document.getElementById('admin-notes')?.value||'';
-  const idx=allApps.findIndex(a=>a.id===currentAppId);
-  if(idx===-1)return;
-  allApps[idx].admin_notes=notes;
-  allApps[idx].updated_at=new Date().toISOString();
-  saveApps();
-  alert('Notes saved ✅');
+  try {
+    await fetch('/api/applications/'+currentAppId, {
+      method: 'PATCH',
+      headers: {'Content-Type':'application/json','x-admin-password':ADMIN_PASS},
+      body: JSON.stringify({admin_notes: notes})
+    });
+    const idx=allApps.findIndex(a=>a.id===currentAppId);
+    if(idx!==-1) allApps[idx].admin_notes=notes;
+    alert('Notes saved ✅');
+  } catch(e){ alert('Failed to save notes: '+e.message); }
 }
 
-function deleteApplication(){
+async function deleteApplication(){
   if(!currentAppId)return;
   if(!confirm('Delete this application permanently? This cannot be undone.'))return;
-  allApps=allApps.filter(a=>a.id!==currentAppId);
-  saveApps();
-  closeModal();
-  renderTable(allApps);
-  updateStats(allApps);
+  try {
+    await fetch('/api/applications/'+currentAppId, {
+      method: 'DELETE',
+      headers: {'x-admin-password': ADMIN_PASS}
+    });
+    allApps=allApps.filter(a=>a.id!==currentAppId);
+    closeModal();renderTable(allApps);updateStats(allApps);
+  } catch(e){ alert('Failed to delete: '+e.message); }
 }
 
-function saveApps(){
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(allApps));
-}
+function saveApps(){ localStorage.setItem(STORAGE_KEY,JSON.stringify(allApps)); } // kept as fallback
 
 // ── EXPORT CSV ──
 function exportCSV(){
