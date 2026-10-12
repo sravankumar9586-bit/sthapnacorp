@@ -43,17 +43,30 @@ module.exports = async function (req, res) {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'Please check the email address.' });
       const profile = cleanProfile(b.profile);
       const token = crypto.randomBytes(18).toString('hex');
-      const prev = await query("SELECT updated_at > NOW() - INTERVAL '10 minutes' AS recent FROM subscribers WHERE email = $1", [email]);
-      const sendMail = mail.configured() && !(prev.rows[0] && prev.rows[0].recent);
-
-      const r = await query(
-        `INSERT INTO subscribers (name, email, mobile, company, profile, token)
-         VALUES ($1,$2,$3,$4,$5,$6)
-         ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name, mobile = EXCLUDED.mobile, company = EXCLUDED.company,
-           profile = EXCLUDED.profile, active = TRUE, updated_at = NOW()
-         RETURNING token`,
-        [name, email, clean(b.mobile, 20) || null, clean(b.company, 160) || null, JSON.stringify(profile), token]
-      );
+      let r, sendMail;
+      try {
+        const prev = await query("SELECT updated_at > NOW() - INTERVAL '10 minutes' AS recent FROM subscribers WHERE email = $1", [email]);
+        sendMail = mail.configured() && !(prev.rows[0] && prev.rows[0].recent);
+        r = await query(
+          `INSERT INTO subscribers (name, email, mobile, company, profile, token)
+           VALUES ($1,$2,$3,$4,$5,$6)
+           ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name, mobile = EXCLUDED.mobile, company = EXCLUDED.company,
+             profile = EXCLUDED.profile, active = TRUE, updated_at = NOW()
+           RETURNING token`,
+          [name, email, clean(b.mobile, 20) || null, clean(b.company, 160) || null, JSON.stringify(profile), token]
+        );
+      } catch (err) {
+        // Database unavailable: pass the request to the owner by email so the contact is not lost.
+        console.error('subscriber not saved to database:', err.message);
+        if (!mail.configured()) throw err;
+        await mail.send({
+          to: process.env.NOTIFY_EMAIL || process.env.SMTP_USER,
+          subject: `Reminder sign-up NOT saved (database down): ${name}`,
+          html: mail.layout('Reminder sign-up not saved', `<p style="background:#F8E9E9;color:#9B1C1C;padding:10px;border-radius:6px">The database is unavailable, so this person will not get automatic reminders until they sign up again. Contact them directly.</p>
+            <p>${mail.esc(name)} · ${mail.esc(email)} · ${mail.esc(b.mobile || '—')} · ${mail.esc(b.company || '—')}</p><p>Entity: ${profile.entity.toUpperCase()}</p>`),
+        });
+        return res.status(200).json({ ok: true, queued: true });
+      }
 
       if (sendMail) {
         const today = D.todayIST();

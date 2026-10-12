@@ -155,7 +155,9 @@
         .then(function (res) {
           if (!res.ok) throw new Error(res.j.error || 'Request failed');
           msg.className = 'form-msg ok';
-          msg.textContent = 'Done. Reminders for these deadlines will go to ' + payload.email + ', starting with a confirmation email now.';
+          msg.textContent = res.j.queued
+            ? 'Thanks, we have your details. We will be in touch about these deadlines.'
+            : 'Done. Reminders for these deadlines will go to ' + payload.email + ', starting with a confirmation email now.';
           subForm.reset();
           trackLead('reminder_subscribe');
         })

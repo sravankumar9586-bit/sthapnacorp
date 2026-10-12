@@ -25,18 +25,27 @@ module.exports = async function (req, res) {
       if (lead.mobile.replace(/\D/g, '').length < 10) return res.status(400).json({ error: 'Please enter a 10-digit mobile number.' });
       if (lead.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email)) return res.status(400).json({ error: 'Please check the email address.' });
 
-      const recent = await query(
-        "SELECT COUNT(*)::int AS n FROM leads WHERE created_at > NOW() - INTERVAL '1 hour' AND (regexp_replace(mobile, '\\D', '', 'g') = $1 OR (email IS NOT NULL AND lower(email) = lower($2)))",
-        [lead.mobile.replace(/\D/g, ''), lead.email || null]
-      );
-      if (recent.rows[0].n >= 3) return res.status(429).json({ error: 'We already have your enquiry and will call you shortly.' });
+      // Save to the database, but never lose a lead if the database is unavailable: email it instead.
+      let id = null;
+      let dbError = null;
+      try {
+        const recent = await query(
+          "SELECT COUNT(*)::int AS n FROM leads WHERE created_at > NOW() - INTERVAL '1 hour' AND (regexp_replace(mobile, '\\D', '', 'g') = $1 OR (email IS NOT NULL AND lower(email) = lower($2)))",
+          [lead.mobile.replace(/\D/g, ''), lead.email || null]
+        );
+        if (recent.rows[0].n >= 3) return res.status(429).json({ error: 'We already have your enquiry and will call you shortly.' });
+        const r = await query(
+          `INSERT INTO leads (name, mobile, email, company, service, message, page, utm)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
+          [lead.name, lead.mobile, lead.email || null, lead.company || null, lead.service || null, lead.message || null, lead.page || null, JSON.stringify(lead.utm)]
+        );
+        id = r.rows[0].id;
+      } catch (err) {
+        dbError = err;
+        console.error('lead not saved to database:', err.message);
+      }
 
-      const r = await query(
-        `INSERT INTO leads (name, mobile, email, company, service, message, page, utm)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
-        [lead.name, lead.mobile, lead.email || null, lead.company || null, lead.service || null, lead.message || null, lead.page || null, JSON.stringify(lead.utm)]
-      );
-
+      let ownerNotified = false;
       if (mail.configured()) {
         const e = mail.esc;
         const digits = lead.mobile.replace(/\D/g, '');
@@ -46,8 +55,9 @@ module.exports = async function (req, res) {
           mail.send({
             to: process.env.NOTIFY_EMAIL || process.env.SMTP_USER,
             replyTo: lead.email || undefined,
-            subject: `New enquiry #${r.rows[0].id}: ${lead.service || 'General'} — ${lead.name}`,
+            subject: `New enquiry${id ? ' #' + id : ''}: ${lead.service || 'General'} — ${lead.name}`,
             html: mail.layout('New website enquiry', `
+              ${dbError ? '<p style="background:#F8E9E9;color:#9B1C1C;padding:10px;border-radius:6px">This enquiry could not be saved to the admin panel because the database is unavailable. Keep this email.</p>' : ''}
               <p><strong>${e(lead.name)}</strong>${lead.company ? ' · ' + e(lead.company) : ''}</p>
               <p>Mobile: <a href="tel:${e(lead.mobile)}">${e(lead.mobile)}</a> · <a href="${wa}">WhatsApp</a><br>
               Email: ${e(lead.email || '—')}<br>Service: ${e(lead.service || '—')}<br>Page: ${e(lead.page || '—')}${source ? '<br>Source: ' + source : ''}</p>
@@ -64,8 +74,10 @@ module.exports = async function (req, res) {
           }));
         }
         const results = await Promise.allSettled(jobs);
+        ownerNotified = results[0].status === 'fulfilled';
         results.filter((x) => x.status === 'rejected').forEach((x) => console.error('lead mail failed:', x.reason && x.reason.message));
       }
+      if (dbError && !ownerNotified) return res.status(500).json({ error: 'Server error.' });
       return res.status(200).json({ ok: true });
     }
 

@@ -42,10 +42,21 @@ let ready;
 function getPool() {
   if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
   if (!pool) {
-    const url = new URL(process.env.DATABASE_URL);
-    const mode = url.searchParams.get('sslmode');
-    url.searchParams.delete('sslmode');
-    pool = new Pool({ connectionString: url.toString(), ssl: mode === 'disable' ? false : { rejectUnauthorized: false }, max: 3 });
+    // Tolerate stray whitespace or quotes pasted into the Vercel setting.
+    let conn = process.env.DATABASE_URL.trim().replace(/^["']|["']$/g, '');
+    let mode = null;
+    try {
+      const url = new URL(conn);
+      mode = url.searchParams.get('sslmode');
+      url.searchParams.delete('sslmode');
+      conn = url.toString();
+    } catch (e) { /* leave the string as is and let pg report the problem */ }
+    pool = new Pool({
+      connectionString: conn,
+      ssl: mode === 'disable' ? false : { rejectUnauthorized: false },
+      max: 3,
+      connectionTimeoutMillis: 8000,
+    });
   }
   return pool;
 }
