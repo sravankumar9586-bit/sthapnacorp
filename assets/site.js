@@ -231,7 +231,7 @@
         .then(function (res) {
           if (!res.ok) throw new Error(res.j.error || 'Request failed');
           msg.className = 'form-msg ok';
-          msg.innerHTML = 'Thanks, ' + esc(payload.name.split(' ')[0]) + '. We will call you on ' + esc(payload.mobile) + ' within one working day with a fixed quote. ' +
+          msg.innerHTML = 'Thanks, ' + esc(payload.name.split(' ')[0]) + '. We will call you on ' + esc(payload.mobile) + ' within one working day with a written quote. ' +
             '<a href="' + waUrl('Hi, I just sent an enquiry on your website about ' + (payload.service || 'compliance') + '. My name is ' + payload.name + '.') + '" target="_blank" rel="noopener">Prefer WhatsApp? Message us now.</a>';
           form.reset();
           trackLead(payload.service || 'general');

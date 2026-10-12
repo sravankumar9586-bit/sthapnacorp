@@ -58,7 +58,7 @@ module.exports = async function (req, res) {
           <p>Hi ${e(String(s.name).split(' ')[0])}, these deadlines are coming up for your ${s.profile.entity === 'llp' ? 'LLP' : 'company'}:</p>
           <table cellpadding="0" cellspacing="0" style="font-size:15px;width:100%">${rows}</table>
           <p style="margin-top:18px"><a href="https://wa.me/918919232657?text=${waText(items)}" style="display:inline-block;background:#1FA855;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:bold">Ask us to file these</a></p>
-          <p>Or reply to this email for a fixed quote.</p>
+          <p>Or reply to this email for a written quote.</p>
           <p style="font-size:13px;color:#7E786F">Statutory due dates as we understand them today; extensions by MCA or CBDT can change them. <a href="${SITE}/api/subscribe?unsubscribe=${s.token}" style="color:#7E786F">Unsubscribe</a></p>`),
       });
       emails++;
