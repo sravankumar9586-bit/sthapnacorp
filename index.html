@@ -1,1482 +1,435 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-IN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SthapnaCorp — Company Secretarial & Compliance Services</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230D1B3E'/><rect x='7' y='18' width='5' height='9' rx='1' fill='%234A6FA5'/><rect x='14' y='13' width='5' height='14' rx='1' fill='%237A9CC5'/><rect x='21' y='8' width='5' height='19' rx='1' fill='%23FFFFFF'/><rect x='5' y='28' width='22' height='3' rx='0' fill='%23C9A84C'/><circle cx='26' cy='7' r='2.5' fill='%23C9A84C'/></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --ink:#1C1A17;--ink2:#4A4640;--ink3:#8A857C;--ink4:#C4BFB8;
-  --cream:#FAF8F4;--cream2:#F2EFE9;--cream3:#E8E3DA;
-  --gold:#C9A84C;--gold2:#E8C96A;--gold3:#F5E8C0;
-  --navy:#0D1B3E;--navy2:#1A2F5A;--navylight:#E8EDF5;
-  --green:#1A5C3A;--greenlight:#E8F3ED;
-  --red:#8B1A1A;--redlight:#F5E8E8;
-  --orange:#B85C00;--orangelight:#FFF3E0;
-  --white:#FFFFFF;--r:6px;--r-lg:10px;--r-xl:16px;
-  --shadow:0 1px 3px rgba(28,26,23,0.08),0 4px 16px rgba(28,26,23,0.06);
-  --shadow-lg:0 4px 24px rgba(28,26,23,0.12);
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SthapnaCorp — ROC Compliance, Company Registration &amp; FEMA Filings | Hyderabad</title>
+<meta name="description" content="Annual ROC filings (AOC-4, MGT-7, LLP Form 8 & 11), company and LLP registration, FEMA reporting, overdue filings and company closure. Fixed fees, CA/CS-reviewed. Based in Hyderabad, serving all of India.">
+<link rel="canonical" href="https://sthapnacorp.com/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SthapnaCorp — company filings done right, before the deadline">
+<meta property="og:description" content="Fixed-fee ROC compliance, incorporation, FEMA filings and closures for private companies, LLPs and OPCs.">
+<meta property="og:url" content="https://sthapnacorp.com/">
+<meta name="theme-color" content="#0D1B3E">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230D1B3E'/><rect x='7' y='18' width='5' height='9' rx='1' fill='%234A6FA5'/><rect x='14' y='13' width='5' height='14' rx='1' fill='%237A9CC5'/><rect x='21' y='8' width='5' height='19' rx='1' fill='%23FFFFFF'/><circle cx='26' cy='7' r='2.5' fill='%23C9A84C'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Crimson+Pro:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "SthapnaCorp",
+  "url": "https://sthapnacorp.com/",
+  "telephone": "+91-8919232657",
+  "email": "sthapnacorp@gmail.com",
+  "address": {"@type": "PostalAddress", "addressLocality": "Hyderabad", "addressRegion": "Telangana", "addressCountry": "IN"},
+  "areaServed": "IN",
+  "priceRange": "₹₹",
+  "openingHours": "Mo-Sa 09:00-19:00",
+  "description": "Company secretarial and compliance services: incorporation, annual ROC filings, FEMA reporting, corporate changes, strike-off and tax filings for private companies, LLPs and OPCs."
 }
-html{scroll-behavior:smooth}
-body{font-family:'Crimson Pro',serif;color:var(--ink);background:var(--cream);font-size:16px;line-height:1.6}
-
-/* ── SCREENS ── */
-.screen{display:none;min-height:100vh;flex-direction:column}
-.screen.active{display:flex}
-
-/* ── BUTTONS ── */
-.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--white);color:var(--ink);font-family:'Crimson Pro',serif;font-size:15px;font-weight:500;cursor:pointer;transition:all .18s;text-decoration:none;white-space:nowrap}
-.btn:hover{border-color:var(--ink3);background:var(--cream2)}
-.btn-navy{background:var(--navy);color:#fff;border-color:var(--navy)}.btn-navy:hover{background:var(--navy2);border-color:var(--navy2)}
-.btn-gold{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:600}.btn-gold:hover{background:var(--gold2);border-color:var(--gold2)}
-.btn-ghost{background:transparent;color:var(--ink2);border-color:transparent}.btn-ghost:hover{background:var(--cream2);border-color:var(--cream3)}
-.btn-white{background:#fff;color:var(--navy);border-color:#fff}.btn-white:hover{background:var(--cream);border-color:var(--cream)}
-.btn-green{background:var(--green);color:#fff;border-color:var(--green)}.btn-green:hover{background:#1e6b44;border-color:#1e6b44}
-.btn-xl{padding:13px 28px;font-size:17px}
-.btn-lg{padding:11px 22px;font-size:16px}
-.btn-sm{padding:6px 13px;font-size:13px}
-
-/* ── NAV ── */
-.nav{display:flex;align-items:center;justify-content:space-between;padding:0 60px;height:64px;background:var(--white);border-bottom:1px solid var(--cream3);position:sticky;top:0;z-index:100}
-.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
-.nav-logo-icon{width:32px;height:32px;background:var(--navy);border-radius:6px;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:end;padding:5px 4px 3px;gap:2px;position:relative}
-.nav-logo-icon .b1{background:#4A6FA5;border-radius:1px;height:8px}
-.nav-logo-icon .b2{background:#7A9CC5;border-radius:1px;height:12px}
-.nav-logo-icon .b3{background:#fff;border-radius:1px;height:16px}
-.nav-logo-icon .dot{position:absolute;top:4px;right:4px;width:5px;height:5px;background:var(--gold);border-radius:50%}
-.nav-logo-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy)}
-.nav-links{display:flex;gap:4px}
-.nav-link{padding:6px 14px;border-radius:var(--r);color:var(--ink2);font-size:15px;font-weight:400;cursor:pointer;text-decoration:none;transition:background .15s}
-.nav-link:hover{background:var(--cream2);color:var(--ink)}
-.nav-cta{display:flex;gap:10px;align-items:center}
-
-/* ── HERO ── */
-.hero{background:var(--navy);padding:72px 60px 64px;display:grid;grid-template-columns:1fr 460px;gap:64px;align-items:center}
-.hero-eyebrow{font-size:12px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:14px}
-.hero h1{font-family:'Playfair Display',serif;font-size:46px;line-height:1.18;color:#fff;margin-bottom:20px}
-.hero h1 span{color:var(--gold2)}
-.hero-sub{font-size:18px;color:rgba(255,255,255,0.72);font-weight:300;line-height:1.7;margin-bottom:30px;max-width:520px}
-.hero-btns{display:flex;gap:14px;flex-wrap:wrap}
-.hero-trust{display:flex;gap:20px;margin-top:28px;flex-wrap:wrap}
-.hero-trust span{font-size:13px;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:6px}
-.hero-trust span::before{content:'✓';color:var(--gold)}
-.hero-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:var(--r-xl);padding:28px;backdrop-filter:blur(8px)}
-.hero-card-title{font-family:'Playfair Display',serif;font-size:18px;color:#fff;margin-bottom:6px}
-.hero-card-sub{font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:20px}
-.service-pills{display:flex;flex-direction:column;gap:10px}
-.service-pill{display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r);cursor:pointer;transition:all .15s}
-.service-pill:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.2)}
-.service-pill-icon{font-size:18px;width:32px;text-align:center}
-.service-pill-name{font-size:14px;color:#fff;font-weight:500}
-.service-pill-tag{margin-left:auto;font-size:11px;background:rgba(201,168,76,0.25);color:var(--gold2);border-radius:20px;padding:2px 8px;border:1px solid rgba(201,168,76,0.3)}
-
-/* ── SECTION ── */
-.section{padding:72px 60px}
-.section-eyebrow{font-size:12px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:10px}
-.section-title{font-family:'Playfair Display',serif;font-size:36px;color:var(--navy);margin-bottom:14px;line-height:1.2}
-.section-sub{font-size:17px;color:var(--ink2);max-width:560px;line-height:1.7;font-weight:300}
-.section-header{margin-bottom:44px}
-
-/* ── SERVICES GRID ── */
-.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:44px}
-.svc-card{background:var(--white);border:1px solid var(--cream3);border-radius:var(--r-xl);padding:28px;transition:all .2s;cursor:pointer}
-.svc-card:hover{border-color:var(--navy);box-shadow:var(--shadow-lg);transform:translateY(-2px)}
-.svc-icon{width:48px;height:48px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px}
-.svc-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin-bottom:8px}
-.svc-desc{font-size:14px;color:var(--ink3);line-height:1.65;margin-bottom:16px}
-.svc-tags{display:flex;flex-wrap:wrap;gap:6px}
-.svc-tag{font-size:11px;color:var(--ink3);background:var(--cream2);border-radius:20px;padding:3px 9px;border:1px solid var(--cream3)}
-.svc-tag.due{color:var(--orange);background:var(--orangelight);border-color:rgba(184,92,0,0.2)}
-
-/* ── COMPLIANCE CALENDAR ── */
-.calendar-section{background:var(--navy);padding:72px 60px}
-.cal-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;margin-top:44px}
-.cal-entity-tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
-.cal-tab{padding:7px 16px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);font-size:13px;cursor:pointer;transition:all .15s}
-.cal-tab.active{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:600}
-.cal-deadline-list{display:flex;flex-direction:column;gap:10px}
-.cal-deadline{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r-lg)}
-.cal-deadline-date{min-width:52px;text-align:center}
-.cal-deadline-day{font-family:'Playfair Display',serif;font-size:22px;color:#fff;line-height:1}
-.cal-deadline-mon{font-size:11px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.08em}
-.cal-deadline-info{flex:1}
-.cal-deadline-form{font-size:13px;font-weight:600;color:var(--gold2);margin-bottom:2px}
-.cal-deadline-desc{font-size:13px;color:rgba(255,255,255,0.65)}
-.cal-deadline-badge{margin-left:auto;font-size:11px;border-radius:20px;padding:3px 9px;white-space:nowrap}
-.badge-urgent{background:rgba(139,26,26,0.3);color:#f5a0a0;border:1px solid rgba(139,26,26,0.4)}
-.badge-upcoming{background:rgba(201,168,76,0.2);color:var(--gold2);border:1px solid rgba(201,168,76,0.3)}
-.badge-normal{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.12)}
-.cal-right{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r-xl);padding:28px}
-.cal-right-title{font-family:'Playfair Display',serif;font-size:18px;color:#fff;margin-bottom:6px}
-.cal-right-sub{font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:22px}
-.reminder-form .form-group{margin-bottom:14px}
-.reminder-form label{display:block;font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:5px}
-.reminder-form input,.reminder-form select{width:100%;padding:10px 14px;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:var(--r);color:#fff;font-family:'Crimson Pro',serif;font-size:15px}
-.reminder-form input::placeholder{color:rgba(255,255,255,0.35)}
-.reminder-form input:focus,.reminder-form select:focus{outline:none;border-color:var(--gold)}
-.reminder-form select option{background:var(--navy2);color:#fff}
-
-/* ── PACKAGES ── */
-.packages-section{background:var(--white);padding:72px 60px}
-.packages-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:44px}
-.pkg-card{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-xl);padding:32px;position:relative}
-.pkg-card.featured{background:var(--navy);border-color:var(--navy)}
-.pkg-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--navy);font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em}
-.pkg-name{font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);margin-bottom:4px}
-.pkg-card.featured .pkg-name{color:#fff}
-.pkg-desc{font-size:14px;color:var(--ink3);margin-bottom:20px;line-height:1.5}
-.pkg-card.featured .pkg-desc{color:rgba(255,255,255,0.55)}
-.pkg-price{display:flex;align-items:baseline;gap:4px;margin-bottom:24px}
-.pkg-price-amt{font-family:'Playfair Display',serif;font-size:38px;color:var(--navy);font-weight:700}
-.pkg-card.featured .pkg-price-amt{color:#fff}
-.pkg-price-unit{font-size:14px;color:var(--ink3)}
-.pkg-card.featured .pkg-price-unit{color:rgba(255,255,255,0.5)}
-.pkg-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
-.pkg-features li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--ink2);line-height:1.45}
-.pkg-card.featured .pkg-features li{color:rgba(255,255,255,0.8)}
-.pkg-features li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0;margin-top:1px}
-.pkg-card.featured .pkg-features li::before{color:var(--gold2)}
-.pkg-features li.off{color:var(--ink4)}
-.pkg-features li.off::before{content:'–';color:var(--ink4)}
-.pkg-card.featured .pkg-features li.off{color:rgba(255,255,255,0.25)}
-
-/* ── TRUST ── */
-.trust-section{background:var(--cream2);padding:64px 60px}
-.trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:44px}
-.trust-card{background:var(--white);border:1px solid var(--cream3);border-radius:var(--r-xl);padding:24px}
-.trust-icon{font-size:28px;margin-bottom:12px}
-.trust-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);margin-bottom:8px}
-.trust-desc{font-size:14px;color:var(--ink3);line-height:1.65}
-
-/* ── HOW IT WORKS ── */
-.how-section{padding:72px 60px;background:var(--white)}
-.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:48px;position:relative}
-.steps-grid::before{content:'';position:absolute;top:28px;left:10%;right:10%;height:1px;background:var(--cream3);z-index:0}
-.how-step{text-align:center;padding:0 16px;position:relative;z-index:1}
-.how-num{width:56px;height:56px;border-radius:50%;background:var(--white);border:1.5px solid var(--cream3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy);margin:0 auto 16px;box-shadow:var(--shadow)}
-.how-step.active .how-num{background:var(--navy);color:#fff;border-color:var(--navy)}
-.how-title{font-family:'Playfair Display',serif;font-size:15px;color:var(--navy);margin-bottom:6px}
-.how-desc{font-size:13px;color:var(--ink3);line-height:1.6}
-
-/* ── CONTACT ── */
-.contact-section{background:var(--cream2);border-top:1px solid var(--cream3);padding:72px 60px}
-.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-top:44px;align-items:start}
-.contact-info-list{display:flex;flex-direction:column;gap:20px;margin-top:28px}
-.contact-info-item{display:flex;align-items:flex-start;gap:14px}
-.contact-info-icon{width:40px;height:40px;background:var(--navylight);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.contact-info-label{font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
-.contact-info-value{font-size:15px;color:var(--ink);font-weight:500}
-
-/* ── FORM ── */
-.form-card{background:var(--white);border:1px solid var(--cream3);border-radius:var(--r-xl);padding:28px}
-.form-group{margin-bottom:16px}
-.form-label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:5px}
-.form-input{width:100%;padding:10px 14px;background:var(--white);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--ink);font-family:'Crimson Pro',serif;font-size:15px;transition:border-color .15s}
-.form-input:focus{outline:none;border-color:var(--navy)}
-.form-input::placeholder{color:var(--ink4)}
-textarea.form-input{resize:vertical;min-height:100px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.req{color:var(--red)}
-.form-hint{font-size:12px;color:var(--ink3);margin-top:4px}
-
-/* ── FOOTER ── */
-footer{background:var(--navy);padding:48px 60px 28px;border-top:1px solid rgba(255,255,255,0.08)}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:36px}
-.footer-brand{font-family:'Playfair Display',serif;font-size:18px;color:#fff;margin-bottom:12px}
-.footer-desc{font-size:14px;color:rgba(255,255,255,0.45);line-height:1.7;margin-bottom:16px}
-.footer-col-title{font-size:12px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px}
-.footer-links{display:flex;flex-direction:column;gap:8px}
-.footer-link{font-size:14px;color:rgba(255,255,255,0.55);cursor:pointer;text-decoration:none;transition:color .15s}
-.footer-link:hover{color:#fff}
-.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center}
-.footer-copy{font-size:13px;color:rgba(255,255,255,0.35)}
-
-/* ── NOTICE / TOAST ── */
-.toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:14px 20px;border-radius:var(--r-lg);font-size:14px;font-weight:500;z-index:9999;display:none;align-items:center;gap:10px;box-shadow:var(--shadow-lg);max-width:360px}
-.toast.error{background:var(--red)}
-.toast.active{display:flex}
-
-/* ── AUTH SCREEN ── */
-#screen-auth{background:var(--cream);min-height:100vh;align-items:stretch}
-.auth-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
-.auth-left{background:var(--navy);display:flex;flex-direction:column;justify-content:center;padding:64px}
-.auth-left-title{font-family:'Playfair Display',serif;font-size:32px;color:#fff;margin-bottom:16px}
-.auth-left-sub{font-size:17px;color:rgba(255,255,255,0.6);font-weight:300;line-height:1.7;margin-bottom:36px}
-.auth-feat{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.auth-feat-icon{width:28px;height:28px;background:rgba(201,168,76,0.2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.auth-feat span{font-size:14px;color:rgba(255,255,255,0.65)}
-.auth-right{display:flex;align-items:center;justify-content:center;padding:64px 48px}
-.auth-form-wrap{width:100%;max-width:400px}
-.auth-title{font-family:'Playfair Display',serif;font-size:28px;color:var(--navy);margin-bottom:6px}
-.auth-sub{font-size:15px;color:var(--ink3);margin-bottom:28px}
-.auth-tabs{display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid var(--cream3)}
-.auth-tab{padding:8px 20px;font-size:15px;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
-.auth-tab.active{color:var(--navy);font-weight:600;border-bottom-color:var(--navy)}
-.logo-wrap{display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:36px;text-decoration:none}
-.logo-wrap span{font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);font-weight:700}
-
-/* ── DASHBOARD ── */
-#screen-dashboard{background:var(--cream);flex-direction:column}
-.dash-nav{display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:60px;background:var(--white);border-bottom:1px solid var(--cream3);position:sticky;top:0;z-index:50}
-.dash-logo{display:flex;align-items:center;gap:10px;cursor:pointer;font-family:'Playfair Display',serif;font-size:17px;color:var(--navy);font-weight:700}
-.dash-user{display:flex;align-items:center;gap:12px}
-.dash-user-name{font-size:14px;color:var(--ink2)}
-.dash-body{display:grid;grid-template-columns:240px 1fr;flex:1}
-.dash-sidebar{background:var(--white);border-right:1px solid var(--cream3);padding:24px 0}
-.dash-nav-item{display:flex;align-items:center;gap:12px;padding:10px 24px;font-size:14px;color:var(--ink2);cursor:pointer;transition:background .15s;border-radius:0}
-.dash-nav-item:hover{background:var(--cream2)}
-.dash-nav-item.active{background:var(--navylight);color:var(--navy);font-weight:600}
-.dash-nav-item .icon{font-size:16px;width:20px;text-align:center}
-.dash-content{padding:32px 40px;overflow-y:auto}
-.dash-greeting{font-family:'Playfair Display',serif;font-size:26px;color:var(--navy);margin-bottom:4px}
-.dash-greeting-sub{font-size:15px;color:var(--ink3);margin-bottom:28px}
-.dash-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
-.stat-card{background:var(--white);border:1px solid var(--cream3);border-radius:var(--r-lg);padding:18px 20px}
-.stat-label{font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-.stat-value{font-family:'Playfair Display',serif;font-size:28px;color:var(--navy)}
-.stat-sub{font-size:12px;color:var(--ink3);margin-top:3px}
-
-/* ── TIMELINE ── */
-.timeline-section{background:var(--white);border:1px solid var(--cream3);border-radius:var(--r-xl);padding:24px;margin-bottom:24px}
-.timeline-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.timeline-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--navy)}
-.deadline-item{display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--cream3)}
-.deadline-item:last-child{border-bottom:none}
-.deadline-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.deadline-dot.overdue{background:var(--red)}
-.deadline-dot.urgent{background:var(--orange)}
-.deadline-dot.upcoming{background:var(--gold)}
-.deadline-dot.ok{background:var(--green)}
-.deadline-info{flex:1}
-.deadline-form{font-size:14px;font-weight:600;color:var(--ink)}
-.deadline-company{font-size:12px;color:var(--ink3)}
-.deadline-due{font-size:13px;color:var(--ink3);text-align:right;white-space:nowrap}
-.deadline-status{margin-left:8px}
-.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
-.badge-overdue{background:var(--redlight);color:var(--red);border:1px solid rgba(139,26,26,.2)}
-.badge-urgent{background:var(--orangelight);color:var(--orange);border:1px solid rgba(184,92,0,.2)}
-.badge-upcoming{background:var(--gold3);color:#7A5C00;border:1px solid rgba(201,168,76,.3)}
-.badge-filed{background:var(--greenlight);color:var(--green);border:1px solid rgba(26,92,58,.2)}
-.badge-na{background:var(--cream2);color:var(--ink3);border:1px solid var(--cream3)}
-
-/* ── REMINDER PANEL ── */
-.reminder-panel{background:var(--white);border:1px solid var(--cream3);border-radius:var(--r-xl);padding:24px;margin-bottom:24px}
-.reminder-setting{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--cream3)}
-.reminder-setting:last-child{border-bottom:none}
-.reminder-setting-label{font-size:14px;color:var(--ink)}
-.reminder-setting-sub{font-size:12px;color:var(--ink3)}
-.toggle{position:relative;width:42px;height:24px;cursor:pointer}
-.toggle input{opacity:0;width:0;height:0}
-.toggle-slider{position:absolute;inset:0;background:var(--cream3);border-radius:12px;transition:.25s}
-.toggle input:checked+.toggle-slider{background:var(--navy)}
-.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:white;border-radius:50%;transition:.25s}
-.toggle input:checked+.toggle-slider::before{transform:translateX(18px)}
-
-/* ── SERVICES DETAIL PANEL ── */
-.service-detail{display:none}
-.service-detail.active{display:block}
-.service-detail-header{margin-bottom:24px}
-.service-detail-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);margin-bottom:6px}
-.service-detail-sub{font-size:15px;color:var(--ink2);line-height:1.65}
-.detail-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:20px}
-.detail-card{background:var(--cream);border:1px solid var(--cream3);border-radius:var(--r-lg);padding:18px}
-.detail-card-title{font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
-.detail-card-value{font-size:16px;color:var(--navy)}
-
-/* ── WHATSAPP FLOAT ── */
-.wa-btn{position:fixed;bottom:28px;right:28px;width:54px;height:54px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(37,211,102,.4);z-index:200;text-decoration:none;transition:transform .2s}
-.wa-btn:hover{transform:scale(1.08)}
-.wa-btn svg{width:28px;height:28px;fill:#fff}
-
-/* ── RESPONSIVE ── */
-@media(max-width:900px){
-  .nav{padding:0 20px}.nav-links{display:none}
-  .hero{grid-template-columns:1fr;padding:48px 20px;gap:32px}.hero-right{display:none}.hero h1{font-size:32px}
-  .section{padding:48px 20px}.calendar-section{padding:48px 20px}.trust-section{padding:48px 20px}.how-section{padding:48px 20px}.contact-section{padding:48px 20px}.packages-section{padding:48px 20px}
-  .services-grid{grid-template-columns:1fr}.packages-grid{grid-template-columns:1fr}.trust-grid{grid-template-columns:1fr 1fr}.steps-grid{grid-template-columns:1fr 1fr;gap:24px}.steps-grid::before{display:none}
-  .cal-grid{grid-template-columns:1fr}.contact-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr}
-  .auth-wrap{grid-template-columns:1fr}.auth-left{display:none}.auth-right{padding:32px 20px}
-  .dash-body{grid-template-columns:1fr}.dash-sidebar{display:none}.dash-stats{grid-template-columns:1fr 1fr}
-  footer{padding:40px 20px 24px}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "What happens if AOC-4 or MGT-7 is filed late?", "acceptedAnswer": {"@type": "Answer", "text": "MCA charges an additional fee of ₹100 per day for each form, with no upper limit. If financial statements or annual returns are not filed for three continuous financial years, every director is disqualified under section 164(2) of the Companies Act, 2013, and the Registrar can strike the company off."}},
+    {"@type": "Question", "name": "Is DIR-3 KYC still filed every year?", "acceptedAnswer": {"@type": "Answer", "text": "No. From 31 March 2026 directors file DIR-3 KYC Web once every three financial years, by 30 June. A change in mobile number, email or residential address must still be reported within 30 days."}},
+    {"@type": "Question", "name": "Our company has had no business. Do we still need to file?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. AOC-4, MGT-7 or MGT-7A and the income tax return are due even with nil activity. If the company will stay inactive, dormant status or a strike-off may cost less over time."}},
+    {"@type": "Question", "name": "Do you only work with companies in Hyderabad?", "acceptedAnswer": {"@type": "Answer", "text": "No. MCA, FEMA and tax filings are made online, so we work with companies and LLPs registered with any Registrar of Companies in India."}},
+    {"@type": "Question", "name": "Are government fees included in your prices?", "acceptedAnswer": {"@type": "Answer", "text": "No. Our professional fee is fixed. MCA filing fees, additional fees, stamp duty and trademark office fees are charged at actuals and shown separately in your quote."}}
+  ]
 }
-</style>
+</script>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════
-     TOAST
-══════════════════════════════════════════════════════ -->
-<div class="toast" id="toast"></div>
+<div class="dbar" id="dbar" role="status"><div class="wrap"></div></div>
 
-<!-- ══════════════════════════════════════════════════════
-     WHATSAPP FLOAT
-══════════════════════════════════════════════════════ -->
-<a class="wa-btn" href="https://wa.me/918919232657" target="_blank" title="WhatsApp us">
-  <svg viewBox="0 0 32 32"><path d="M16 2C8.3 2 2 8.3 2 16c0 2.4.6 4.7 1.8 6.8L2 30l7.4-1.8C11.4 29.4 13.6 30 16 30c7.7 0 14-6.3 14-14S23.7 2 16 2zm7.5 19.7c-.3.9-1.8 1.7-2.5 1.8-.6.1-1.4.1-2.3-.2-2.8-1-5.9-3.9-7.2-6.6-.7-1.5-.5-2.8.1-3.7.3-.4.6-.6 1-.6h.7c.3 0 .5.1.7.6l1.1 2.6c.2.4 0 .8-.2 1l-.4.5c-.2.2-.2.5 0 .7.7 1.1 1.7 2 2.9 2.6.3.1.5.1.7-.1l.7-.8c.2-.2.5-.3.8-.1l2.5 1.2c.4.2.6.4.6.8 0 .2 0 .5-.2 1.3z"/></svg>
-</a>
-
-<!-- ══════════════════════════════════════════════════════
-     SCREEN: LANDING
-══════════════════════════════════════════════════════ -->
-<div class="screen active" id="screen-landing">
-
-  <!-- NAV -->
-  <nav class="nav">
-    <a class="nav-logo" href="#" onclick="showScreen('landing');return false">
-      <div class="nav-logo-icon"><div class="b1"></div><div class="b2"></div><div class="b3"></div><div class="dot"></div></div>
-      <div class="nav-logo-name">SthapnaCorp</div>
-    </a>
-    <div class="nav-links">
-      <a class="nav-link" href="#services">Services</a>
-      <a class="nav-link" href="#packages">Packages</a>
-      <a class="nav-link" href="#calendar">Due Dates</a>
-      <a class="nav-link" href="#contact">Contact</a>
+<header class="site-head">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="SthapnaCorp home"><span class="logo-mark"><i></i><i></i><i></i><b></b></span><span class="logo-name">SthapnaCorp</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="#services">Services &amp; fees</a>
+      <a href="#calendar">Due dates</a>
+      <a href="#late-fee">Late fee calculator</a>
+      <a href="/incorporate">Register a company</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="head-cta">
+      <a class="btn btn-wa btn-sm" data-wa="Hi SthapnaCorp, I need help with a compliance matter."><svg class="wa-ico" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2C8.3 2 2 8.3 2 16c0 2.4.6 4.7 1.8 6.8L2 30l7.4-1.8C11.4 29.4 13.6 30 16 30c7.7 0 14-6.3 14-14S23.7 2 16 2zm7.5 19.7c-.3.9-1.8 1.7-2.5 1.8-.6.1-1.4.1-2.3-.2-2.8-1-5.9-3.9-7.2-6.6-.7-1.5-.5-2.8.1-3.7.3-.4.6-.6 1-.6h.7c.3 0 .5.1.7.6l1.1 2.6c.2.4 0 .8-.2 1l-.4.5c-.2.2-.2.5 0 .7.7 1.1 1.7 2 2.9 2.6.3.1.5.1.7-.1l.7-.8c.2-.2.5-.3.8-.1l2.5 1.2c.4.2.6.4.6.8 0 .2 0 .5-.2 1.3z"/></svg>WhatsApp</a>
     </div>
-    <div class="nav-cta">
-      <button class="btn btn-ghost" onclick="showScreen('auth','login')">Client Login</button>
-      <button class="btn btn-gold" onclick="scrollToContact()">Get Free Consultation</button>
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-left">
-      <div class="hero-eyebrow">Company Secretarial · ROC · GST · Income Tax</div>
-      <h1>Your company's<br><span>compliance, handled</span><br>professionally.</h1>
-      <p class="hero-sub">End-to-end secretarial and compliance services for Private Limited companies, LLPs, and OPCs — annual filings, board meetings, director changes, GST, and more. Never miss a deadline again.</p>
-      <div class="hero-btns">
-        <button class="btn btn-gold btn-xl" onclick="scrollToContact()">Get Free Consultation →</button>
-        <button class="btn btn-lg" style="border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.85);background:transparent" onclick="document.getElementById('calendar').scrollIntoView()">View Compliance Calendar</button>
-      </div>
-      <div class="hero-trust">
-        <span>Qualified CA &amp; CS professionals</span>
-        <span>Never miss a deadline</span>
-        <span>All ROC jurisdictions</span>
-        <span>Automated reminders</span>
-      </div>
-    </div>
-    <div class="hero-right">
-      <div class="hero-card">
-        <div class="hero-card-title">What we handle for you</div>
-        <div class="hero-card-sub">Click any service to enquire</div>
-        <div class="service-pills">
-          <div class="service-pill" onclick="scrollToContact('Annual ROC Compliance')">
-            <div class="service-pill-icon">📋</div>
-            <div class="service-pill-name">Annual ROC Compliance</div>
-            <div class="service-pill-tag">MGT-7 · AOC-4</div>
-          </div>
-          <div class="service-pill" onclick="scrollToContact('GST Filing')">
-            <div class="service-pill-icon">🧾</div>
-            <div class="service-pill-name">GST Registration &amp; Filing</div>
-            <div class="service-pill-tag">Monthly · Quarterly</div>
-          </div>
-          <div class="service-pill" onclick="scrollToContact('Income Tax Filing')">
-            <div class="service-pill-icon">📊</div>
-            <div class="service-pill-name">Income Tax &amp; TDS Returns</div>
-            <div class="service-pill-tag">ITR-6 · 26Q · 24Q</div>
-          </div>
-          <div class="service-pill" onclick="scrollToContact('Director / Share Changes')">
-            <div class="service-pill-icon">👥</div>
-            <div class="service-pill-name">Director &amp; Share Changes</div>
-            <div class="service-pill-tag">DIR-12 · PAS-3 · SH-4</div>
-          </div>
-          <div class="service-pill" onclick="scrollToContact('Company Incorporation')">
-            <div class="service-pill-icon">🏢</div>
-            <div class="service-pill-name">Company Incorporation</div>
-            <div class="service-pill-tag">Pvt Ltd · LLP · OPC</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <button class="menu-btn" aria-expanded="false" aria-label="Open menu">Menu</button>
   </div>
+</header>
 
-  <!-- SERVICES -->
-  <div class="section" id="services">
-    <div class="section-header">
-      <div class="section-eyebrow">Our Services</div>
-      <h2 class="section-title">Everything your company needs to stay compliant</h2>
-      <p class="section-sub">From incorporation to ongoing annual filings — we handle the regulatory complexity so you can focus on running your business.</p>
+<main>
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Corporate law &amp; compliance · Hyderabad · All of India</div>
+      <h1>Company filings done right, <em>before the deadline.</em></h1>
+      <p class="lede">Incorporation, annual ROC filings, FEMA reporting, corporate changes and closures for private companies, LLPs and OPCs. Fixed fees quoted upfront. Every filing prepared and reviewed by CA/CS professionals.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-gold btn-lg" data-wa="Hi SthapnaCorp, I'd like a fixed quote for compliance work.">Get a quote on WhatsApp</a>
+        <a class="btn btn-line-light btn-lg" href="#contact">Send an enquiry</a>
+      </div>
+      <a class="hero-sub-link" href="/incorporate">Starting a company? Register online from ₹10,000 →</a>
     </div>
-    <div class="services-grid">
-      <div class="svc-card" onclick="scrollToContact('Annual ROC Compliance')">
-        <div class="svc-icon" style="background:#E8EDF5">📋</div>
-        <div class="svc-title">Annual ROC Compliance</div>
-        <div class="svc-desc">Complete annual compliance for Private Limited and OPC — board meetings, AGM, DIR-3 KYC, auditor appointment, Annual Return (MGT-7), and Financial Statements (AOC-4).</div>
-        <div class="svc-tags">
-          <span class="svc-tag">MGT-7 Annual Return</span>
-          <span class="svc-tag">AOC-4 Fin. Statements</span>
-          <span class="svc-tag">DIR-3 KYC</span>
-          <span class="svc-tag">ADT-1 Auditor</span>
-          <span class="svc-tag due">Due: Oct–Nov</span>
-        </div>
+    <aside class="board" aria-label="Upcoming statutory deadlines">
+      <div class="board-head"><span class="board-title">Due next</span><span class="board-today" id="board-today"></span></div>
+      <div id="board-rows">
+        <div class="board-row"><span class="code">AOC-4</span><span class="t">Financial statements, private companies<small>30 days after the AGM</small></span><span class="days cool">annual</span></div>
+        <div class="board-row"><span class="code">Form 8</span><span class="t">LLP statement of account &amp; solvency<small>30 October</small></span><span class="days cool">annual</span></div>
+        <div class="board-row"><span class="code">MGT-7/7A</span><span class="t">Annual return, private companies<small>60 days after the AGM</small></span><span class="days cool">annual</span></div>
       </div>
-      <div class="svc-card" onclick="scrollToContact('LLP Annual Compliance')">
-        <div class="svc-icon" style="background:#F0F9F4">🤝</div>
-        <div class="svc-title">LLP Annual Compliance</div>
-        <div class="svc-desc">Full annual compliance for Limited Liability Partnerships — Form 11 Annual Return, Form 8 Statement of Accounts, partner KYC, and ITR-5 filing.</div>
-        <div class="svc-tags">
-          <span class="svc-tag">Form 11 Annual Return</span>
-          <span class="svc-tag">Form 8 Accounts</span>
-          <span class="svc-tag due">Form 11: 30 May</span>
-          <span class="svc-tag due">Form 8: 30 Oct</span>
-        </div>
-      </div>
-      <div class="svc-card" onclick="scrollToContact('GST Registration & Filing')">
-        <div class="svc-icon" style="background:#FFF8E6">🧾</div>
-        <div class="svc-title">GST Registration &amp; Filing</div>
-        <div class="svc-desc">GST registration, monthly/quarterly GSTR-1 and GSTR-3B filing, GSTR-9 annual return, reconciliation, and ITC management.</div>
-        <div class="svc-tags">
-          <span class="svc-tag">GSTR-1 · GSTR-3B</span>
-          <span class="svc-tag">GSTR-9 Annual</span>
-          <span class="svc-tag">GST Registration</span>
-          <span class="svc-tag due">Monthly · Quarterly</span>
-        </div>
-      </div>
-      <div class="svc-card" onclick="scrollToContact('Income Tax & TDS')">
-        <div class="svc-icon" style="background:#F5E8E8">📊</div>
-        <div class="svc-title">Income Tax &amp; TDS Returns</div>
-        <div class="svc-desc">Company income tax returns (ITR-6), tax audit (Form 3CD), TDS quarterly returns (24Q, 26Q), advance tax computation, and TDS certificate issuance.</div>
-        <div class="svc-tags">
-          <span class="svc-tag">ITR-6 Company Return</span>
-          <span class="svc-tag">Form 3CD Tax Audit</span>
-          <span class="svc-tag">24Q · 26Q TDS</span>
-          <span class="svc-tag due">ITR: 31 Oct</span>
-        </div>
-      </div>
-      <div class="svc-card" onclick="scrollToContact('Director & Share Changes')">
-        <div class="svc-icon" style="background:#EFF6FF">👥</div>
-        <div class="svc-title">Director &amp; Share Changes</div>
-        <div class="svc-desc">Appointment/resignation of directors (DIR-12), share transfers and allotments (PAS-3, SH-4), change of registered office, increase in authorised capital (SH-7), and board resolutions (MGT-14).</div>
-        <div class="svc-tags">
-          <span class="svc-tag">DIR-12 Directors</span>
-          <span class="svc-tag">PAS-3 · SH-4 Shares</span>
-          <span class="svc-tag">SH-7 Capital</span>
-          <span class="svc-tag">INC-22 Address</span>
-        </div>
-      </div>
-      <div class="svc-card" onclick="scrollToContact('Company Incorporation')">
-        <div class="svc-icon" style="background:#F2EFE9">🏢</div>
-        <div class="svc-title">Company Incorporation</div>
-        <div class="svc-desc">End-to-end company registration — Private Limited (SPICe+), LLP (FiLLiP), and OPC. Includes name reservation, DIN, DSC, PAN, TAN, and commencement of business (INC-20A).</div>
-        <div class="svc-tags">
-          <span class="svc-tag">Private Limited</span>
-          <span class="svc-tag">LLP</span>
-          <span class="svc-tag">OPC</span>
-          <span class="svc-tag">SPICe+ · FiLLiP</span>
-        </div>
-      </div>
-    </div>
-    <!-- Additional services row -->
-    <div style="margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
-      <div style="background:var(--white);border:1px solid var(--cream3);border-radius:var(--r-lg);padding:18px 20px;display:flex;align-items:center;gap:14px;cursor:pointer" onclick="scrollToContact('MSME Registration')">
-        <span style="font-size:20px">🏭</span>
-        <div><div style="font-size:14px;font-weight:600;color:var(--navy)">MSME / Udyam Registration</div><div style="font-size:13px;color:var(--ink3)">Register as Micro, Small, or Medium enterprise</div></div>
-      </div>
-      <div style="background:var(--white);border:1px solid var(--cream3);border-radius:var(--r-lg);padding:18px 20px;display:flex;align-items:center;gap:14px;cursor:pointer" onclick="scrollToContact('Trademark Registration')">
-        <span style="font-size:20px">™️</span>
-        <div><div style="font-size:14px;font-weight:600;color:var(--navy)">Trademark Registration</div><div style="font-size:13px;color:var(--ink3)">Protect your brand name and logo with IPO</div></div>
-      </div>
-      <div style="background:var(--white);border:1px solid var(--cream3);border-radius:var(--r-lg);padding:18px 20px;display:flex;align-items:center;gap:14px;cursor:pointer" onclick="scrollToContact('Other Registrations')">
-        <span style="font-size:20px">📝</span>
-        <div><div style="font-size:14px;font-weight:600;color:var(--navy)">Other Registrations</div><div style="font-size:13px;color:var(--ink3)">IEC, FSSAI, Shop &amp; Establishment, PF/ESI</div></div>
-      </div>
-    </div>
+      <div class="board-foot"><a href="#calendar">See every date for your company →</a></div>
+    </aside>
   </div>
+</section>
 
-  <!-- COMPLIANCE CALENDAR -->
-  <div class="calendar-section" id="calendar">
-    <div class="section-header">
-      <div class="section-eyebrow" style="color:var(--gold2)">Compliance Calendar</div>
-      <h2 class="section-title" style="color:#fff">Know your deadlines before they creep up</h2>
-      <p class="section-sub" style="color:rgba(255,255,255,0.6)">Every missed filing attracts late fees and potential director disqualification. Here are the key annual deadlines — we track all of these for every client.</p>
+<div class="strip"><div class="wrap">
+  <span>Companies Act, 2013</span><span>LLP Act, 2008</span><span>FEMA (NDI) Rules</span><span>SEBI LODR · PIT</span><span>Income-tax</span><span>GST</span>
+</div></div>
+
+<section class="section" id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Services &amp; fixed fees</div>
+      <h2>One practice for the whole life of your company</h2>
+      <p class="lede">From registration to annual filings, fundraising and closure. Our professional fee is fixed; government fees are charged at actuals.</p>
     </div>
-    <div class="cal-grid">
+
+    <div class="stage">
+      <div class="stage-name">Start<small>Registration and set-up</small></div>
       <div>
-        <div class="cal-entity-tabs">
-          <div class="cal-tab active" onclick="switchCalTab('pvt',this)">Private Limited / OPC</div>
-          <div class="cal-tab" onclick="switchCalTab('llp',this)">LLP</div>
-          <div class="cal-tab" onclick="switchCalTab('gst',this)">GST &amp; IT</div>
-        </div>
-        <div id="cal-pvt" class="cal-deadline-list"></div>
-        <div id="cal-llp" class="cal-deadline-list" style="display:none"></div>
-        <div id="cal-gst" class="cal-deadline-list" style="display:none"></div>
+        <div class="svc"><div class="svc-name"><a href="/incorporate">Private Limited or OPC registration</a></div><div class="svc-price">₹10,000<small>+ govt fees</small></div><div class="svc-desc">Name reservation, <span class="code">SPICe+</span> filing, DIN, PAN and TAN, MoA and AoA, registered-office NOC drafted for you.</div></div>
+        <div class="svc"><div class="svc-name"><a href="/incorporate">LLP registration</a></div><div class="svc-price">₹7,000<small>+ govt fees</small></div><div class="svc-desc"><span class="code">RUN-LLP</span> <span class="code">FiLLiP</span> filing, LLP agreement drafted and filed in <span class="code">Form 3</span>.</div></div>
+        <div class="svc"><div class="svc-name">Name reservation only</div><div class="svc-price">₹2,000 / ₹400<small>company / LLP, incl. MCA fee</small></div><div class="svc-desc">Up to four name options checked against MCA naming rules before filing.</div></div>
+        <div class="svc"><div class="svc-name">Trademark application</div><div class="svc-price">₹4,999<small>+ ₹4,500 govt fee per class</small></div><div class="svc-desc">Search, class selection and <span class="code">TM-A</span> filing. Govt fee is ₹9,000 per class for companies that are not small enterprises or startups.</div></div>
+        <div class="svc"><div class="svc-name">LLP agreement or partnership deed</div><div class="svc-price">₹2,999</div><div class="svc-desc">Drafted for your capital, profit-sharing and exit terms.</div></div>
       </div>
-      <div class="cal-right">
-        <div class="cal-right-title">Get Deadline Reminders by Email</div>
-        <div class="cal-right-sub">Enter your details and we'll send you timely reminders before each due date — 30 days, 15 days, and 7 days in advance.</div>
-        <form class="reminder-form" onsubmit="submitReminder(event)">
-          <div class="form-group">
-            <label>Your Name</label>
-            <input type="text" id="rem-name" placeholder="Full name" required>
+    </div>
+
+    <div class="stage">
+      <div class="stage-name">Run<small>Annual compliance</small></div>
+      <div>
+        <div class="svc"><div class="svc-name"><a href="/services/private-limited-annual-compliance">Annual ROC filing: private company or OPC</a></div><div class="svc-price">from ₹9,999<small>per year</small></div><div class="svc-desc">Board's report, AGM notice and minutes, <span class="code">AOC-4</span> <span class="code">MGT-7/7A</span>.</div></div>
+        <div class="svc"><div class="svc-name"><a href="/services/llp-annual-compliance">LLP annual filing</a></div><div class="svc-price">from ₹4,999<small>per year</small></div><div class="svc-desc"><span class="code">Form 11</span> by 30 May and <span class="code">Form 8</span> by 30 October.</div></div>
+        <div class="svc"><div class="svc-name">MSME-1 or DPT-3 return</div><div class="svc-price">₹1,499<small>per return</small></div><div class="svc-desc"><span class="code">MSME-1</span> by 30 April and 31 October; <span class="code">DPT-3</span> by 30 June.</div></div>
+        <div class="svc"><div class="svc-name">Director KYC</div><div class="svc-price">₹499<small>per director</small></div><div class="svc-desc"><span class="code">DIR-3 KYC Web</span>, now once every three years by 30 June, or within 30 days of a change in mobile, email or address.</div></div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-name">Change<small>Corporate actions</small></div>
+      <div>
+        <div class="svc"><div class="svc-name">Director appointment or resignation</div><div class="svc-price">₹2,999</div><div class="svc-desc">Board resolutions, consent and declarations, <span class="code">DIR-12</span>.</div></div>
+        <div class="svc"><div class="svc-name">Increase in authorised capital</div><div class="svc-price">₹3,999<small>+ MCA fee &amp; stamp duty</small></div><div class="svc-desc">EGM documents, altered MoA, <span class="code">SH-7</span> <span class="code">MGT-14</span>.</div></div>
+        <div class="svc"><div class="svc-name"><a href="/services/fema-share-allotment">Share allotment or transfer</a></div><div class="svc-price">from ₹4,999</div><div class="svc-desc">Offer letters, resolutions, <span class="code">PAS-3</span>, share certificates, <span class="code">SH-4</span> and register updates.</div></div>
+        <div class="svc"><div class="svc-name">Name change, office shift, conversion, LLP partner change</div><div class="svc-price">from ₹3,999</div><div class="svc-desc"><span class="code">INC-24</span> <span class="code">INC-22</span> <span class="code">INC-6</span> OPC to private company, <span class="code">Form 3</span> <span class="code">Form 4</span> LLP reconstitution.</div></div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-name">Raise<small>Funding &amp; FEMA</small></div>
+      <div>
+        <div class="svc"><div class="svc-name"><a href="/services/fema-share-allotment">Foreign investment reporting</a></div><div class="svc-price">₹9,999<small>per filing</small></div><div class="svc-desc"><span class="code">FC-GPR</span> within 30 days of allotment, <span class="code">FC-TRS</span> within 60 days of payment, on the RBI FIRMS portal.</div></div>
+        <div class="svc"><div class="svc-name">CCPS or CCD issue</div><div class="svc-price">from ₹14,999</div><div class="svc-desc">Term-sheet to filings: resolutions, offer documents, <span class="code">PAS-3</span>, <span class="code">MGT-14</span>.</div></div>
+        <div class="svc"><div class="svc-name">ISIN &amp; demat for a private company</div><div class="svc-price">from ₹14,999<small>+ depository &amp; RTA charges</small></div><div class="svc-desc">Rule 9B of the PAS Rules: RTA tie-up, ISIN, and conversion of existing holdings to demat.</div></div>
+        <div class="svc"><div class="svc-name">Valuation report</div><div class="svc-price">quoted</div><div class="svc-desc">Coordinated with a registered valuer for allotments and transfers.</div></div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-name">Fix &amp; exit<small>Backlogs and closures</small></div>
+      <div>
+        <div class="svc"><div class="svc-name"><a href="/services/overdue-roc-filings">Overdue ROC filings</a></div><div class="svc-price">from ₹2,999<small>per form per year + MCA fees</small></div><div class="svc-desc">Catch-up of missed <span class="code">AOC-4</span> <span class="code">MGT-7</span> <span class="code">Form 8</span> <span class="code">Form 11</span>, including DIN re-activation.</div></div>
+        <div class="svc"><div class="svc-name"><a href="/services/close-company-strike-off">Close a private company</a></div><div class="svc-price">₹14,999<small>+ ₹10,000 MCA fee</small></div><div class="svc-desc">Indemnity bonds, affidavits, statement of accounts and <span class="code">STK-2</span>.</div></div>
+        <div class="svc"><div class="svc-name"><a href="/services/close-company-strike-off">Close an LLP</a></div><div class="svc-price">from ₹9,999<small>+ govt fee</small></div><div class="svc-desc"><span class="code">Form 24</span> with pending Form 8 and 11 brought up to date.</div></div>
+        <div class="svc"><div class="svc-name">Slump sale or demerger compliance</div><div class="svc-price">quoted</div><div class="svc-desc">Agreements, approvals and post-transaction filings.</div></div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-name">Tax &amp; diligence<small>For founders and lenders</small></div>
+      <div>
+        <div class="svc"><div class="svc-name"><a href="/services/nri-itr-tax-notices">ITR for NRIs, foreign assets and ESOPs</a></div><div class="svc-price">from ₹3,999</div><div class="svc-desc"><span class="code">ITR-2</span> with Schedule FA, ESOP perquisites and capital gains, NRI property sales.</div></div>
+        <div class="svc"><div class="svc-name"><a href="/services/nri-itr-tax-notices">Income-tax notice reply</a></div><div class="svc-price">from ₹4,999</div><div class="svc-desc">Scrutiny, mismatch and demand notices, drafted and filed on the e-filing portal.</div></div>
+        <div class="svc"><div class="svc-name">Due diligence report</div><div class="svc-price">quoted</div><div class="svc-desc">Secretarial and legal diligence for investors, acquirers and banks.</div></div>
+      </div>
+    </div>
+    <p class="price-note">Prices are professional fees and exclude GST, government fees, stamp duty and third-party charges. Complex matters are quoted in writing before work starts.</p>
+  </div>
+</section>
+
+<section class="section alt" id="retainers">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Annual retainers</div>
+      <h2>Hand over the whole compliance year</h2>
+      <p class="lede">One fee, every recurring filing, and a reminder before each due date. Built for private companies and OPCs; LLP retainers are quoted.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Essentials</h3>
+        <div class="plan-price">₹11,999 <small>/ year</small></div>
+        <ul>
+          <li>Board meeting notices, agendas and minutes</li>
+          <li>Board's report, AGM notice and minutes</li>
+          <li>AOC-4 and MGT-7/7A filed</li>
+          <li>DPT-3 and both MSME-1 returns where applicable</li>
+          <li>DIR-3 KYC updates for directors</li>
+          <li>Email reminders before every due date</li>
+        </ul>
+        <a class="btn btn-navy" href="#contact" data-service="Compliance retainer">Ask about Essentials</a>
+      </div>
+      <div class="plan feature">
+        <div class="plan-tag">Recommended for funded startups</div>
+        <h3>Growth</h3>
+        <div class="plan-price">₹24,999 <small>/ year</small></div>
+        <ul>
+          <li>Everything in Essentials</li>
+          <li>Company income tax return (ITR-6)</li>
+          <li>Quarterly TDS returns</li>
+          <li>Advance tax working before each instalment</li>
+          <li>One corporate change a year included, such as a director change or allotment</li>
+          <li>Statutory registers kept up to date</li>
+        </ul>
+        <a class="btn btn-gold" href="#contact" data-service="Compliance retainer">Ask about Growth</a>
+      </div>
+      <div class="plan">
+        <h3>Complete</h3>
+        <div class="plan-price">₹39,999 <small>/ year</small></div>
+        <ul>
+          <li>Everything in Growth</li>
+          <li>Monthly GSTR-1 and GSTR-3B</li>
+          <li>GSTR-9 annual return</li>
+          <li>Quarterly compliance review call</li>
+          <li>Priority WhatsApp support</li>
+        </ul>
+        <a class="btn btn-navy" href="#contact" data-service="Compliance retainer">Ask about Complete</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="calendar">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Free tool · Compliance calendar</div>
+      <h2>Every due date for your company, for the next 12 months</h2>
+      <p class="lede">Choose your entity type and what applies to you. Then get an email 30, 7 and 1 day before each deadline.</p>
+    </div>
+    <div class="tool">
+      <div>
+        <form class="panel" id="cal-form" onsubmit="return false">
+          <div class="field"><label for="cal-entity">Entity type</label>
+            <select class="input" id="cal-entity" name="entity">
+              <option value="pvt">Private limited company</option>
+              <option value="opc">One person company (OPC)</option>
+              <option value="llp">Limited liability partnership (LLP)</option>
+            </select></div>
+          <div class="row2">
+            <div class="field"><label for="cal-inc">Incorporated on</label><input class="input" type="date" id="cal-inc" name="incDate"></div>
+            <div class="field" id="agm-field"><label for="cal-agm">AGM held on</label><input class="input" type="date" id="cal-agm" name="agmDate"></div>
           </div>
-          <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" id="rem-email" placeholder="you@company.com" required>
+          <div class="label" style="margin-bottom:8px">Also applies to us</div>
+          <div class="checks">
+            <label class="check"><input type="checkbox" name="gst" id="cal-gst"> Registered under GST (monthly returns)</label>
+            <label class="check"><input type="checkbox" name="tds" id="cal-tds"> We deduct TDS</label>
+            <label class="check"><input type="checkbox" name="msme" id="cal-msme"> We owe micro or small suppliers for more than 45 days</label>
+            <label class="check"><input type="checkbox" name="taxAudit" id="cal-audit"> Tax audit applies (turnover above the 44AB limit)</label>
           </div>
-          <div class="form-group">
-            <label>Mobile Number</label>
-            <input type="tel" id="rem-mobile" placeholder="+91 99999 99999" required>
+          <p class="small muted">Dates assume a 31 March year end and, for companies, an AGM on the last permitted date unless you enter one.</p>
+        </form>
+        <form class="subscribe-box" id="sub-form">
+          <h3>Email me these reminders</h3>
+          <p class="small muted" style="margin-bottom:12px">Free. One email per due date, 30, 7 and 1 day before. Unsubscribe from any email.</p>
+          <div class="field"><label for="sub-name">Name</label><input class="input" id="sub-name" name="name" required maxlength="100" autocomplete="name"></div>
+          <div class="field"><label for="sub-email">Email</label><input class="input" id="sub-email" name="email" type="email" required maxlength="160" autocomplete="email"></div>
+          <div class="row2">
+            <div class="field"><label for="sub-mobile">Mobile</label><input class="input" id="sub-mobile" name="mobile" type="tel" maxlength="20" autocomplete="tel"></div>
+            <div class="field"><label for="sub-company">Company</label><input class="input" id="sub-company" name="company" maxlength="160" autocomplete="organization"></div>
           </div>
-          <div class="form-group">
-            <label>Entity Type</label>
-            <select id="rem-entity">
-              <option value="pvt">Private Limited Company</option>
-              <option value="llp">LLP</option>
-              <option value="opc">One Person Company (OPC)</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Company Name (optional)</label>
-            <input type="text" id="rem-company" placeholder="Your company name">
-          </div>
-          <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;padding:13px" id="rem-btn">📧 Subscribe to Deadline Reminders</button>
+          <div class="hp" aria-hidden="true"><label for="sub-website">Website</label><input id="sub-website" name="website" tabindex="-1" autocomplete="off"></div>
+          <button class="btn btn-navy" type="submit" style="width:100%">Send me reminders</button>
+          <div class="form-msg" role="status"></div>
         </form>
       </div>
+      <div class="panel">
+        <div class="label" id="cal-count"></div>
+        <div class="cal-list" id="cal-out"></div>
+      </div>
     </div>
   </div>
+</section>
 
-  <!-- PACKAGES -->
-  <div class="packages-section" id="packages">
-    <div class="section-header">
-      <div class="section-eyebrow">Compliance Packages</div>
-      <h2 class="section-title">Simple, transparent pricing</h2>
-      <p class="section-sub">Annual compliance packages for Private Limited companies. LLP and OPC pricing available on request. All prices exclusive of GST and MCA government fees.</p>
+<section class="section dark" id="late-fee">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Free tool · Late fee calculator</div>
+      <h2>What is a missed filing costing you?</h2>
+      <p class="lede">MCA charges ₹100 a day for each late AOC-4, MGT-7/7A, LLP Form 8 and Form 11, with no upper limit. The meter runs until the form is filed.</p>
     </div>
-    <div class="packages-grid">
-      <div class="pkg-card">
-        <div class="pkg-name">Starter</div>
-        <div class="pkg-desc">For newly incorporated companies up to 2 years old with zero revenue.</div>
-        <div class="pkg-price">
-          <div class="pkg-price-amt">₹9,999</div>
-          <div class="pkg-price-unit">/ year</div>
+    <div class="tool">
+      <form class="panel" id="fee-form" onsubmit="return false">
+        <div class="field"><label for="fee-forms">Pending forms</label>
+          <select class="input" id="fee-forms" name="forms">
+            <option value="aoc4,mgt7">AOC-4 and MGT-7/7A (company)</option>
+            <option value="aoc4">AOC-4 only</option>
+            <option value="mgt7">MGT-7/7A only</option>
+            <option value="form8,form11">Form 8 and Form 11 (LLP)</option>
+            <option value="form8">Form 8 only</option>
+            <option value="form11">Form 11 only</option>
+          </select></div>
+        <div class="field"><label for="fee-oldest">Not filed since</label><select class="input" id="fee-oldest" name="oldest"></select></div>
+        <div class="field"><label for="fee-filed">If we file on</label><input class="input" type="date" id="fee-filed" name="filed"></div>
+        <p class="small" style="color:rgba(255,255,255,.6)">A minimum figure: it assumes the AGM was held on 30 September and leaves out the normal filing fee and any relief scheme. A late DIR-3 KYC is a flat ₹5,000 per director.</p>
+      </form>
+      <div class="panel" aria-live="polite">
+        <div class="label">Additional fee payable to MCA</div>
+        <div class="fee-total tnum" id="fee-total">₹0</div>
+        <div class="small" id="fee-sub" style="color:rgba(255,255,255,.7)"></div>
+        <div class="fee-table-wrap" id="fee-table" hidden>
+          <table class="fee-table">
+            <thead><tr><th>Form</th><th>Year</th><th>Was due</th><th class="num">Days late</th><th class="num">Fee</th></tr></thead>
+            <tbody id="fee-rows"></tbody>
+          </table>
         </div>
-        <ul class="pkg-features">
-          <li>4 Board Meeting notices &amp; minutes</li>
-          <li>1 AGM notice &amp; minutes</li>
-          <li>DIR-3 KYC for 2 directors</li>
-          <li>ADT-1 Auditor appointment</li>
-          <li>MGT-7 Annual Return filing</li>
-          <li>AOC-4 Financial Statements</li>
-          <li>Compliance reminders via email</li>
-          <li class="off">GST filing not included</li>
-          <li class="off">Income Tax not included</li>
-        </ul>
-        <button class="btn btn-navy" style="width:100%;justify-content:center" onclick="scrollToContact('Starter Package')">Enquire →</button>
-      </div>
-      <div class="pkg-card featured">
-        <div class="pkg-badge">Most Popular</div>
-        <div class="pkg-name">Professional</div>
-        <div class="pkg-desc">Complete compliance for growing companies with active operations.</div>
-        <div class="pkg-price">
-          <div class="pkg-price-amt">₹19,999</div>
-          <div class="pkg-price-unit">/ year</div>
+        <p class="callout" id="fee-warning" hidden style="background:rgba(155,28,28,.25);color:#ffdede;border-color:#ff9b9b">Three or more years unfiled: every director is disqualified under section 164(2) and the Registrar can strike the company off. Closing the company may cost less than catching up. We can compare both for you.</p>
+        <div class="hero-ctas" style="margin-top:20px">
+          <a class="btn btn-gold" id="fee-cta" href="#contact" target="_blank" rel="noopener">Send these figures on WhatsApp</a>
+          <a class="btn btn-line-light" href="/services/overdue-roc-filings">How we clear backlogs</a>
         </div>
-        <ul class="pkg-features">
-          <li>4 Board Meeting notices &amp; minutes</li>
-          <li>1 AGM notice &amp; minutes</li>
-          <li>DIR-3 KYC for up to 4 directors</li>
-          <li>ADT-1 Auditor appointment</li>
-          <li>MGT-7 Annual Return filing</li>
-          <li>AOC-4 Financial Statements</li>
-          <li>ITR-6 Income Tax Return</li>
-          <li>TDS Returns (26Q) — 4 quarters</li>
-          <li>Compliance reminders &amp; dashboard access</li>
-          <li class="off">GST filing not included</li>
-        </ul>
-        <button class="btn btn-gold" style="width:100%;justify-content:center" onclick="scrollToContact('Professional Package')">Enquire →</button>
-      </div>
-      <div class="pkg-card">
-        <div class="pkg-name">Complete</div>
-        <div class="pkg-desc">Full-stack compliance including GST for companies with regular transactions.</div>
-        <div class="pkg-price">
-          <div class="pkg-price-amt">₹34,999</div>
-          <div class="pkg-price-unit">/ year</div>
-        </div>
-        <ul class="pkg-features">
-          <li>Everything in Professional</li>
-          <li>GSTR-1 &amp; GSTR-3B monthly filing</li>
-          <li>GSTR-9 Annual Return</li>
-          <li>TDS Returns (24Q + 26Q)</li>
-          <li>Tax Audit (Form 3CD) if applicable</li>
-          <li>Dedicated CA/CS manager</li>
-          <li>Priority support (WhatsApp + Email)</li>
-          <li>Client compliance dashboard</li>
-          <li>Annual compliance review call</li>
-        </ul>
-        <button class="btn btn-navy" style="width:100%;justify-content:center" onclick="scrollToContact('Complete Package')">Enquire →</button>
-      </div>
-    </div>
-    <div style="text-align:center;margin-top:28px;font-size:14px;color:var(--ink3)">
-      All prices are indicative and subject to actual turnover, number of transactions, and applicable MCA/government fees. <a href="#" onclick="scrollToContact();return false" style="color:var(--navy);font-weight:500">Contact us for a custom quote.</a>
-    </div>
-  </div>
-
-  <!-- TRUST -->
-  <div class="trust-section" id="trust">
-    <div class="section-header">
-      <div class="section-eyebrow">Why SthapnaCorp</div>
-      <h2 class="section-title">Built for founders, backed by professionals</h2>
-    </div>
-    <div class="trust-grid">
-      <div class="trust-card">
-        <div class="trust-icon">⚖️</div>
-        <div class="trust-title">Qualified CA &amp; CS professionals</div>
-        <div class="trust-desc">Every filing is handled by a practising Chartered Accountant or Company Secretary — not a junior executive or automated tool.</div>
-      </div>
-      <div class="trust-card">
-        <div class="trust-icon">📅</div>
-        <div class="trust-title">Proactive deadline management</div>
-        <div class="trust-desc">We track every due date for every client and send automated email reminders 30, 15, and 7 days before each deadline.</div>
-      </div>
-      <div class="trust-card">
-        <div class="trust-icon">📊</div>
-        <div class="trust-title">Client compliance dashboard</div>
-        <div class="trust-desc">Log in to see your compliance status, upcoming deadlines, filed documents, and payment records — all in one place.</div>
-      </div>
-      <div class="trust-card">
-        <div class="trust-icon">🇮🇳</div>
-        <div class="trust-title">All 36 ROC jurisdictions</div>
-        <div class="trust-desc">We handle filings across all states and union territories of India — wherever your company is registered.</div>
-      </div>
-      <div class="trust-card">
-        <div class="trust-icon">🔒</div>
-        <div class="trust-title">Secure document handling</div>
-        <div class="trust-desc">Your documents and DSC are handled with strict confidentiality. DSC is used only with your explicit written authorisation.</div>
-      </div>
-      <div class="trust-card">
-        <div class="trust-icon">💬</div>
-        <div class="trust-title">Responsive support</div>
-        <div class="trust-desc">Reach us on WhatsApp, email, or phone — Mon to Sat, 9am to 7pm IST. We respond within 4 working hours.</div>
-      </div>
-      <div class="trust-card">
-        <div class="trust-icon">📋</div>
-        <div class="trust-title">Transparent status updates</div>
-        <div class="trust-desc">You always know what we're working on. Every filing gets an SRN/acknowledgement shared with you on the same day.</div>
-      </div>
-      <div class="trust-card">
-        <div class="trust-icon">💰</div>
-        <div class="trust-title">No hidden charges</div>
-        <div class="trust-desc">Our package prices are fixed. Government fees like MCA challan and GST late fees are shown separately — no surprise bills.</div>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- HOW IT WORKS -->
-  <div class="how-section" id="how">
-    <div class="section-header">
-      <div class="section-eyebrow">How it works</div>
-      <h2 class="section-title">Up and running in 4 simple steps</h2>
-      <p class="section-sub">Onboarding is fast and entirely digital. No need to visit our office.</p>
+<section class="section alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">How we work</div>
+      <h2>From first message to filed form</h2>
     </div>
-    <div class="steps-grid">
-      <div class="how-step active">
-        <div class="how-num">1</div>
-        <div class="how-title">Free Consultation</div>
-        <div class="how-desc">Tell us about your company, current status, and what you need. We'll explain exactly what's required and quote you upfront.</div>
-      </div>
-      <div class="how-step">
-        <div class="how-num">2</div>
-        <div class="how-title">Onboarding &amp; Documents</div>
-        <div class="how-desc">Share your company documents via WhatsApp or our secure portal. We collect only what's needed, nothing more.</div>
-      </div>
-      <div class="how-step">
-        <div class="how-num">3</div>
-        <div class="how-title">We Handle the Filings</div>
-        <div class="how-desc">Our CA/CS team prepares, reviews, and files everything on MCA21, Income Tax, or GST portals — sharing SRNs with you.</div>
-      </div>
-      <div class="how-step">
-        <div class="how-num">4</div>
-        <div class="how-title">Ongoing Reminders</div>
-        <div class="how-desc">From here on, you receive automated deadline reminders and annual compliance reports. We check in before every due date.</div>
-      </div>
+    <div class="steps">
+      <div class="step"><h3>Tell us what you need</h3><p>WhatsApp, call or send the form. Share your CIN or LLPIN if you have one.</p></div>
+      <div class="step"><h3>Get a fixed quote</h3><p>Within one working day: our fee, government fees at actuals, and the documents we need.</p></div>
+      <div class="step"><h3>We prepare and file</h3><p>Drafts come to you for review and signature. We file and send you the SRN and challan the same day.</p></div>
+      <div class="step"><h3>We watch the next date</h3><p>Every client gets reminders before the next due date, so nothing slips again.</p></div>
     </div>
   </div>
+</section>
 
-  <!-- CONTACT -->
-  <div class="contact-section" id="contact">
-    <div class="section-header">
-      <div class="section-eyebrow">Get in touch</div>
-      <h2 class="section-title">Start with a free consultation</h2>
-      <p class="section-sub">Tell us your requirement and we'll get back within 4 working hours with a detailed quote and action plan.</p>
+<section class="section">
+  <div class="wrap narrow">
+    <div class="sec-head">
+      <div class="eyebrow">Questions founders ask</div>
+      <h2>Frequently asked questions</h2>
     </div>
-    <div class="contact-grid">
+    <div class="faq">
+      <details><summary>What happens if AOC-4 or MGT-7 is filed late?</summary><p>MCA charges an additional fee of ₹100 per day for each form, with no upper limit. If financial statements or annual returns are not filed for three continuous financial years, every director is disqualified under section 164(2) of the Companies Act, 2013, and the Registrar can strike the company off.</p></details>
+      <details><summary>Is DIR-3 KYC still filed every year?</summary><p>No. From 31 March 2026 directors file DIR-3 KYC Web once every three financial years, by 30 June. A change in mobile number, email or residential address must still be reported within 30 days.</p></details>
+      <details><summary>Our company has had no business. Do we still need to file?</summary><p>Yes. AOC-4, MGT-7 or MGT-7A and the income tax return are due even with nil activity. If the company will stay inactive, dormant status or a strike-off may cost less over time.</p></details>
+      <details><summary>Do you only work with companies in Hyderabad?</summary><p>No. MCA, FEMA and tax filings are made online, so we work with companies and LLPs registered with any Registrar of Companies in India.</p></details>
+      <details><summary>Are government fees included in your prices?</summary><p>No. Our professional fee is fixed. MCA filing fees, additional fees, stamp duty and trademark office fees are charged at actuals and shown separately in your quote.</p></details>
+      <details><summary>How do I pay?</summary><p>You receive a written quote first. Pay by UPI, bank transfer, or card through a Razorpay link. We issue an invoice for every payment.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="contact">
+  <div class="wrap contact">
+    <div>
+      <div class="eyebrow">Contact</div>
+      <h2 style="margin:10px 0 12px">Get a fixed quote</h2>
+      <p class="lede">Tell us what you need. We reply within one working day with our fee, the government fees and a document checklist.</p>
+      <div class="direct">
+        <div class="direct-item"><span class="label">Phone &amp; WhatsApp</span><span class="v">+91 89192 32657</span></div>
+        <div class="direct-item"><span class="label">Email</span><span class="v">sthapnacorp@gmail.com</span></div>
+        <div class="direct-item"><span class="label">Existing clients</span><span class="v">sthapnacorp.support@gmail.com</span></div>
+        <div class="direct-item"><span class="label">Hours</span><span class="v" style="user-select:auto">Mon–Sat, 9 am – 7 pm IST · Hyderabad</span></div>
+      </div>
+    </div>
+    <form class="panel lead-form" novalidate>
+      <div class="row2">
+        <div class="field"><label for="lead-name">Name *</label><input class="input" id="lead-name" name="name" required maxlength="100" autocomplete="name"></div>
+        <div class="field"><label for="lead-mobile">Mobile *</label><input class="input" id="lead-mobile" name="mobile" type="tel" required maxlength="20" autocomplete="tel"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="lead-email">Email</label><input class="input" id="lead-email" name="email" type="email" maxlength="160" autocomplete="email"></div>
+        <div class="field"><label for="lead-company">Company or LLP</label><input class="input" id="lead-company" name="company" maxlength="160" autocomplete="organization"></div>
+      </div>
+      <div class="field"><label for="lead-service">I need help with</label>
+        <select class="input" id="lead-service" name="service">
+          <option value="">Choose one</option>
+          <option>Company or LLP registration</option>
+          <option>Annual ROC filing (company or OPC)</option>
+          <option>LLP annual filing</option>
+          <option>Overdue or backlog filings</option>
+          <option>Director, capital or name change</option>
+          <option>Share allotment, FEMA or demat</option>
+          <option>Closing a company or LLP</option>
+          <option>NRI or ESOP tax return, or a tax notice</option>
+          <option>Due diligence report</option>
+          <option>Trademark or agreement drafting</option>
+          <option>Compliance retainer</option>
+          <option>Something else</option>
+        </select></div>
+      <div class="field"><label for="lead-message">Details</label><textarea class="input" id="lead-message" name="message" maxlength="2000" placeholder="For example: we missed AOC-4 and MGT-7 for FY 2024-25 and need to file before 30 October."></textarea></div>
+      <div class="hp" aria-hidden="true"><label for="lead-website">Website</label><input id="lead-website" name="website" tabindex="-1" autocomplete="off"></div>
+      <button class="btn btn-gold btn-lg" type="submit" style="width:100%">Get my fixed quote</button>
+      <div class="form-msg" role="status"></div>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
       <div>
-        <div class="section-sub" style="margin-bottom:24px;max-width:100%">We work with startups, SMEs, and established companies across India. Whether you need to catch up on missed filings, set up ongoing compliance, or just need a second opinion — we're here.</div>
-        <div class="contact-info-list">
-          <div class="contact-info-item">
-            <div class="contact-info-icon">📞</div>
-            <div>
-              <div class="contact-info-label">Phone &amp; WhatsApp</div>
-              <div class="contact-info-value">+91 89192 32657</div>
-            </div>
-          </div>
-          <div class="contact-info-item">
-            <div class="contact-info-icon">✉️</div>
-            <div>
-              <div class="contact-info-label">General Enquiries</div>
-              <div class="contact-info-value">sthapnacorp@gmail.com</div>
-            </div>
-          </div>
-          <div class="contact-info-item">
-            <div class="contact-info-icon">🛠</div>
-            <div>
-              <div class="contact-info-label">Client Support</div>
-              <div class="contact-info-value">sthapnacorp.support@gmail.com</div>
-            </div>
-          </div>
-          <div class="contact-info-item">
-            <div class="contact-info-icon">🕐</div>
-            <div>
-              <div class="contact-info-label">Office Hours</div>
-              <div class="contact-info-value">Mon – Sat, 9:00 am – 7:00 pm IST</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="form-card">
-        <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin-bottom:4px">Send us an enquiry</div>
-        <div style="font-size:14px;color:var(--ink3);margin-bottom:22px">We'll respond within 4 working hours.</div>
-        <form onsubmit="submitContact(event)" id="contact-form">
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Name <span class="req">*</span></label>
-              <input class="form-input" id="c-name" placeholder="Your name" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Mobile <span class="req">*</span></label>
-              <input class="form-input" id="c-mobile" type="tel" placeholder="+91 99999 99999" required>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email <span class="req">*</span></label>
-            <input class="form-input" id="c-email" type="email" placeholder="you@company.com" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Company Name</label>
-            <input class="form-input" id="c-company" placeholder="Your company name (if any)">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Service Required</label>
-            <select class="form-input" id="c-service">
-              <option value="">— Select a service —</option>
-              <option>Annual ROC Compliance (Pvt Ltd / OPC)</option>
-              <option>LLP Annual Compliance</option>
-              <option>GST Registration &amp; Filing</option>
-              <option>Income Tax &amp; TDS Returns</option>
-              <option>Director / Share Changes</option>
-              <option>Company Incorporation</option>
-              <option>MSME / Udyam Registration</option>
-              <option>Trademark Registration</option>
-              <option>Starter Package</option>
-              <option>Professional Package</option>
-              <option>Complete Package</option>
-              <option>Other / Not sure</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Message</label>
-            <textarea class="form-input" id="c-message" placeholder="Tell us about your company and what you need help with..." style="min-height:90px"></textarea>
-          </div>
-          <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;padding:13px" id="contact-btn">Send Enquiry →</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-grid">
-      <div>
-        <div class="footer-brand">SthapnaCorp</div>
-        <div class="footer-desc">Professional company secretarial and compliance services for Private Limited companies, LLPs, and OPCs across India. Handled by qualified CA &amp; CS professionals.</div>
-        <div style="display:flex;gap:12px;margin-top:8px">
-          <a href="https://wa.me/918919232657" target="_blank" class="btn btn-sm" style="border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);background:transparent">💬 WhatsApp</a>
-        </div>
+        <div class="foot-brand">SthapnaCorp</div>
+        <p>Company secretarial, corporate law and compliance services for private companies, LLPs and OPCs. Based in Hyderabad, filing for clients across India.</p>
       </div>
       <div>
-        <div class="footer-col-title">Services</div>
-        <div class="footer-links">
-          <a class="footer-link" href="#services">Annual ROC Compliance</a>
-          <a class="footer-link" href="#services">LLP Annual Compliance</a>
-          <a class="footer-link" href="#services">GST Filing</a>
-          <a class="footer-link" href="#services">Income Tax &amp; TDS</a>
-          <a class="footer-link" href="#services">Director Changes</a>
-          <a class="footer-link" href="#services">Company Incorporation</a>
-        </div>
+        <h4>Services</h4>
+        <a href="/incorporate">Company &amp; LLP registration</a>
+        <a href="/services/private-limited-annual-compliance">Private company annual filing</a>
+        <a href="/services/llp-annual-compliance">LLP annual filing</a>
+        <a href="/services/overdue-roc-filings">Overdue ROC filings</a>
+        <a href="/services/fema-share-allotment">FEMA &amp; share allotment</a>
+        <a href="/services/close-company-strike-off">Close a company</a>
+        <a href="/services/nri-itr-tax-notices">NRI tax &amp; notices</a>
       </div>
       <div>
-        <div class="footer-col-title">Resources</div>
-        <div class="footer-links">
-          <a class="footer-link" href="#calendar">Compliance Calendar</a>
-          <a class="footer-link" href="#packages">Pricing Packages</a>
-          <a class="footer-link" href="#how">How It Works</a>
-          <a class="footer-link" onclick="showScreen('auth','login')">Client Login</a>
-        </div>
+        <h4>Free tools</h4>
+        <a href="/#calendar">Compliance calendar</a>
+        <a href="/#late-fee">Late fee calculator</a>
+        <a href="/guides/compliance-calendar-2026-27">Due dates FY 2026-27</a>
+        <a href="/services/company-registration-hyderabad">Register a company in Hyderabad</a>
       </div>
       <div>
-        <div class="footer-col-title">Contact</div>
-        <div class="footer-links">
-          <span class="footer-link">📞 +91 89192 32657</span>
-          <span class="footer-link">✉ sthapnacorp@gmail.com</span>
-          <span class="footer-link">Mon–Sat, 9am–7pm IST</span>
-        </div>
+        <h4>Contact</h4>
+        <a href="tel:+918919232657">+91 89192 32657</a>
+        <a href="mailto:sthapnacorp@gmail.com">sthapnacorp@gmail.com</a>
+        <a href="/terms">Terms of service</a>
+        <a href="/privacy">Privacy policy</a>
+        <a href="/refund">Refund policy</a>
       </div>
     </div>
-    <div class="footer-bottom">
-      <div class="footer-copy">© 2024–2025 SthapnaCorp. All rights reserved. · GST and MCA government fees billed separately.</div>
-      <div class="footer-copy">Operated by qualified CA/CS professionals.</div>
-    </div>
-  </footer>
-
-</div><!-- end screen-landing -->
-
-<!-- ══════════════════════════════════════════════════════
-     SCREEN: AUTH
-══════════════════════════════════════════════════════ -->
-<div class="screen" id="screen-auth">
-  <div class="auth-wrap">
-    <div class="auth-left">
-      <a class="nav-logo" href="#" onclick="showScreen('landing');return false" style="margin-bottom:40px;text-decoration:none">
-        <div class="nav-logo-icon"><div class="b1"></div><div class="b2"></div><div class="b3"></div><div class="dot"></div></div>
-        <div class="nav-logo-name" style="color:#fff">SthapnaCorp</div>
-      </a>
-      <div class="auth-left-title">Your compliance<br>dashboard awaits.</div>
-      <div class="auth-left-sub">Track all your statutory deadlines, view filed documents, set email reminders, and stay on top of your company's compliance — all in one place.</div>
-      <div class="auth-feat">
-        <div class="auth-feat-icon">📅</div>
-        <span>Compliance calendar with automated email reminders</span>
-      </div>
-      <div class="auth-feat">
-        <div class="auth-feat-icon">📋</div>
-        <span>Track annual filings — MGT-7, AOC-4, DIR-3 KYC, and more</span>
-      </div>
-      <div class="auth-feat">
-        <div class="auth-feat-icon">📊</div>
-        <span>GST and IT filing status in real time</span>
-      </div>
-      <div class="auth-feat">
-        <div class="auth-feat-icon">🔔</div>
-        <span>Deadline alerts 30, 15, and 7 days in advance</span>
-      </div>
-    </div>
-    <div class="auth-right">
-      <div class="auth-form-wrap">
-        <a class="logo-wrap" href="#" onclick="showScreen('landing');return false">
-          <div class="nav-logo-icon"><div class="b1"></div><div class="b2"></div><div class="b3"></div><div class="dot"></div></div>
-          <span>SthapnaCorp</span>
-        </a>
-        <div class="auth-tabs">
-          <div class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Sign in</div>
-          <div class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">New client</div>
-        </div>
-        <!-- LOGIN -->
-        <div id="auth-login">
-          <div class="auth-title">Welcome back</div>
-          <div class="auth-sub">Sign in to your compliance dashboard.</div>
-          <div class="form-group" style="margin-top:24px">
-            <label class="form-label">Email address</label>
-            <input class="form-input" type="email" id="login-email" placeholder="you@company.com" onkeydown="if(event.key==='Enter')doLogin()">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Password</label>
-            <input class="form-input" type="password" id="login-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()">
-          </div>
-          <button class="btn btn-navy" style="width:100%;justify-content:center;padding:13px;margin-top:4px;font-size:16px" onclick="doLogin()">Sign in →</button>
-          <div style="text-align:center;margin-top:14px;font-size:14px;color:var(--ink3)">Don't have an account? <span style="color:var(--navy);cursor:pointer;font-weight:500" onclick="switchAuthTab('signup')">Register as a new client</span></div>
-        </div>
-        <!-- SIGNUP -->
-        <div id="auth-signup" style="display:none">
-          <div class="auth-title">New client registration</div>
-          <div class="auth-sub">Already a client? <span style="color:var(--navy);cursor:pointer;font-weight:500" onclick="switchAuthTab('login')">Sign in instead</span></div>
-          <div class="form-group" style="margin-top:20px">
-            <label class="form-label">Full name <span class="req">*</span></label>
-            <input class="form-input" id="signup-name" placeholder="Your full legal name">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email address <span class="req">*</span></label>
-            <input class="form-input" type="email" id="signup-email" placeholder="you@company.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Mobile number <span class="req">*</span></label>
-            <input class="form-input" type="tel" id="signup-mobile" placeholder="+91 99999 99999">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Company Name</label>
-            <input class="form-input" id="signup-company" placeholder="Your company / LLP name">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Entity Type</label>
-            <select class="form-input" id="signup-entity">
-              <option value="pvt">Private Limited Company</option>
-              <option value="llp">Limited Liability Partnership</option>
-              <option value="opc">One Person Company</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Password <span class="req">*</span></label>
-            <input class="form-input" type="password" id="signup-pass" placeholder="Min. 8 characters">
-          </div>
-          <button class="btn btn-navy" style="width:100%;justify-content:center;padding:13px;margin-top:4px;font-size:16px" onclick="doSignup()">Create Account →</button>
-        </div>
-      </div>
-    </div>
+    <div class="foot-bottom"><span>© 2026 SthapnaCorp. Government fees are charged at actuals.</span><span>Filings are subject to approval by the MCA, RBI and tax authorities.</span></div>
   </div>
-</div>
+</footer>
 
-<!-- ══════════════════════════════════════════════════════
-     SCREEN: DASHBOARD
-══════════════════════════════════════════════════════ -->
-<div class="screen" id="screen-dashboard">
-  <div class="dash-nav">
-    <div class="dash-logo" onclick="showScreen('landing')">
-      <div class="nav-logo-icon"><div class="b1"></div><div class="b2"></div><div class="b3"></div><div class="dot"></div></div>
-      SthapnaCorp
-    </div>
-    <div class="dash-user">
-      <div class="dash-user-name" id="dash-username">—</div>
-      <button class="btn btn-sm btn-ghost" onclick="doLogout()">Sign out</button>
-    </div>
-  </div>
-  <div class="dash-body">
-    <div class="dash-sidebar">
-      <div class="dash-nav-item active" onclick="showDashTab('overview',this)"><span class="icon">🏠</span>Overview</div>
-      <div class="dash-nav-item" onclick="showDashTab('calendar',this)"><span class="icon">📅</span>Compliance Calendar</div>
-      <div class="dash-nav-item" onclick="showDashTab('filings',this)"><span class="icon">📋</span>My Filings</div>
-      <div class="dash-nav-item" onclick="showDashTab('reminders',this)"><span class="icon">🔔</span>Reminders</div>
-      <div class="dash-nav-item" onclick="showDashTab('documents',this)"><span class="icon">📁</span>Documents</div>
-      <div class="dash-nav-item" onclick="scrollToContact();showScreen('landing')"><span class="icon">💬</span>Talk to Us</div>
-    </div>
-    <div class="dash-content">
+<a class="float-wa" data-wa="Hi SthapnaCorp, I need help with a compliance matter." aria-label="Chat on WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2C8.3 2 2 8.3 2 16c0 2.4.6 4.7 1.8 6.8L2 30l7.4-1.8C11.4 29.4 13.6 30 16 30c7.7 0 14-6.3 14-14S23.7 2 16 2zm7.5 19.7c-.3.9-1.8 1.7-2.5 1.8-.6.1-1.4.1-2.3-.2-2.8-1-5.9-3.9-7.2-6.6-.7-1.5-.5-2.8.1-3.7.3-.4.6-.6 1-.6h.7c.3 0 .5.1.7.6l1.1 2.6c.2.4 0 .8-.2 1l-.4.5c-.2.2-.2.5 0 .7.7 1.1 1.7 2 2.9 2.6.3.1.5.1.7-.1l.7-.8c.2-.2.5-.3.8-.1l2.5 1.2c.4.2.6.4.6.8 0 .2 0 .5-.2 1.3z"/></svg></a>
+<div class="mobile-bar"><a class="btn btn-wa" data-wa="Hi SthapnaCorp, I need help with a compliance matter.">WhatsApp</a><a class="btn btn-navy" href="tel:+918919232657">Call</a></div>
 
-      <!-- OVERVIEW TAB -->
-      <div id="dash-overview" class="dash-tab">
-        <div class="dash-greeting">Good <span id="dash-timeofday">day</span>, <span id="dash-uname2">—</span></div>
-        <div class="dash-greeting-sub" id="dash-company-sub">Here is your compliance overview</div>
-        <div class="dash-stats">
-          <div class="stat-card">
-            <div class="stat-label">Overdue</div>
-            <div class="stat-value" id="stat-overdue" style="color:var(--red)">0</div>
-            <div class="stat-sub">Filings past due date</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Due This Month</div>
-            <div class="stat-value" id="stat-thismonth" style="color:var(--orange)">0</div>
-            <div class="stat-sub">Upcoming deadlines</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Filed This Year</div>
-            <div class="stat-value" id="stat-filed" style="color:var(--green)">0</div>
-            <div class="stat-sub">Completed filings</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Next Deadline</div>
-            <div class="stat-value" id="stat-next" style="font-size:14px;padding-top:6px;color:var(--navy)">—</div>
-            <div class="stat-sub" id="stat-next-date">—</div>
-          </div>
-        </div>
-        <div class="timeline-section">
-          <div class="timeline-header">
-            <div class="timeline-title">Upcoming Deadlines</div>
-            <button class="btn btn-sm" onclick="showDashTab('calendar',document.querySelector('.dash-nav-item:nth-child(2)'))">View full calendar →</button>
-          </div>
-          <div id="dash-deadlines-list">Loading...</div>
-        </div>
-        <div style="background:var(--navylight);border:1px solid rgba(13,27,62,.15);border-radius:var(--r-xl);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px">
-          <div>
-            <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);margin-bottom:4px">Need help with a filing?</div>
-            <div style="font-size:14px;color:var(--ink2)">Reach out to your assigned CA/CS — or contact us for a new requirement.</div>
-          </div>
-          <div style="display:flex;gap:10px;flex-shrink:0">
-            <a href="https://wa.me/918919232657" target="_blank" class="btn btn-sm btn-green">💬 WhatsApp</a>
-            <button class="btn btn-sm btn-navy" onclick="showScreen('landing');setTimeout(scrollToContact,100)">Send Enquiry</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- CALENDAR TAB -->
-      <div id="dash-calendar" class="dash-tab" style="display:none">
-        <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);margin-bottom:4px">Compliance Calendar</div>
-        <div style="font-size:14px;color:var(--ink3);margin-bottom:24px">All statutory deadlines for your entity type. Dates shown are for FY 2024–25 (April–March).</div>
-        <div id="dash-cal-tabs" style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap"></div>
-        <div id="dash-full-calendar"></div>
-      </div>
-
-      <!-- FILINGS TAB -->
-      <div id="dash-filings" class="dash-tab" style="display:none">
-        <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);margin-bottom:4px">My Filings</div>
-        <div style="font-size:14px;color:var(--ink3);margin-bottom:24px">Status of all your compliance filings managed by SthapnaCorp.</div>
-        <div id="dash-filings-list" style="background:var(--white);border:1px solid var(--cream3);border-radius:var(--r-xl);overflow:hidden">
-          <div style="padding:20px;text-align:center;color:var(--ink3);font-size:15px">Your filing records will appear here once our team begins work on your compliance. <br><a href="https://wa.me/918919232657" target="_blank" style="color:var(--navy);font-weight:500">Contact us to get started →</a></div>
-        </div>
-      </div>
-
-      <!-- REMINDERS TAB -->
-      <div id="dash-reminders" class="dash-tab" style="display:none">
-        <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);margin-bottom:4px">Reminder Settings</div>
-        <div style="font-size:14px;color:var(--ink3);margin-bottom:24px">Configure when and how you receive compliance deadline reminders.</div>
-        <div class="reminder-panel">
-          <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);margin-bottom:16px">Email Reminders</div>
-          <div class="reminder-setting">
-            <div><div class="reminder-setting-label">30-day advance reminder</div><div class="reminder-setting-sub">Email 30 days before each deadline</div></div>
-            <label class="toggle"><input type="checkbox" id="rem-30" checked onchange="saveReminderSettings()"><div class="toggle-slider"></div></label>
-          </div>
-          <div class="reminder-setting">
-            <div><div class="reminder-setting-label">15-day advance reminder</div><div class="reminder-setting-sub">Email 15 days before each deadline</div></div>
-            <label class="toggle"><input type="checkbox" id="rem-15" checked onchange="saveReminderSettings()"><div class="toggle-slider"></div></label>
-          </div>
-          <div class="reminder-setting">
-            <div><div class="reminder-setting-label">7-day advance reminder</div><div class="reminder-setting-sub">Email 7 days before each deadline</div></div>
-            <label class="toggle"><input type="checkbox" id="rem-7" checked onchange="saveReminderSettings()"><div class="toggle-slider"></div></label>
-          </div>
-          <div class="reminder-setting">
-            <div><div class="reminder-setting-label">On-the-day reminder</div><div class="reminder-setting-sub">Email on the actual due date</div></div>
-            <label class="toggle"><input type="checkbox" id="rem-0" onchange="saveReminderSettings()"><div class="toggle-slider"></div></label>
-          </div>
-          <div class="reminder-setting">
-            <div><div class="reminder-setting-label">WhatsApp reminders</div><div class="reminder-setting-sub">Receive reminders on WhatsApp (manual dispatch)</div></div>
-            <label class="toggle"><input type="checkbox" id="rem-wa" checked onchange="saveReminderSettings()"><div class="toggle-slider"></div></label>
-          </div>
-        </div>
-        <div class="reminder-panel">
-          <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);margin-bottom:16px">Reminder Email Address</div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input class="form-input" id="rem-email-pref" placeholder="your@email.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Additional CC email (optional)</label>
-            <input class="form-input" id="rem-cc-pref" placeholder="accountant@example.com">
-          </div>
-          <button class="btn btn-navy" onclick="saveReminderEmail()">Save Email Preferences</button>
-        </div>
-        <div style="background:var(--gold3);border:1px solid rgba(201,168,76,.3);border-radius:var(--r-lg);padding:16px 20px">
-          <div style="font-size:13px;font-weight:600;color:#7A5C00;margin-bottom:4px">📧 How reminders work</div>
-          <div style="font-size:13px;color:#7A5C00;line-height:1.6">Our system sends automated email reminders based on the statutory due dates for your entity type. WhatsApp reminders are sent manually by your assigned CA/CS. If you have specific due dates that differ (e.g. your AGM is held earlier), please <a href="https://wa.me/918919232657" target="_blank" style="color:var(--navy)">inform us on WhatsApp</a>.</div>
-        </div>
-      </div>
-
-      <!-- DOCUMENTS TAB -->
-      <div id="dash-documents" class="dash-tab" style="display:none">
-        <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);margin-bottom:4px">Documents</div>
-        <div style="font-size:14px;color:var(--ink3);margin-bottom:24px">Filed documents, acknowledgements, and SRNs will appear here.</div>
-        <div style="background:var(--white);border:1px solid var(--cream3);border-radius:var(--r-xl);padding:40px;text-align:center">
-          <div style="font-size:36px;margin-bottom:12px">📁</div>
-          <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin-bottom:6px">No documents yet</div>
-          <div style="font-size:14px;color:var(--ink3);margin-bottom:20px">Filed documents, SRNs, and acknowledgements from MCA, GST, and Income Tax portals will be shared here by your CA/CS.</div>
-          <a href="https://wa.me/918919232657" target="_blank" class="btn btn-navy">Contact your CA/CS →</a>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<script>
-// ══════════════════════════════════════════════════════
-// EMAILJS CONFIG — replace with your actual keys
-// Get free keys at https://www.emailjs.com (200 emails/month free)
-// ══════════════════════════════════════════════════════
-const EJ_PUBLIC_KEY  = 'YOUR_EMAILJS_PUBLIC_KEY';
-const EJ_SERVICE_ID  = 'YOUR_EMAILJS_SERVICE_ID';
-const EJ_TEMPLATE_CONTACT  = 'YOUR_TEMPLATE_CONTACT';
-const EJ_TEMPLATE_REMINDER = 'YOUR_TEMPLATE_REMINDER';
-const EJ_CONFIGURED = EJ_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY';
-if(EJ_CONFIGURED) emailjs.init(EJ_PUBLIC_KEY);
-
-// ══════════════════════════════════════════════════════
-// SCREEN MANAGEMENT
-// ══════════════════════════════════════════════════════
-function showScreen(id, sub){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('screen-'+id).classList.add('active');
-  window.scrollTo(0,0);
-  if(id==='auth'){
-    switchAuthTab(sub||'login');
-  }
-  if(id==='dashboard'){
-    initDashboard();
-  }
-}
-
-// ══════════════════════════════════════════════════════
-// COMPLIANCE CALENDAR DATA
-// ══════════════════════════════════════════════════════
-const DEADLINES = {
-  pvt:[
-    {form:'INC-20A',desc:'Commencement of Business Declaration',due:'Within 180 days of incorporation',mon:'Ongoing',day:'180d',urgency:'normal'},
-    {form:'DIR-3 KYC',desc:'Director KYC — all directors must file',due:'30 September every year',mon:'Sep',day:'30',urgency:'upcoming'},
-    {form:'ADT-1',desc:'Auditor Appointment intimation to ROC',due:'Within 15 days of AGM (by ~14 Oct)',mon:'Oct',day:'14',urgency:'upcoming'},
-    {form:'AOC-4',desc:'Financial Statements filing with ROC',due:'Within 30 days of AGM (by ~29 Oct)',mon:'Oct',day:'29',urgency:'upcoming'},
-    {form:'MGT-7 / MGT-7A',desc:'Annual Return filing with ROC',due:'Within 60 days of AGM (by ~28 Nov)',mon:'Nov',day:'28',urgency:'normal'},
-    {form:'MGT-14',desc:'Board resolutions — within 30 days of each Board Meeting',due:'Within 30 days of every BM',mon:'Ongoing',day:'30d',urgency:'normal'},
-    {form:'Board Meeting 1',desc:'First BM within 30 days of incorporation',due:'Within 30 days of incorporation',mon:'Ongoing',day:'30d',urgency:'normal'},
-    {form:'Board Meetings 2–4',desc:'At least 4 BMs per year (≤120 day gap)',due:'Every quarter',mon:'Mar/Jun/Sep/Dec',day:'Qtr',urgency:'normal'},
-    {form:'AGM',desc:'Annual General Meeting — within 6 months of FY end',due:'On or before 30 September',mon:'Sep',day:'30',urgency:'upcoming'},
-  ],
-  llp:[
-    {form:'Form 11',desc:'Annual Return of LLP',due:'30 May every year',mon:'May',day:'30',urgency:'upcoming'},
-    {form:'Form 8',desc:'Statement of Accounts and Solvency',due:'30 October every year',mon:'Oct',day:'30',urgency:'upcoming'},
-    {form:'DIR-3 KYC',desc:'Designated Partner KYC',due:'30 September every year',mon:'Sep',day:'30',urgency:'upcoming'},
-    {form:'ITR-5',desc:'LLP Income Tax Return',due:'31 October (with audit) · 31 July (without)',mon:'Oct/Jul',day:'31',urgency:'upcoming'},
-    {form:'Tax Audit',desc:'Applicable if turnover exceeds ₹1 crore',due:'30 September',mon:'Sep',day:'30',urgency:'normal'},
-    {form:'LLP Agreement Amendment',desc:'Any change in partners / contribution — file with ROC',due:'30 days from date of change',mon:'Ongoing',day:'30d',urgency:'normal'},
-  ],
-  gst:[
-    {form:'GSTR-1',desc:'Outward supplies return (monthly filers)',due:'11th of every following month',mon:'Monthly',day:'11',urgency:'normal'},
-    {form:'GSTR-1 (Quarterly)',desc:'IFF / GSTR-1 for QRMP scheme filers',due:'13th of month after quarter end',mon:'Quarterly',day:'13',urgency:'normal'},
-    {form:'GSTR-3B',desc:'Summary return (monthly filers)',due:'20th of every following month',mon:'Monthly',day:'20',urgency:'upcoming'},
-    {form:'GSTR-9',desc:'Annual GST Return',due:'31 December every year',mon:'Dec',day:'31',urgency:'normal'},
-    {form:'TDS Return 26Q',desc:'TDS on payments other than salary (quarterly)',due:'31 Jul · 31 Oct · 31 Jan · 31 May',mon:'Quarterly',day:'31',urgency:'normal'},
-    {form:'TDS Return 24Q',desc:'TDS on salary (quarterly)',due:'31 Jul · 31 Oct · 31 Jan · 31 May',mon:'Quarterly',day:'31',urgency:'normal'},
-    {form:'ITR-6',desc:'Company Income Tax Return',due:'31 October (with audit)',mon:'Oct',day:'31',urgency:'upcoming'},
-    {form:'Tax Audit (3CD)',desc:'Applicable if turnover exceeds ₹1 crore',due:'30 September',mon:'Sep',day:'30',urgency:'upcoming'},
-    {form:'Advance Tax Q1',desc:'First advance tax instalment',due:'15 June',mon:'Jun',day:'15',urgency:'normal'},
-    {form:'Advance Tax Q2',desc:'Second advance tax instalment',due:'15 September',mon:'Sep',day:'15',urgency:'normal'},
-    {form:'Advance Tax Q3',desc:'Third advance tax instalment',due:'15 December',mon:'Dec',day:'15',urgency:'normal'},
-    {form:'Advance Tax Q4',desc:'Fourth advance tax instalment',due:'15 March',mon:'Mar',day:'15',urgency:'normal'},
-  ]
-};
-
-function urgencyBadge(u){
-  if(u==='urgent') return '<span class="cal-deadline-badge badge-urgent">Urgent</span>';
-  if(u==='upcoming') return '<span class="cal-deadline-badge badge-upcoming">Key deadline</span>';
-  return '<span class="cal-deadline-badge badge-normal">Annual</span>';
-}
-
-function renderCalendar(key, containerId){
-  const container = document.getElementById(containerId);
-  if(!container) return;
-  const items = DEADLINES[key]||[];
-  container.innerHTML = items.map(d=>`
-    <div class="cal-deadline">
-      <div class="cal-deadline-date">
-        <div class="cal-deadline-day">${d.day}</div>
-        <div class="cal-deadline-mon">${d.mon}</div>
-      </div>
-      <div class="cal-deadline-info">
-        <div class="cal-deadline-form">${d.form}</div>
-        <div class="cal-deadline-desc">${d.desc}</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px">${d.due}</div>
-      </div>
-      ${urgencyBadge(d.urgency)}
-    </div>
-  `).join('');
-}
-
-function switchCalTab(key, el){
-  document.querySelectorAll('.cal-tab').forEach(t=>t.classList.remove('active'));
-  if(el) el.classList.add('active');
-  ['pvt','llp','gst'].forEach(k=>{ const el=document.getElementById('cal-'+k); if(el) el.style.display='none'; });
-  const show = document.getElementById('cal-'+key);
-  if(show){ show.style.display='flex'; show.style.flexDirection='column'; }
-}
-
-// Init landing calendar
-renderCalendar('pvt','cal-pvt');
-renderCalendar('llp','cal-llp');
-renderCalendar('gst','cal-gst');
-
-// ══════════════════════════════════════════════════════
-// AUTH
-// ══════════════════════════════════════════════════════
-function switchAuthTab(tab){
-  document.getElementById('auth-login').style.display = tab==='login'?'block':'none';
-  document.getElementById('auth-signup').style.display = tab==='signup'?'block':'none';
-  document.getElementById('tab-login').classList.toggle('active', tab==='login');
-  document.getElementById('tab-signup').classList.toggle('active', tab==='signup');
-}
-
-function doLogin(){
-  const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-pass').value;
-  if(!email||!pass){ showToast('Please enter email and password.','error'); return; }
-  // Retrieve stored user
-  const users = JSON.parse(localStorage.getItem('sc_users')||'[]');
-  const user = users.find(u=>u.email===email && u.pass===pass);
-  if(!user){ showToast('Invalid email or password.','error'); return; }
-  localStorage.setItem('sc_current', JSON.stringify(user));
-  showToast('Signed in successfully!');
-  showScreen('dashboard');
-}
-
-function doSignup(){
-  const name    = document.getElementById('signup-name').value.trim();
-  const email   = document.getElementById('signup-email').value.trim();
-  const mobile  = document.getElementById('signup-mobile').value.trim();
-  const company = document.getElementById('signup-company').value.trim();
-  const entity  = document.getElementById('signup-entity').value;
-  const pass    = document.getElementById('signup-pass').value;
-  if(!name||!email||!mobile||!pass){ showToast('Please fill all required fields.','error'); return; }
-  if(pass.length<8){ showToast('Password must be at least 8 characters.','error'); return; }
-  const users = JSON.parse(localStorage.getItem('sc_users')||'[]');
-  if(users.find(u=>u.email===email)){ showToast('An account with this email already exists.','error'); return; }
-  const user = {name, email, mobile, company, entity, pass, reminders:{r30:true,r15:true,r7:true,r0:false,wa:true}, remEmail:email};
-  users.push(user);
-  localStorage.setItem('sc_users', JSON.stringify(users));
-  localStorage.setItem('sc_current', JSON.stringify(user));
-  showToast('Account created! Welcome to SthapnaCorp.');
-  showScreen('dashboard');
-}
-
-function doLogout(){
-  localStorage.removeItem('sc_current');
-  showScreen('landing');
-}
-
-// ══════════════════════════════════════════════════════
-// DASHBOARD
-// ══════════════════════════════════════════════════════
-function initDashboard(){
-  const user = JSON.parse(localStorage.getItem('sc_current')||'null');
-  if(!user){ showScreen('auth','login'); return; }
-  const hours = new Date().getHours();
-  const tod = hours<12?'morning':hours<17?'afternoon':'evening';
-  document.getElementById('dash-timeofday').textContent = tod;
-  document.getElementById('dash-uname2').textContent = user.name.split(' ')[0];
-  document.getElementById('dash-username').textContent = user.name;
-  if(user.company) document.getElementById('dash-company-sub').textContent = user.company + ' — compliance overview';
-  loadReminderSettings(user);
-  buildDashCalendar(user.entity||'pvt');
-  buildDeadlinesList(user.entity||'pvt');
-}
-
-function buildDeadlinesList(entity){
-  const items = DEADLINES[entity]||DEADLINES.pvt;
-  const today = new Date();
-  let overdue=0, thisMonth=0, filed=0, next=null;
-  const list = document.getElementById('dash-deadlines-list');
-  const html = items.slice(0,6).map(d=>{
-    const status = d.urgency==='urgent'?'overdue':d.urgency==='upcoming'?'urgent':'upcoming';
-    if(status==='overdue') overdue++;
-    else if(status==='urgent') thisMonth++;
-    else filed++;
-    if(!next && status!=='overdue') next=d;
-    const dot = status==='overdue'?'overdue':status==='urgent'?'urgent':'upcoming';
-    const badge = status==='overdue'?'badge-overdue':status==='urgent'?'badge-urgent':'badge-upcoming';
-    const label = status==='overdue'?'Overdue':status==='urgent'?'Due soon':'Upcoming';
-    return `<div class="deadline-item">
-      <div class="deadline-dot ${dot}"></div>
-      <div class="deadline-info">
-        <div class="deadline-form">${d.form}</div>
-        <div class="deadline-company">${d.desc}</div>
-      </div>
-      <div class="deadline-due">${d.mon} ${d.day}<div class="deadline-status"><span class="badge ${badge}">${label}</span></div></div>
-    </div>`;
-  }).join('');
-  if(list) list.innerHTML = html;
-  const stO = document.getElementById('stat-overdue');
-  const stM = document.getElementById('stat-thismonth');
-  const stF = document.getElementById('stat-filed');
-  const stN = document.getElementById('stat-next');
-  const stND = document.getElementById('stat-next-date');
-  if(stO) stO.textContent = overdue;
-  if(stM) stM.textContent = thisMonth;
-  if(stF) stF.textContent = filed;
-  if(stN) stN.textContent = next?next.form:'All clear';
-  if(stND) stND.textContent = next?next.due:'';
-}
-
-function buildDashCalendar(entity){
-  const calTabs = document.getElementById('dash-cal-tabs');
-  const calContent = document.getElementById('dash-full-calendar');
-  if(!calTabs||!calContent) return;
-  const tabs = [{key:'pvt',label:'Pvt Ltd / OPC'},{key:'llp',label:'LLP'},{key:'gst',label:'GST & IT'}];
-  calTabs.innerHTML = tabs.map((t,i)=>`<div class="cal-tab${i===0?' active':''}" style="background:${i===0?'var(--gold)':'transparent'};color:${i===0?'var(--navy)':'var(--ink3)'};border:1.5px solid var(--cream3);padding:6px 16px;border-radius:20px;font-size:13px;cursor:pointer" onclick="switchDashCalTab('${t.key}',this)">${t.label}</div>`).join('');
-  renderDashCalendar(entity);
-}
-
-function switchDashCalTab(key, el){
-  document.querySelectorAll('#dash-cal-tabs .cal-tab').forEach(t=>{
-    t.style.background='transparent';t.style.color='var(--ink3)';t.style.borderColor='var(--cream3)';
-  });
-  if(el){el.style.background='var(--gold)';el.style.color='var(--navy)';}
-  renderDashCalendar(key);
-}
-
-function renderDashCalendar(key){
-  const items = DEADLINES[key]||[];
-  const html = items.map(d=>`
-    <div style="display:flex;align-items:flex-start;gap:16px;padding:14px;background:var(--white);border:1px solid var(--cream3);border-radius:var(--r-lg);margin-bottom:10px">
-      <div style="min-width:56px;text-align:center;padding:6px;background:${d.urgency==='urgent'?'var(--orangelight)':d.urgency==='upcoming'?'var(--gold3)':'var(--navylight)'};border-radius:var(--r)">
-        <div style="font-family:'Playfair Display',serif;font-size:18px;color:${d.urgency==='urgent'?'var(--orange)':d.urgency==='upcoming'?'#7A5C00':'var(--navy)'}">${d.day}</div>
-        <div style="font-size:10px;color:var(--ink3);text-transform:uppercase">${d.mon}</div>
-      </div>
-      <div style="flex:1">
-        <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:3px">${d.form}</div>
-        <div style="font-size:13px;color:var(--ink2)">${d.desc}</div>
-        <div style="font-size:12px;color:var(--ink3);margin-top:3px">${d.due}</div>
-      </div>
-      <span class="badge ${d.urgency==='urgent'?'badge-urgent':d.urgency==='upcoming'?'badge-upcoming':'badge-na'}" style="flex-shrink:0">${d.urgency==='urgent'?'Due soon':d.urgency==='upcoming'?'Key date':'Annual'}</span>
-    </div>
-  `).join('');
-  document.getElementById('dash-full-calendar').innerHTML = html;
-}
-
-function showDashTab(tab, el){
-  document.querySelectorAll('.dash-tab').forEach(t=>t.style.display='none');
-  document.querySelectorAll('.dash-nav-item').forEach(t=>t.classList.remove('active'));
-  const t = document.getElementById('dash-'+tab);
-  if(t) t.style.display='block';
-  if(el) el.classList.add('active');
-}
-
-// ══════════════════════════════════════════════════════
-// REMINDER SETTINGS
-// ══════════════════════════════════════════════════════
-function loadReminderSettings(user){
-  const r = user.reminders||{r30:true,r15:true,r7:true,r0:false,wa:true};
-  const e30=document.getElementById('rem-30');const e15=document.getElementById('rem-15');
-  const e7=document.getElementById('rem-7');const e0=document.getElementById('rem-0');
-  const ewa=document.getElementById('rem-wa');
-  if(e30) e30.checked=!!r.r30;if(e15) e15.checked=!!r.r15;
-  if(e7)  e7.checked=!!r.r7; if(e0)  e0.checked=!!r.r0;
-  if(ewa) ewa.checked=!!r.wa;
-  const remEmail=document.getElementById('rem-email-pref');
-  if(remEmail) remEmail.value=user.remEmail||user.email||'';
-}
-
-function saveReminderSettings(){
-  const user = JSON.parse(localStorage.getItem('sc_current')||'null');
-  if(!user) return;
-  user.reminders = {
-    r30: document.getElementById('rem-30')?.checked,
-    r15: document.getElementById('rem-15')?.checked,
-    r7:  document.getElementById('rem-7')?.checked,
-    r0:  document.getElementById('rem-0')?.checked,
-    wa:  document.getElementById('rem-wa')?.checked
-  };
-  updateUser(user);
-  showToast('Reminder preferences saved.');
-}
-
-function saveReminderEmail(){
-  const user = JSON.parse(localStorage.getItem('sc_current')||'null');
-  if(!user) return;
-  user.remEmail = document.getElementById('rem-email-pref')?.value||user.email;
-  user.remCC    = document.getElementById('rem-cc-pref')?.value||'';
-  updateUser(user);
-  showToast('Email preferences saved.');
-}
-
-function updateUser(user){
-  const users = JSON.parse(localStorage.getItem('sc_users')||'[]');
-  const idx = users.findIndex(u=>u.email===user.email);
-  if(idx>=0) users[idx]=user;
-  localStorage.setItem('sc_users', JSON.stringify(users));
-  localStorage.setItem('sc_current', JSON.stringify(user));
-}
-
-// ══════════════════════════════════════════════════════
-// CONTACT FORM
-// ══════════════════════════════════════════════════════
-function scrollToContact(service){
-  showScreen('landing');
-  setTimeout(()=>{
-    document.getElementById('contact').scrollIntoView({behavior:'smooth'});
-    if(service){
-      const sel = document.getElementById('c-service');
-      if(sel) for(let i=0;i<sel.options.length;i++){
-        if(sel.options[i].text.toLowerCase().includes(service.toLowerCase())){ sel.selectedIndex=i; break; }
-      }
-    }
-  }, 50);
-}
-
-async function submitContact(e){
-  e.preventDefault();
-  const btn = document.getElementById('contact-btn');
-  const name    = document.getElementById('c-name').value.trim();
-  const email   = document.getElementById('c-email').value.trim();
-  const mobile  = document.getElementById('c-mobile').value.trim();
-  const company = document.getElementById('c-company').value.trim();
-  const service = document.getElementById('c-service').value;
-  const message = document.getElementById('c-message').value.trim();
-  if(!name||!email||!mobile){ showToast('Please fill in Name, Email and Mobile.','error'); return; }
-  btn.textContent='Sending...'; btn.disabled=true;
-  if(EJ_CONFIGURED){
-    try{
-      await emailjs.send(EJ_SERVICE_ID, EJ_TEMPLATE_CONTACT, {
-        from_name: name, from_email: email, from_mobile: mobile,
-        company: company||'—', service: service||'General enquiry', message: message||'—',
-        to_email: 'sthapnacorp@gmail.com'
-      });
-      showToast('✓ Enquiry sent! We\'ll respond within 4 working hours.');
-      document.getElementById('contact-form').reset();
-    } catch(err){
-      showToast('Send failed. Please try WhatsApp or email directly.','error');
-    }
-  } else {
-    // Fallback: mailto link
-    const subject = encodeURIComponent('Enquiry: '+( service||'General'));
-    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nMobile: ${mobile}\nCompany: ${company||'—'}\nService: ${service||'—'}\n\n${message}`);
-    window.open(`mailto:sthapnacorp@gmail.com?subject=${subject}&body=${body}`);
-    showToast('Opening your email client. Alternatively call +91 89192 32657.');
-  }
-  btn.textContent='Send Enquiry →'; btn.disabled=false;
-}
-
-async function submitReminder(e){
-  e.preventDefault();
-  const btn = document.getElementById('rem-btn');
-  const name    = document.getElementById('rem-name').value.trim();
-  const email   = document.getElementById('rem-email').value.trim();
-  const mobile  = document.getElementById('rem-mobile').value.trim();
-  const entity  = document.getElementById('rem-entity').value;
-  const company = document.getElementById('rem-company').value.trim();
-  btn.textContent='Subscribing...'; btn.disabled=true;
-  const entityLabel = {pvt:'Private Limited',llp:'LLP',opc:'OPC'}[entity]||entity;
-  if(EJ_CONFIGURED){
-    try{
-      await emailjs.send(EJ_SERVICE_ID, EJ_TEMPLATE_REMINDER, {
-        name, email, mobile, entity: entityLabel, company: company||'—',
-        to_email: 'sthapnacorp@gmail.com'
-      });
-      showToast('✓ Subscribed! You\'ll receive deadline reminders at '+email);
-      e.target.reset();
-    } catch(err){
-      // Fallback
-      fallbackReminderSubmit(name,email,mobile,entityLabel,company);
-    }
-  } else {
-    fallbackReminderSubmit(name,email,mobile,entityLabel,company);
-  }
-  btn.textContent='📧 Subscribe to Deadline Reminders'; btn.disabled=false;
-}
-
-function fallbackReminderSubmit(name,email,mobile,entity,company){
-  const subject = encodeURIComponent('Compliance Reminder Subscription');
-  const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nMobile: ${mobile}\nEntity: ${entity}\nCompany: ${company||'—'}\n\nPlease add me to your compliance deadline reminder list.`);
-  window.open(`mailto:sthapnacorp@gmail.com?subject=${subject}&body=${body}`);
-  showToast('Opening email client to complete your reminder subscription.');
-}
-
-// ══════════════════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════════════════
-let toastTimer;
-function showToast(msg, type){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast active' + (type==='error'?' error':'');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('active'), 4000);
-}
-
-// ══════════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', function(){
-  // Auto-login if session exists
-  const cur = localStorage.getItem('sc_current');
-  // If URL hash points to a section, don't override
-  if(!window.location.hash && cur){
-    // Don't auto-redirect to dashboard on page load — let user navigate
-  }
-});
-</script>
+<script src="/assets/deadlines.js"></script>
+<script src="/assets/site.js"></script>
 </body>
 </html>
