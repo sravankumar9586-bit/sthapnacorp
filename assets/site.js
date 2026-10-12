@@ -1,7 +1,7 @@
 (function () {
   // Edit these once: WhatsApp number (country code, no +) and optional Google Analytics / Ads IDs.
   var CONFIG = {
-    whatsapp: '918919232657',
+    whatsapp: '918686145656',
     gaId: '',            // e.g. 'G-XXXXXXXXXX'
     adsId: '',           // e.g. 'AW-1234567890'
     adsLeadLabel: ''     // conversion label for a lead, e.g. 'AbCdEfGhIj'
@@ -161,7 +161,7 @@
         })
         .catch(function (err) {
           msg.className = 'form-msg err';
-          msg.textContent = (err && err.message && err.message !== 'Request failed' ? err.message + ' ' : '') + 'If this keeps happening, WhatsApp us on +91 89192 32657 and we will add you manually.';
+          msg.textContent = (err && err.message && err.message !== 'Request failed' ? err.message + ' ' : '') + 'If this keeps happening, WhatsApp us on +91 86861 45656 and we will add you manually.';
         })
         .then(function () { btn.disabled = false; });
     });
