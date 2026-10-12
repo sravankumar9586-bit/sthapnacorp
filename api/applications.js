@@ -1,4 +1,4 @@
-const { Client } = require('pg');
+const { query } = require('./_lib/db');
 const { isAdmin } = require('./_lib/auth');
 
 module.exports = async function(req, res) {
@@ -10,18 +10,12 @@ module.exports = async function(req, res) {
 
   const id = req.query.id;
 
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-  });
-
   try {
-    await client.connect();
 
     // POST /api/applications — save new application on payment
     if(req.method === 'POST' && !id){
       const d = req.body;
-      await client.query(`
+      await query(`
         INSERT INTO applications (
           id, created_at, updated_at,
           applicant_name, applicant_email, applicant_mobile,
@@ -51,26 +45,28 @@ module.exports = async function(req, res) {
 
     // PATCH /api/applications?id=xxx — update company+director details
     if(req.method === 'PATCH' && id){
-      const d = req.body;
-      await client.query(`
+      const d = req.body || {};
+      const has = (k) => Object.prototype.hasOwnProperty.call(d, k);
+      await query(`
         UPDATE applications SET
-          company_email  = $2, company_mobile = $3,
-          office_address = $4, office_state   = $5,
-          ownership      = $6, auth_capital    = $7,
-          paidup_capital = $8, face_value      = $9,
-          section5       = $10, directors      = $11,
+          company_email  = COALESCE($2, company_email),  company_mobile = COALESCE($3, company_mobile),
+          office_address = COALESCE($4, office_address), office_state   = COALESCE($5, office_state),
+          ownership      = COALESCE($6, ownership),      auth_capital   = COALESCE($7, auth_capital),
+          paidup_capital = COALESCE($8, paidup_capital), face_value     = COALESCE($9, face_value),
+          section5       = COALESCE($10::jsonb, section5), directors    = COALESCE($11::jsonb, directors),
           filing_status  = COALESCE($12, filing_status),
           admin_notes    = COALESCE($13, admin_notes),
           updated_at     = NOW()
         WHERE id = $1
       `, [
         id,
-        d.company_email||'', d.company_mobile||'',
-        d.office_address||'', d.office_state||'',
-        d.ownership||'', d.auth_capital||'',
-        d.paidup_capital||'', d.face_value||'10',
-        JSON.stringify(d.section5||{}), JSON.stringify(d.directors||[]),
-        d.filing_status||null, d.admin_notes||null
+        // Only fields present in the request are changed, so an admin status update keeps the company details.
+        has('company_email') ? d.company_email || '' : null, has('company_mobile') ? d.company_mobile || '' : null,
+        has('office_address') ? d.office_address || '' : null, has('office_state') ? d.office_state || '' : null,
+        has('ownership') ? d.ownership || '' : null, has('auth_capital') ? String(d.auth_capital || '') : null,
+        has('paidup_capital') ? String(d.paidup_capital || '') : null, has('face_value') ? String(d.face_value || '10') : null,
+        has('section5') ? JSON.stringify(d.section5 || {}) : null, has('directors') ? JSON.stringify(d.directors || []) : null,
+        d.filing_status || null, has('admin_notes') ? String(d.admin_notes) : null
       ]);
       return res.status(200).json({ success: true });
     }
@@ -79,7 +75,7 @@ module.exports = async function(req, res) {
     if(req.method === 'GET' && !id){
       if(!isAdmin(req))
         return res.status(401).json({ error: 'Unauthorized' });
-      const result = await client.query('SELECT * FROM applications ORDER BY created_at DESC');
+      const result = await query('SELECT * FROM applications ORDER BY created_at DESC');
       return res.status(200).json(result.rows);
     }
 
@@ -87,7 +83,7 @@ module.exports = async function(req, res) {
     if(req.method === 'GET' && id){
       if(!isAdmin(req))
         return res.status(401).json({ error: 'Unauthorized' });
-      const result = await client.query('SELECT * FROM applications WHERE id = $1', [id]);
+      const result = await query('SELECT * FROM applications WHERE id = $1', [id]);
       if(!result.rows.length) return res.status(404).json({ error: 'Not found' });
       return res.status(200).json(result.rows[0]);
     }
@@ -96,7 +92,7 @@ module.exports = async function(req, res) {
     if(req.method === 'DELETE' && id){
       if(!isAdmin(req))
         return res.status(401).json({ error: 'Unauthorized' });
-      await client.query('DELETE FROM applications WHERE id = $1', [id]);
+      await query('DELETE FROM applications WHERE id = $1', [id]);
       return res.status(200).json({ success: true });
     }
 
@@ -104,8 +100,6 @@ module.exports = async function(req, res) {
 
   } catch(err){
     console.error('API error:', err.message);
-    return res.status(500).json({ error: err.message });
-  } finally {
-    await client.end();
+    return res.status(500).json({ error: 'Server error' });
   }
 };
