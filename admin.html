@@ -112,6 +112,13 @@ tbody tr:last-child td{border-bottom:none}
 .tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:2px solid var(--cream3)}
 .tab{padding:9px 18px;font-size:15px;color:var(--ink3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;font-family:"Crimson Pro",serif}
 .tab.on{color:var(--navy);font-weight:600;border-bottom-color:var(--navy)}
+.tabs{flex-wrap:wrap}
+.dues-h{font-size:19px;color:var(--navy);margin:26px 0 10px}
+.ovr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:10px}
+.ovr-grid label,.ovr-wide{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--ink2)}
+.ovr-wide{margin-bottom:10px}
+.ovr-grid .status-select,.ovr-wide .status-select{width:100%;padding:7px 9px}
+.src-ok{color:var(--green)}.src-bad{color:#9B1C1C}
 .health{padding:14px 18px;border-radius:var(--r-lg);margin-bottom:20px;font-size:15px;line-height:1.5}
 .health.ok{background:var(--greenlight);color:var(--green);border:1px solid #A8D5B8}
 .health.bad{background:var(--redlight);color:var(--red);border:1px solid #E8B4B4}
@@ -164,6 +171,7 @@ tbody tr:last-child td{border-bottom:none}
       <button class="tab on" data-tab="apps" onclick="showTab('apps')">Incorporation applications</button>
       <button class="tab" data-tab="leads" onclick="showTab('leads')">Enquiries <span id="lead-new-count"></span></button>
       <button class="tab" data-tab="subs" onclick="showTab('subs')">Reminder subscribers</button>
+      <button class="tab" data-tab="dues" onclick="showTab('dues')">Due dates &amp; extensions <span id="watch-new-count"></span></button>
     </div>
     <div id="tab-apps">
     <div class="admin-header">
@@ -249,6 +257,61 @@ tbody tr:last-child td{border-bottom:none}
         <tbody id="subs-tbody"></tbody>
       </table></div>
       <div class="empty-state" id="subs-empty" hidden><div class="empty-title">No subscribers yet</div></div></div>
+    </div>
+
+    <div id="tab-dues" hidden>
+      <div class="admin-header">
+        <div>
+          <h1 style="font-size:26px;color:var(--navy)">Due dates &amp; extensions</h1>
+          <p style="font-size:14px;color:var(--ink3);margin-top:3px">Every morning at 8 am IST the site checks MCA, CBDT, CBIC-GST, PIB and news for extensions and emails you what it finds. Approve an extension here and the website calendar, deadline bar, late-fee calculator and reminder emails all switch to the new date.</p>
+        </div>
+        <button class="btn btn-navy btn-sm" id="watch-btn" onclick="checkSources()">Check official sources now</button>
+      </div>
+
+      <h2 class="dues-h">Announcements to review</h2>
+      <div class="table-wrap"><div style="overflow-x:auto"><table>
+        <thead><tr><th>Found</th><th>Announcement</th><th>Source</th><th>Action</th></tr></thead>
+        <tbody id="watch-tbody"></tbody>
+      </table></div>
+      <div class="empty-state" id="watch-empty" hidden><div class="empty-title">Nothing new to review</div><p style="font-size:14px">New announcements about extensions will appear here and in your email.</p></div></div>
+      <details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px;color:var(--navy)">Earlier announcements (<span id="watch-old-count">0</span>) — already reviewed, or already listed when checking started</summary>
+        <div class="table-wrap" style="margin-top:8px"><div style="overflow-x:auto"><table>
+          <thead><tr><th>Date</th><th>Announcement</th><th>Source</th><th>Status</th><th></th></tr></thead>
+          <tbody id="watch-old-tbody"></tbody>
+        </table></div></div>
+      </details>
+
+      <h2 class="dues-h" id="ovr-form-h">Add an extension</h2>
+      <form class="table-wrap" id="ovr-form" style="padding:18px 20px" onsubmit="saveOverride(event)">
+        <input type="hidden" name="item_id">
+        <div class="ovr-grid">
+          <label>Form<select class="status-select" name="form_key" required></select></label>
+          <label>Financial year<select class="status-select" name="fy_end"></select></label>
+          <label>or original due date<input class="status-select" type="date" name="original_due"></label>
+          <label>New due date<input class="status-select" type="date" name="new_due" required></label>
+          <label>Type<select class="status-select" name="kind"><option value="extension">Due date extended</option><option value="fee_waiver">Additional fee waived until</option></select></label>
+        </div>
+        <label class="ovr-wide">Note shown to clients (optional)<input class="status-select" name="note" maxlength="500" placeholder="e.g. Extended for companies requiring tax audit"></label>
+        <label class="ovr-wide">Official circular / notification link<input class="status-select" name="source_url" type="url" maxlength="500" placeholder="https://..."></label>
+        <label class="ovr-wide">Circular title<input class="status-select" name="source_title" maxlength="300" placeholder="e.g. CBDT Circular No. 10/2026"></label>
+        <label style="display:flex;gap:8px;align-items:center;margin:10px 0;font-size:14px"><input type="checkbox" name="notify" checked> Email subscribers who are affected</label>
+        <p style="font-size:13px;color:var(--ink3);margin-bottom:10px">Pick the financial year for annual filings (AOC-4, MGT-7, ITR, LLP forms, tax audit, GSTR-9). For monthly or quarterly filings (GSTR-1, GSTR-3B, TDS, advance tax), leave the year blank and enter the original due date instead.</p>
+        <button class="btn btn-navy btn-sm" type="submit">Save extension</button>
+        <button class="btn btn-ghost btn-sm" type="button" onclick="resetOverrideForm()">Clear</button>
+      </form>
+
+      <h2 class="dues-h">Extensions in force</h2>
+      <div class="table-wrap"><div style="overflow-x:auto"><table>
+        <thead><tr><th>Form</th><th>Applies to</th><th>New date</th><th>Type</th><th>Source</th><th>Subscribers told</th><th></th></tr></thead>
+        <tbody id="ovr-tbody"></tbody>
+      </table></div>
+      <div class="empty-state" id="ovr-empty" hidden><div class="empty-title">No extensions in force</div><p style="font-size:14px">The website shows the regular statutory due dates.</p></div></div>
+
+      <h2 class="dues-h">Sources checked</h2>
+      <div class="table-wrap"><div style="overflow-x:auto"><table>
+        <thead><tr><th>Source</th><th>Last checked</th><th>Result</th></tr></thead>
+        <tbody id="src-tbody"></tbody>
+      </table></div></div>
     </div>
   </div>
 </div>
@@ -346,6 +409,7 @@ async function refreshAll(){
     if(!(await loadApplications())) return doLogout();
     await loadLeads();
     if(!document.getElementById('tab-subs').hidden) await loadSubs();
+    await loadDues().catch(()=>{});
   } catch(e){ alert('Refresh failed: '+e.message); }
 }
 
@@ -576,10 +640,11 @@ function showHealth(h){
 
 // ── TABS ──
 function showTab(t){
-  ['apps','leads','subs'].forEach(k=>{ document.getElementById('tab-'+k).hidden = k!==t; });
+  ['apps','leads','subs','dues'].forEach(k=>{ document.getElementById('tab-'+k).hidden = k!==t; });
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on', b.dataset.tab===t));
   if(t==='leads') loadLeads().catch(e=>alert('Could not load enquiries: '+e.message));
   if(t==='subs') loadSubs().catch(e=>alert('Could not load subscribers: '+e.message));
+  if(t==='dues') loadDues().catch(e=>alert('Could not load due dates: '+e.message));
 }
 
 // ── LEADS ──
@@ -661,6 +726,99 @@ async function runReminders(){
   const r = await fetch('/api/cron-reminders', {method:'POST', headers:{'x-admin-password':ADMIN_PASS}});
   const j = await r.json().catch(()=>({}));
   alert(r.ok ? `Done: ${j.emails} reminder email(s) sent to ${j.subscribers} active subscriber(s).` : 'Failed: '+(j.error||('HTTP '+r.status)));
+}
+
+// ── DUE DATES & EXTENSIONS ──
+let dues = {forms:[], overrides:[], items:[], sources:[]};
+function fyLabel(y){ return y ? 'FY '+(y-1)+'-'+String(y).slice(2) : ''; }
+function dmy(iso){ if(!iso) return '—'; const [y,m,d]=String(iso).slice(0,10).split('-'); return new Date(Date.UTC(+y,+m-1,+d)).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}); }
+async function duesApi(method, body){
+  const r = await fetch('/api/updates', {method, headers:{'Content-Type':'application/json','x-admin-password':ADMIN_PASS}, body: body?JSON.stringify(body):undefined});
+  const j = await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(j.error||('HTTP '+r.status));
+  return j;
+}
+async function loadDues(){
+  dues = await duesApi('GET');
+  const f = document.getElementById('ovr-form');
+  const fs = f.elements.form_key;
+  if(!fs.options.length) fs.innerHTML = '<option value="">Choose…</option>'+dues.forms.map(([k,l])=>`<option value="${esc(k)}">${esc(l)}</option>`).join('');
+  const fy = f.elements.fy_end;
+  if(!fy.options.length){
+    const now=new Date(), end=now.getFullYear()-(now.getMonth()<3?1:0);
+    let o='<option value="">— (use original due date)</option>';
+    for(let y=end+1;y>=end-3;y--) o+=`<option value="${y}" ${y===end?'selected':''}>${fyLabel(y)}</option>`;
+    fy.innerHTML=o;
+  }
+  const fresh = dues.items.filter(i=>i.status==='new');
+  document.getElementById('watch-new-count').textContent = fresh.length ? '('+fresh.length+')' : '';
+  document.getElementById('watch-empty').hidden = fresh.length>0;
+  document.getElementById('watch-tbody').innerHTML = fresh.map(i=>`<tr style="cursor:default">
+      <td class="mono" style="font-size:12px">${formatDate(i.published_at||i.found_at)}</td>
+      <td><a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title)}</a></td>
+      <td style="font-size:13px">${esc(i.source_name)}</td>
+      <td style="white-space:nowrap"><button class="btn btn-navy btn-sm" onclick="useItem(${Number(i.id)})">Create extension</button> <button class="btn btn-ghost btn-sm" onclick="dismissItem(${Number(i.id)})">Not relevant</button></td>
+    </tr>`).join('');
+  const older = dues.items.filter(i=>i.status!=='new');
+  document.getElementById('watch-old-count').textContent = older.length;
+  document.getElementById('watch-old-tbody').innerHTML = older.map(i=>`<tr style="cursor:default">
+      <td class="mono" style="font-size:12px">${formatDate(i.published_at||i.found_at)}</td>
+      <td style="font-size:13px"><a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title)}</a></td>
+      <td style="font-size:12px">${esc(i.source_name)}</td>
+      <td style="font-size:12px">${({applied:'Applied',dismissed:'Not relevant',archived:'Listed before checking started'})[i.status]||esc(i.status)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="useItem(${Number(i.id)})">Create extension</button></td>
+    </tr>`).join('');
+  const label = Object.fromEntries(dues.forms);
+  const act = dues.overrides.filter(o=>o.active);
+  document.getElementById('ovr-empty').hidden = act.length>0;
+  document.getElementById('ovr-tbody').innerHTML = act.map(o=>`<tr style="cursor:default">
+      <td style="font-weight:600">${esc(label[o.form_key]||o.form_key)}</td>
+      <td>${o.fy_end?fyLabel(o.fy_end):'Due '+dmy(o.original_due)}</td>
+      <td>${dmy(o.new_due)}</td>
+      <td style="font-size:13px">${o.kind==='fee_waiver'?'Fee waived':'Extended'}${o.note?'<br><span style="color:var(--ink3)">'+esc(o.note)+'</span>':''}</td>
+      <td style="font-size:13px">${o.source_url?`<a href="${esc(o.source_url)}" target="_blank" rel="noopener">${esc(o.source_title||'link')}</a>`:'—'}</td>
+      <td style="font-size:12px">${o.notified_at?formatDate(o.notified_at):'—'}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="removeOverride(${Number(o.id)})">Remove</button></td>
+    </tr>`).join('');
+  document.getElementById('src-tbody').innerHTML = dues.sources.map(s=>`<tr style="cursor:default">
+      <td><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a></td>
+      <td class="mono" style="font-size:12px">${s.checked_at?formatDate(s.checked_at):'Not yet'}</td>
+      <td style="font-size:13px">${s.ok===null?'—':s.ok?`<span class="src-ok">✓ OK</span> · ${Number(s.scanned)} items read, ${Number(s.matched)} about due dates`:`<span class="src-bad">✗ Could not read</span> · ${esc(s.error||'')}`}</td>
+    </tr>`).join('');
+}
+async function checkSources(){
+  const b=document.getElementById('watch-btn'); b.disabled=true; const t=b.textContent; b.textContent='Checking… (up to a minute)';
+  try { const j=await duesApi('POST',{action:'check'}); await loadDues(); alert(j.found?`${j.found} new announcement(s) to review.`:'Checked. Nothing new since the last check.'); }
+  catch(e){ alert('Check failed: '+e.message); }
+  finally { b.disabled=false; b.textContent=t; }
+}
+function useItem(id){
+  const i=dues.items.find(x=>x.id===id); if(!i) return;
+  const s=i.suggestion||{}, f=document.getElementById('ovr-form').elements;
+  resetOverrideForm();
+  f.item_id.value=id;
+  if(s.form_key) f.form_key.value=s.form_key;
+  if(s.fy_end && [...f.fy_end.options].some(o=>o.value===String(s.fy_end))) f.fy_end.value=String(s.fy_end);
+  if(s.new_due) f.new_due.value=s.new_due;
+  if(s.kind) f.kind.value=s.kind;
+  f.source_url.value=i.url; f.source_title.value=i.title.slice(0,300);
+  document.getElementById('ovr-form-h').scrollIntoView({behavior:'smooth'});
+  alert('Form filled from the announcement as a starting point. Open the source, confirm the form, year and new date, then save.');
+}
+function resetOverrideForm(){ const f=document.getElementById('ovr-form'); const fy=f.elements.fy_end.value; f.reset(); f.elements.item_id.value=''; f.elements.fy_end.value=fy; }
+async function saveOverride(ev){
+  ev.preventDefault();
+  const f=ev.target.elements;
+  const body={action:'create', item_id:f.item_id.value||null, form_key:f.form_key.value, fy_end:f.fy_end.value||null, original_due:f.original_due.value||null,
+    new_due:f.new_due.value, kind:f.kind.value, note:f.note.value, source_url:f.source_url.value, source_title:f.source_title.value, notify:f.notify.checked};
+  if(body.original_due) body.fy_end=null;
+  try { const j=await duesApi('POST',body); resetOverrideForm(); await loadDues(); alert('Saved. The website now shows the new date.'+(body.notify?` ${j.notified} subscriber(s) emailed.`:'')); }
+  catch(e){ alert('Could not save: '+e.message); }
+}
+async function dismissItem(id){ try{ await duesApi('POST',{action:'dismiss',item_id:id}); await loadDues(); }catch(e){ alert(e.message); } }
+async function removeOverride(id){
+  if(!confirm('Remove this extension? The website will go back to the regular due date.')) return;
+  try{ await duesApi('POST',{action:'deactivate',override_id:id}); await loadDues(); }catch(e){ alert(e.message); }
 }
 
 // ── HELPERS ──

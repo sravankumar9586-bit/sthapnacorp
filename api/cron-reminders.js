@@ -1,6 +1,8 @@
 const { query } = require('./_lib/db');
 const mail = require('./_lib/mail');
 const { isAdmin, safeEqual } = require('./_lib/auth');
+const { loadOverrides } = require('./_lib/overrides');
+const { runWatch } = require('./_lib/watch');
 const D = require('../assets/deadlines.js');
 
 const SITE = process.env.SITE_URL || 'https://sthapnacorp.com';
@@ -19,6 +21,27 @@ module.exports = async function (req, res) {
   const cronOk = process.env.CRON_SECRET && safeEqual(req.headers.authorization, `Bearer ${process.env.CRON_SECRET}`);
   if (!cronOk && !isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
   if (!mail.configured()) return res.status(500).json({ error: 'SMTP is not configured' });
+
+  // 1. Check MCA, CBDT, CBIC and news for new extensions and tell the owner what to review.
+  let watched = 0;
+  try {
+    const fresh = await runWatch();
+    watched = fresh.length;
+    if (fresh.length) {
+      const e = mail.esc;
+      await mail.send({
+        to: process.env.NOTIFY_EMAIL || process.env.SMTP_USER,
+        subject: `Possible due-date extension${fresh.length === 1 ? '' : 's'} found (${fresh.length}) — please review`,
+        html: mail.layout('New announcements to review', `
+          <p>The daily check found these announcements that may change a due date. Open the admin panel → <strong>Due dates &amp; extensions</strong> to apply or dismiss them. Nothing changes on the website until you approve.</p>
+          <ul>${fresh.map((f) => `<li><a href="${e(f.url)}">${e(f.title)}</a><br><span style="font-size:13px;color:#7E786F">${e(f.source_name)}</span></li>`).join('')}</ul>
+          <p><a href="${SITE}/admin">Open admin panel</a></p>`),
+      }).catch((err) => console.error('watch digest failed:', err.message));
+    }
+  } catch (err) { console.error('watch failed:', err.message); }
+
+  // 2. Apply approved extensions before working out reminders.
+  await loadOverrides();
 
   const today = D.todayIST();
   const horizon = D.addDays(today, 31);
@@ -45,7 +68,7 @@ module.exports = async function (req, res) {
     const e = mail.esc;
     const rows = items.map((i) => `<tr>
       <td style="padding:8px 12px 8px 0;white-space:nowrap;vertical-align:top"><strong>${D.fmt(i.e.date)}</strong><br><span style="font-size:13px;color:${i.daysLeft <= 7 ? '#9B1C1C' : '#A35A00'}">${i.daysLeft === 0 ? 'due today' : i.daysLeft === 1 ? 'tomorrow' : i.daysLeft + ' days left'}</span></td>
-      <td style="padding:8px 0;vertical-align:top"><strong>${e(i.e.form)}</strong> — ${e(i.e.title)}${i.e.note ? `<br><span style="font-size:13px;color:#7E786F">${e(i.e.note)}</span>` : ''}</td></tr>`).join('');
+      <td style="padding:8px 0;vertical-align:top"><strong>${e(i.e.form)}</strong> — ${e(i.e.title)}${i.e.extension ? `<br><span style="font-size:13px;color:#1F6B3A">Extended from ${D.fmt(i.e.originalDate)}${i.e.extension.source_url ? ` · <a href="${e(i.e.extension.source_url)}" style="color:#1F6B3A">official notice</a>` : ''}</span>` : ''}${i.e.note ? `<br><span style="font-size:13px;color:#7E786F">${e(i.e.note)}</span>` : ''}</td></tr>`).join('');
     const soonest = Math.min(...items.map((i) => i.daysLeft));
     const subject = items.length === 1
       ? `${items[0].e.form} due ${D.fmt(items[0].e.date)} (${soonest === 0 ? 'today' : soonest + ' day' + (soonest === 1 ? '' : 's')})`
@@ -59,7 +82,7 @@ module.exports = async function (req, res) {
           <table cellpadding="0" cellspacing="0" style="font-size:15px;width:100%">${rows}</table>
           <p style="margin-top:18px"><a href="https://wa.me/918686145656?text=${waText(items)}" style="display:inline-block;background:#1FA855;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:bold">Ask us to file these</a></p>
           <p>Or reply to this email for a written quote.</p>
-          <p style="font-size:13px;color:#7E786F">Statutory due dates as we understand them today; extensions by MCA or CBDT can change them. <a href="${SITE}/api/subscribe?unsubscribe=${s.token}" style="color:#7E786F">Unsubscribe</a></p>`),
+          <p style="font-size:13px;color:#7E786F">Due dates include extensions announced by MCA, CBDT and CBIC up to today; we check official sources daily. <a href="${SITE}/api/subscribe?unsubscribe=${s.token}" style="color:#7E786F">Unsubscribe</a></p>`),
       });
       emails++;
       digest.push(`${s.name} <${s.email}>: ${items.map((i) => i.e.form + ' ' + D.fmt(i.e.date)).join(', ')}`);
@@ -78,5 +101,5 @@ module.exports = async function (req, res) {
     }).catch((err) => console.error('digest failed:', err.message));
   }
 
-  return res.status(200).json({ ok: true, subscribers: subs.length, emails, failures, date: D.iso(today) });
+  return res.status(200).json({ ok: true, subscribers: subs.length, emails, failures, announcements: watched, date: D.iso(today) });
 };
