@@ -41,7 +41,7 @@ function layout(title, bodyHtml) {
 ${bodyHtml}
 </td></tr>
 <tr><td style="padding:16px 24px;border-top:1px solid #E5DFD4;font-size:13px;color:#7E786F">
-SthapnaCorp · Hyderabad · +91 89192 32657 · <a href="https://wa.me/918919232657" style="color:#1A2F5A">WhatsApp</a>
+SthapnaCorp · Hyderabad · +91 86861 45656 · <a href="https://wa.me/918686145656" style="color:#1A2F5A">WhatsApp</a>
 </td></tr></table></td></tr></table></body></html>`;
 }
 

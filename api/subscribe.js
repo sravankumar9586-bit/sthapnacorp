@@ -67,7 +67,7 @@ module.exports = async function (req, res) {
             html: mail.layout('Your reminders are set up', `
               <p>Hi ${mail.esc(name.split(' ')[0])}, we will email you 30, 7 and 1 day before each of your due dates. Here is what is coming up:</p>
               <table cellpadding="0" cellspacing="0" style="font-size:15px">${rows || '<tr><td>No deadlines in the next four months.</td></tr>'}</table>
-              <p>Want us to file these for you? Reply to this email or <a href="https://wa.me/918919232657">message us on WhatsApp</a> for a written quote.</p>
+              <p>Want us to file these for you? Reply to this email or <a href="https://wa.me/918686145656">message us on WhatsApp</a> for a written quote.</p>
               <p style="font-size:13px;color:#7E786F">Dates are statutory due dates and can change by notification. <a href="${unsub}" style="color:#7E786F">Unsubscribe</a></p>`),
           }),
           mail.send({

@@ -60,7 +60,7 @@ module.exports = async function (req, res) {
             subject: 'We have your enquiry — SthapnaCorp',
             html: mail.layout(`Thanks, ${lead.name.split(' ')[0]}`, `
               <p>We have received your enquiry${lead.service ? ' about <strong>' + e(lead.service) + '</strong>' : ''}. We will call you on ${e(lead.mobile)} within one working day with a written quote and a document checklist.</p>
-              <p>If it is urgent, message us on <a href="https://wa.me/918919232657">WhatsApp</a> or reply to this email.</p>`),
+              <p>If it is urgent, message us on <a href="https://wa.me/918686145656">WhatsApp</a> or reply to this email.</p>`),
           }));
         }
         const results = await Promise.allSettled(jobs);
