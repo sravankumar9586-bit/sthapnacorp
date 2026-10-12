@@ -295,7 +295,7 @@ tbody tr:last-child td{border-bottom:none}
         <label class="ovr-wide">Official circular / notification link<input class="status-select" name="source_url" type="url" maxlength="500" placeholder="https://..."></label>
         <label class="ovr-wide">Circular title<input class="status-select" name="source_title" maxlength="300" placeholder="e.g. CBDT Circular No. 10/2026"></label>
         <label style="display:flex;gap:8px;align-items:center;margin:10px 0;font-size:14px"><input type="checkbox" name="notify" checked> Email subscribers who are affected</label>
-        <p style="font-size:13px;color:var(--ink3);margin-bottom:10px">Pick the financial year for annual filings (AOC-4, MGT-7, ITR, LLP forms, tax audit, GSTR-9). For monthly or quarterly filings (GSTR-1, GSTR-3B, TDS, advance tax), leave the year blank and enter the original due date instead.</p>
+        <p style="font-size:13px;color:var(--ink3);margin-bottom:10px">Pick the financial year for annual filings (AOC-4, MGT-7, ITR, LLP forms, tax audit, GSTR-9). For monthly or quarterly filings (GSTR-1, GSTR-3B, TDS, advance tax, MSME-1), enter the original due date. If an extension covers only some cases, give the original date too (e.g. ITR-5 originally due 31 Oct moves only audited LLPs).</p>
         <button class="btn btn-navy btn-sm" type="submit">Save extension</button>
         <button class="btn btn-ghost btn-sm" type="button" onclick="resetOverrideForm()">Clear</button>
       </form>
@@ -811,7 +811,8 @@ async function saveOverride(ev){
   const f=ev.target.elements;
   const body={action:'create', item_id:f.item_id.value||null, form_key:f.form_key.value, fy_end:f.fy_end.value||null, original_due:f.original_due.value||null,
     new_due:f.new_due.value, kind:f.kind.value, note:f.note.value, source_url:f.source_url.value, source_title:f.source_title.value, notify:f.notify.checked};
-  if(body.original_due) body.fy_end=null;
+  // Annual filings match by year (plus the original date if given, e.g. ITR-5 audit cases only); monthly/quarterly ones by original date.
+  if(!['aoc4','mgt7','agm','dpt3','itr6','itr5','3cd','form11','form8','gstr9'].includes(body.form_key)) body.fy_end=null;
   try { const j=await duesApi('POST',body); resetOverrideForm(); await loadDues(); alert('Saved. The website now shows the new date.'+(body.notify?` ${j.notified} subscriber(s) emailed.`:'')); }
   catch(e){ alert('Could not save: '+e.message); }
 }

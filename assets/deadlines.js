@@ -46,7 +46,10 @@
     for (var i = 0; i < OVERRIDES.length; i++) {
       var o = OVERRIDES[i];
       if (o.form_key !== base) continue;
-      if (o.fy_end ? (fyEnd && Number(o.fy_end) === fyEnd) : o.original_due === isoDate) return o;
+      // Both may be given, e.g. ITR-5 FY 2025-26 originally due 31 Oct (audit cases only).
+      if (o.fy_end && !(fyEnd && Number(o.fy_end) === fyEnd)) continue;
+      if (o.original_due && o.original_due !== isoDate) continue;
+      return o;
     }
     return null;
   }
