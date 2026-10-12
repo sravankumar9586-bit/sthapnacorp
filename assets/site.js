@@ -66,34 +66,37 @@
     $all('.nav a', head).forEach(function (a) { a.addEventListener('click', function () { head.classList.remove('open'); }); });
   }
 
-  // ── deadline bar ──
-  var bar = $('#dbar .wrap');
-  var headline = D.headline(today, 5);
-  if (bar && !headline.length) $('#dbar').hidden = true;
-  if (bar && headline.length) {
-    var first = headline[0];
-    var same = headline.filter(function (e) { return D.iso(e.date) === D.iso(first.date); });
-    var forms = same.map(function (e) { return e.form; }).join(' & ');
-    var n = D.daysBetween(today, first.date);
-    var allRoc = same.every(function (e) { return e.note.indexOf('₹100') === 0; });
-    bar.innerHTML =
-      '<span><strong>' + esc(forms) + '</strong> due ' + D.fmt(first.date) + ' · ' + daysLabel(n) + '</span>' +
-      (allRoc ? '<span class="dbar-extra">Late filing costs ₹100 a day per form.</span>' : '') +
-      '<a href="' + waUrl('Hi, I need to file ' + forms + ' before ' + D.fmt(first.date) + '. Can you help?') + '" target="_blank" rel="noopener">File it on time →</a>';
+  // ── deadline bar + board (re-drawn when official extensions load) ──
+  var headline = [];
+  function renderTop() {
+    headline = D.headline(today, 5);
+    var bar = $('#dbar .wrap');
+    if (bar) $('#dbar').hidden = !headline.length;
+    if (bar && headline.length) {
+      var first = headline[0];
+      var same = headline.filter(function (e) { return D.iso(e.date) === D.iso(first.date); });
+      var forms = same.map(function (e) { return e.form; }).join(' & ');
+      var n = D.daysBetween(today, first.date);
+      var allRoc = same.every(function (e) { return e.note.indexOf('₹100') === 0; });
+      var ext = same.filter(function (e) { return e.extension; })[0];
+      bar.innerHTML =
+        '<span><strong>' + esc(forms) + '</strong> due ' + D.fmt(first.date) + ' · ' + daysLabel(n) + '</span>' +
+        (ext ? '<span class="dbar-extra">Extended from ' + D.fmt(ext.originalDate) + '.</span>' : allRoc ? '<span class="dbar-extra">Late filing costs ₹100 a day per form.</span>' : '') +
+        '<a href="' + waUrl('Hi, I need to file ' + forms + ' before ' + D.fmt(first.date) + '. Can you help?') + '" target="_blank" rel="noopener">File it on time →</a>';
+    }
+    var board = $('#board-rows');
+    if (board) {
+      var bt = $('#board-today');
+      if (bt) bt.textContent = 'As of ' + D.fmt(today);
+      board.innerHTML = headline.map(function (e) {
+        var n = D.daysBetween(today, e.date);
+        return '<div class="board-row"><span class="code">' + esc(e.form) + '</span>' +
+          '<span class="t">' + esc(e.title) + '<small>' + D.fmt(e.date) + (e.extension ? ' · extended' : '') + '</small></span>' +
+          '<span class="days ' + heat(n) + '">' + daysLabel(n) + '</span></div>';
+      }).join('');
+    }
   }
-
-  // ── deadline board ──
-  var board = $('#board-rows');
-  if (board) {
-    var bt = $('#board-today');
-    if (bt) bt.textContent = 'As of ' + D.fmt(today);
-    board.innerHTML = headline.map(function (e) {
-      var n = D.daysBetween(today, e.date);
-      return '<div class="board-row"><span class="code">' + esc(e.form) + '</span>' +
-        '<span class="t">' + esc(e.title) + '<small>' + D.fmt(e.date) + '</small></span>' +
-        '<span class="days ' + heat(n) + '">' + daysLabel(n) + '</span></div>';
-    }).join('');
-  }
+  renderTop();
 
   // ── compliance calendar ──
   var calForm = $('#cal-form');
@@ -123,6 +126,8 @@
       var n = D.daysBetween(today, e.date);
       html += '<div class="cal-item"><div class="cal-date tnum">' + e.date.getUTCDate() + '<small>' + MONTHS[e.date.getUTCMonth()].slice(0, 3) + '</small></div>' +
         '<div class="cal-body"><span class="code">' + esc(e.form) + '</span><span class="ttl">' + esc(e.title) + '</span>' +
+        (e.extension ? '<div class="ext">' + (e.extension.kind === 'fee_waiver' ? 'No additional fee until ' + D.fmt(e.date) + ' (normally ' + D.fmt(e.originalDate) + ')' : 'Extended from ' + D.fmt(e.originalDate)) +
+          (e.extension.source_url ? ' · <a href="' + esc(e.extension.source_url) + '" target="_blank" rel="noopener">official notice</a>' : '') + '</div>' : '') +
         (e.note ? '<div class="note">' + esc(e.note) + '</div>' : '') + '</div>' +
         '<span class="pill ' + heat(n) + '">' + daysLabel(n) + '</span></div>';
     });
@@ -171,6 +176,7 @@
 
   // ── late fee calculator ──
   var feeForm = $('#fee-form');
+  var renderFee = null;
   if (feeForm) {
     var fySel = feeForm.elements.oldest;
     var latestFyEnd = today.getUTCFullYear() - (today.getUTCMonth() < 3 ? 1 : 0);
@@ -182,7 +188,7 @@
       fySel.appendChild(o);
     }
     feeForm.elements.filed.value = D.iso(today);
-    var renderFee = function () {
+    renderFee = function () {
       var forms = feeForm.elements.forms.value.split(',');
       var filed = D.parse(feeForm.elements.filed.value) || today;
       var r = D.lateFee(forms, Number(fySel.value), filed);
@@ -190,7 +196,7 @@
       var label = r.rows.length ? r.rows.length + ' late form' + (r.rows.length > 1 ? 's' : '') + ', filed on ' + D.fmt(filed) : 'Nothing is late yet for these forms on ' + D.fmt(filed) + '.';
       $('#fee-sub').textContent = label;
       $('#fee-rows').innerHTML = r.rows.map(function (row) {
-        return '<tr><td>' + esc(row.form) + '</td><td>' + esc(row.fy) + '</td><td>' + D.fmt(row.due) + '</td><td class="num">' + row.daysLate.toLocaleString('en-IN') + '</td><td class="num">' + rupees(row.fee) + '</td></tr>';
+        return '<tr><td>' + esc(row.form) + (row.note ? '<small class="fee-note">' + esc(row.note) + '</small>' : '') + '</td><td>' + esc(row.fy) + '</td><td>' + D.fmt(row.due) + '</td><td class="num">' + row.daysLate.toLocaleString('en-IN') + '</td><td class="num">' + rupees(row.fee) + '</td></tr>';
       }).join('');
       $('#fee-table').hidden = !r.rows.length;
       var years = r.rows.reduce(function (acc, row) { acc[row.fy] = 1; return acc; }, {});
@@ -202,6 +208,33 @@
     feeForm.addEventListener('input', renderFee);
     feeForm.addEventListener('change', renderFee);
     renderFee();
+  }
+
+  // ── official extensions (approved after checking MCA, CBDT, CBIC and PIB daily) ──
+  function renderUpdates(data) {
+    var box = $('#official-updates');
+    if (!box) return;
+    var live = (data.overrides || []).filter(function (o) { return D.daysBetween(today, D.parse(o.new_due)) >= -30; });
+    var checked = data.last_checked ? new Date(data.last_checked) : null;
+    var when = checked ? checked.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' }) : '';
+    box.innerHTML = '<h3>Official extensions</h3>' +
+      (live.length ? '<ul>' + live.map(function (o) {
+        return '<li><strong>' + esc(o.form_label) + (o.fy_end ? ' (FY ' + (o.fy_end - 1) + '-' + String(o.fy_end).slice(2) + ')' : '') + '</strong> — ' +
+          (o.kind === 'fee_waiver' ? 'no additional fee until ' : 'due date extended to ') + D.fmt(D.parse(o.new_due)) +
+          (o.source_url ? ' · <a href="' + esc(o.source_url) + '" target="_blank" rel="noopener">' + esc(o.source_title || 'official notice') + '</a>' : '') + '</li>';
+      }).join('') + '</ul>' : '<p>No extensions are currently in force. All dates shown are the regular statutory due dates.</p>') +
+      '<p class="muted">We check MCA, CBDT (Income Tax), CBIC (GST) and PIB announcements every day' + (when ? '. Last checked ' + when : '') + '. The calendar, reminders and late-fee estimates follow any extension automatically.</p>';
+    box.hidden = false;
+  }
+  if (window.fetch && (document.querySelector('#official-updates, #dbar, #cal-form, #fee-form'))) {
+    fetch('/api/updates').then(function (r) { return r.ok ? r.json() : null; }).then(function (data) {
+      if (!data) return;
+      D.setOverrides(data.overrides || []);
+      renderTop();
+      if (calForm && calOut) renderCal();
+      if (renderFee) renderFee();
+      renderUpdates(data);
+    }).catch(function () { /* the regular statutory dates stay on screen */ });
   }
 
   // ── compliance health check ──

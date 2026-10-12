@@ -27,6 +27,38 @@ CREATE TABLE IF NOT EXISTS subscribers (
   token       TEXT NOT NULL UNIQUE,
   active      BOOLEAN NOT NULL DEFAULT TRUE
 );
+CREATE TABLE IF NOT EXISTS due_overrides (
+  id           SERIAL PRIMARY KEY,
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  form_key     TEXT NOT NULL,
+  fy_end       INTEGER,
+  original_due DATE,
+  new_due      DATE NOT NULL,
+  kind         TEXT NOT NULL DEFAULT 'extension',
+  note         TEXT,
+  source_url   TEXT,
+  source_title TEXT,
+  active       BOOLEAN NOT NULL DEFAULT TRUE,
+  notified_at  TIMESTAMPTZ
+);
+CREATE TABLE IF NOT EXISTS watch_items (
+  id           SERIAL PRIMARY KEY,
+  found_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  source       TEXT NOT NULL,
+  title        TEXT NOT NULL,
+  url          TEXT NOT NULL UNIQUE,
+  published_at TIMESTAMPTZ,
+  suggestion   JSONB,
+  status       TEXT NOT NULL DEFAULT 'new'
+);
+CREATE TABLE IF NOT EXISTS watch_sources (
+  source       TEXT PRIMARY KEY,
+  checked_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  ok           BOOLEAN NOT NULL,
+  scanned      INTEGER NOT NULL DEFAULT 0,
+  matched      INTEGER NOT NULL DEFAULT 0,
+  error        TEXT
+);
 CREATE TABLE IF NOT EXISTS reminder_log (
   subscriber_id INTEGER NOT NULL REFERENCES subscribers(id) ON DELETE CASCADE,
   event_key     TEXT NOT NULL,

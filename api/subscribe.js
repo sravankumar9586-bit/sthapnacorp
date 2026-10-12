@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const { query } = require('./_lib/db');
 const mail = require('./_lib/mail');
 const { isAdmin } = require('./_lib/auth');
+const { loadOverrides } = require('./_lib/overrides');
 const D = require('../assets/deadlines.js');
 
 const SITE = process.env.SITE_URL || 'https://sthapnacorp.com';
@@ -69,9 +70,10 @@ module.exports = async function (req, res) {
       }
 
       if (sendMail) {
+        await loadOverrides().catch((err) => console.error('overrides not loaded:', err.message));
         const today = D.todayIST();
         const upcoming = D.generate(profile, today, D.addDays(today, 120)).slice(0, 8);
-        const rows = upcoming.map((e) => `<tr><td style="padding:6px 10px 6px 0;white-space:nowrap">${D.fmt(e.date)}</td><td style="padding:6px 0"><strong>${mail.esc(e.form)}</strong> — ${mail.esc(e.title)}</td></tr>`).join('');
+        const rows = upcoming.map((e) => `<tr><td style="padding:6px 10px 6px 0;white-space:nowrap">${D.fmt(e.date)}</td><td style="padding:6px 0"><strong>${mail.esc(e.form)}</strong> — ${mail.esc(e.title)}${e.extension ? ` <span style="color:#1F6B3A">(extended from ${D.fmt(e.originalDate)})</span>` : ''}</td></tr>`).join('');
         const unsub = `${SITE}/api/subscribe?unsubscribe=${r.rows[0].token}`;
         const jobs = [
           mail.send({
@@ -81,7 +83,7 @@ module.exports = async function (req, res) {
               <p>Hi ${mail.esc(name.split(' ')[0])}, we will email you 30, 7 and 1 day before each of your due dates. Here is what is coming up:</p>
               <table cellpadding="0" cellspacing="0" style="font-size:15px">${rows || '<tr><td>No deadlines in the next four months.</td></tr>'}</table>
               <p>Want us to file these for you? Reply to this email or <a href="https://wa.me/918686145656">message us on WhatsApp</a> for a written quote.</p>
-              <p style="font-size:13px;color:#7E786F">Dates are statutory due dates and can change by notification. <a href="${unsub}" style="color:#7E786F">Unsubscribe</a></p>`),
+              <p style="font-size:13px;color:#7E786F">Dates include extensions announced so far; we check MCA, CBDT and CBIC daily and will tell you if a date moves. <a href="${unsub}" style="color:#7E786F">Unsubscribe</a></p>`),
           }),
           mail.send({
             to: process.env.NOTIFY_EMAIL || process.env.SMTP_USER,

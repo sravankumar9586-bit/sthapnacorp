@@ -1,6 +1,17 @@
 {
   "cleanUrls": true,
   "crons": [
-    { "path": "/api/cron-reminders", "schedule": "30 2 * * *" }
-  ]
+    {
+      "path": "/api/cron-reminders",
+      "schedule": "30 2 * * *"
+    }
+  ],
+  "functions": {
+    "api/cron-reminders.js": {
+      "maxDuration": 60
+    },
+    "api/updates.js": {
+      "maxDuration": 60
+    }
+  }
 }
