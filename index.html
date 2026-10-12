@@ -11,6 +11,11 @@
 <meta property="og:description" content="Fixed-fee ROC compliance, incorporation, FEMA filings and closures for private companies, LLPs and OPCs.">
 <meta property="og:url" content="https://sthapnacorp.com/">
 <meta name="theme-color" content="#0D1B3E">
+<meta property="og:image" content="https://sthapnacorp.com/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script defer src="/_vercel/insights/script.js"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230D1B3E'/><rect x='7' y='18' width='5' height='9' rx='1' fill='%234A6FA5'/><rect x='14' y='13' width='5' height='14' rx='1' fill='%237A9CC5'/><rect x='21' y='8' width='5' height='19' rx='1' fill='%23FFFFFF'/><circle cx='26' cy='7' r='2.5' fill='%23C9A84C'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,7 +59,7 @@
     <nav class="nav" aria-label="Main">
       <a href="/services">Services</a>
       <a href="#calendar">Due dates</a>
-      <a href="#late-fee">Late fee calculator</a>
+      <a href="#health-check">Free health check</a>
       <a href="/incorporate">Register a company</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -74,8 +79,18 @@
       <p class="lede">Incorporation, annual ROC filings, registrations and licences, FEMA reporting, corporate changes and closures for companies, LLPs and firms. A written quote before any work starts. Every filing prepared and reviewed by CA/CS professionals.</p>
       <div class="hero-ctas">
         <a class="btn btn-gold btn-lg" data-wa="Hi SthapnaCorp, I'd like a written quote for compliance work.">Get a quote on WhatsApp</a>
-        <a class="btn btn-line-light btn-lg" href="#contact">Send an enquiry</a>
       </div>
+      <form class="lead-form quick-form" novalidate aria-label="Request a call back">
+        <div class="quick-label">Prefer a call? Leave your number and we'll call you back.</div>
+        <div class="quick-row">
+          <input class="input" name="name" required maxlength="100" placeholder="Your name" autocomplete="name" aria-label="Your name">
+          <input class="input" name="mobile" type="tel" required maxlength="20" placeholder="Mobile number" autocomplete="tel" aria-label="Mobile number">
+          <button class="btn btn-gold" type="submit">Call me back</button>
+        </div>
+        <input type="hidden" name="service" value="Callback request">
+        <div class="hp" aria-hidden="true"><input name="website" tabindex="-1" autocomplete="off"></div>
+        <div class="form-msg" role="status"></div>
+      </form>
       <a class="hero-sub-link" href="/incorporate">Starting a company? Apply online →</a>
     </div>
     <aside class="board" aria-label="Upcoming statutory deadlines">
@@ -145,49 +160,80 @@
   </div>
 </section>
 
-<section class="section alt" id="retainers">
+
+
+<section class="section alt" id="health-check">
   <div class="wrap">
     <div class="sec-head">
-      <div class="eyebrow">Annual compliance plans</div>
-      <h2>Hand over the whole compliance year</h2>
-      <p class="lede">One engagement for every recurring filing, with a reminder before each due date. Plans for LLPs and firms are tailored on request.</p>
+      <div class="eyebrow">Free tool · Compliance health check</div>
+      <h2>Is your company exposed to penalties right now?</h2>
+      <p class="lede">Answer seven quick questions. You'll see what needs attention and why, and you can ask us for a free review of your MCA records.</p>
     </div>
-    <div class="plans">
-      <div class="plan">
-        <h3>Essentials</h3>
-        <ul>
-          <li>Board meeting notices, agendas and minutes</li>
-          <li>Board's report, AGM notice and minutes</li>
-          <li>AOC-4 and MGT-7/7A filed</li>
-          <li>DPT-3 and both MSME-1 returns where applicable</li>
-          <li>DIR-3 KYC updates for directors</li>
-          <li>Email reminders before every due date</li>
-        </ul>
-        <a class="btn btn-navy" href="#contact" data-service="Annual compliance plan">Get a quote for Essentials</a>
-      </div>
-      <div class="plan feature">
-        <div class="plan-tag">Recommended for funded startups</div>
-        <h3>Growth</h3>
-        <ul>
-          <li>Everything in Essentials</li>
-          <li>Company income tax return (ITR-6)</li>
-          <li>Quarterly TDS returns</li>
-          <li>Advance tax working before each instalment</li>
-          <li>One corporate change a year included, such as a director change or allotment</li>
-          <li>Statutory registers kept up to date</li>
-        </ul>
-        <a class="btn btn-gold" href="#contact" data-service="Annual compliance plan">Get a quote for Growth</a>
-      </div>
-      <div class="plan">
-        <h3>Complete</h3>
-        <ul>
-          <li>Everything in Growth</li>
-          <li>Monthly GSTR-1 and GSTR-3B</li>
-          <li>GSTR-9 annual return</li>
-          <li>Quarterly compliance review call</li>
-          <li>Priority WhatsApp support</li>
-        </ul>
-        <a class="btn btn-navy" href="#contact" data-service="Annual compliance plan">Get a quote for Complete</a>
+    <div class="tool">
+      <form class="panel hc-form" id="hc-form" onsubmit="return false">
+        <fieldset class="hc-q"><legend>What do you run?</legend>
+          <label class="opt"><input type="radio" name="entity" value="pvt" checked><span>Private limited</span></label>
+          <label class="opt"><input type="radio" name="entity" value="opc"><span>OPC</span></label>
+          <label class="opt"><input type="radio" name="entity" value="llp"><span>LLP</span></label>
+          <label class="opt"><input type="radio" name="entity" value="none"><span>Not registered yet</span></label>
+        </fieldset>
+        <fieldset class="hc-q" data-hide-for="none"><legend>When was it registered?</legend>
+          <label class="opt"><input type="radio" name="age" value="old" checked><span>Before April 2025</span></label>
+          <label class="opt"><input type="radio" name="age" value="fy26"><span>Apr 2025 – Mar 2026</span></label>
+          <label class="opt"><input type="radio" name="age" value="new"><span>April 2026 or later</span></label>
+        </fieldset>
+        <fieldset class="hc-q" data-hide-for="none" data-hide-age="new"><legend>Annual ROC filings for past years</legend>
+          <label class="opt"><input type="radio" name="filings" value="ontime"><span>All filed on time</span></label>
+          <label class="opt"><input type="radio" name="filings" value="late"><span>Filed, some late</span></label>
+          <label class="opt"><input type="radio" name="filings" value="one"><span>One year pending</span></label>
+          <label class="opt"><input type="radio" name="filings" value="many"><span>Two or more years pending</span></label>
+          <label class="opt"><input type="radio" name="filings" value="unsure" checked><span>Not sure</span></label>
+        </fieldset>
+        <fieldset class="hc-q" data-hide-for="none"><legend>Are all directors' or partners' DINs active?</legend>
+          <label class="opt"><input type="radio" name="din" value="yes"><span>Yes</span></label>
+          <label class="opt"><input type="radio" name="din" value="no"><span>Some are deactivated</span></label>
+          <label class="opt"><input type="radio" name="din" value="unsure" checked><span>Not sure</span></label>
+        </fieldset>
+        <fieldset class="hc-q" data-hide-for="none llp"><legend>Commencement of business (INC-20A) filed?</legend>
+          <label class="opt"><input type="radio" name="inc20a" value="yes"><span>Yes</span></label>
+          <label class="opt"><input type="radio" name="inc20a" value="no"><span>No</span></label>
+          <label class="opt"><input type="radio" name="inc20a" value="unsure" checked><span>Not sure</span></label>
+        </fieldset>
+        <fieldset class="hc-q" data-hide-for="none llp"><legend>Is a statutory auditor appointed?</legend>
+          <label class="opt"><input type="radio" name="auditor" value="yes"><span>Yes</span></label>
+          <label class="opt"><input type="radio" name="auditor" value="no"><span>No</span></label>
+          <label class="opt"><input type="radio" name="auditor" value="unsure" checked><span>Not sure</span></label>
+        </fieldset>
+        <fieldset class="hc-q" data-hide-for="none"><legend>GST</legend>
+          <label class="opt"><input type="radio" name="gst" value="none" checked><span>Not registered</span></label>
+          <label class="opt"><input type="radio" name="gst" value="ok"><span>Returns up to date</span></label>
+          <label class="opt"><input type="radio" name="gst" value="pending"><span>Returns pending</span></label>
+        </fieldset>
+        <fieldset class="hc-q" data-hide-for="none llp"><legend>Board minutes and statutory registers kept?</legend>
+          <label class="opt"><input type="radio" name="minutes" value="yes"><span>Yes</span></label>
+          <label class="opt"><input type="radio" name="minutes" value="no"><span>No</span></label>
+          <label class="opt"><input type="radio" name="minutes" value="unsure" checked><span>Not sure</span></label>
+        </fieldset>
+      </form>
+      <div class="panel hc-result" aria-live="polite">
+        <div class="label">Your result</div>
+        <div class="hc-level" id="hc-level"></div>
+        <p class="hc-summary" id="hc-summary"></p>
+        <ul class="hc-issues" id="hc-issues"></ul>
+        <form class="lead-form hc-lead" id="hc-lead" novalidate>
+          <h3>Get a free review of these points</h3>
+          <p class="small muted">We check your company on the MCA portal and call you with what needs fixing and a written quote.</p>
+          <div class="row2">
+            <div class="field"><label for="hc-name">Name</label><input class="input" id="hc-name" name="name" required maxlength="100" autocomplete="name"></div>
+            <div class="field"><label for="hc-mobile">Mobile</label><input class="input" id="hc-mobile" name="mobile" type="tel" required maxlength="20" autocomplete="tel"></div>
+          </div>
+          <div class="field"><label for="hc-company">Company or LLP name</label><input class="input" id="hc-company" name="company" maxlength="160" autocomplete="organization"></div>
+          <input type="hidden" name="service" value="Compliance health check">
+          <input type="hidden" name="message" id="hc-message" value="">
+          <div class="hp" aria-hidden="true"><input name="website" tabindex="-1" autocomplete="off"></div>
+          <div class="hero-ctas" style="margin-top:4px"><button class="btn btn-navy" type="submit">Request my free review</button><a class="btn btn-wa" id="hc-wa">Send on WhatsApp</a></div>
+          <div class="form-msg" role="status"></div>
+        </form>
       </div>
     </div>
   </div>
@@ -281,6 +327,54 @@
           <a class="btn btn-gold" id="fee-cta" href="#contact" target="_blank" rel="noopener">Send these figures on WhatsApp</a>
           <a class="btn btn-line-light" href="/services/overdue-roc-filings">How we clear backlogs</a>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="retainers">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Annual compliance plans</div>
+      <h2>Hand over the whole compliance year</h2>
+      <p class="lede">One engagement for every recurring filing, with a reminder before each due date. Plans for LLPs and firms are tailored on request.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Essentials</h3>
+        <ul>
+          <li>Board meeting notices, agendas and minutes</li>
+          <li>Board's report, AGM notice and minutes</li>
+          <li>AOC-4 and MGT-7/7A filed</li>
+          <li>DPT-3 and both MSME-1 returns where applicable</li>
+          <li>DIR-3 KYC updates for directors</li>
+          <li>Email reminders before every due date</li>
+        </ul>
+        <a class="btn btn-navy" href="#contact" data-service="Annual compliance plan">Get a quote for Essentials</a>
+      </div>
+      <div class="plan feature">
+        <div class="plan-tag">Recommended for funded startups</div>
+        <h3>Growth</h3>
+        <ul>
+          <li>Everything in Essentials</li>
+          <li>Company income tax return (ITR-6)</li>
+          <li>Quarterly TDS returns</li>
+          <li>Advance tax working before each instalment</li>
+          <li>One corporate change a year included, such as a director change or allotment</li>
+          <li>Statutory registers kept up to date</li>
+        </ul>
+        <a class="btn btn-gold" href="#contact" data-service="Annual compliance plan">Get a quote for Growth</a>
+      </div>
+      <div class="plan">
+        <h3>Complete</h3>
+        <ul>
+          <li>Everything in Growth</li>
+          <li>Monthly GSTR-1 and GSTR-3B</li>
+          <li>GSTR-9 annual return</li>
+          <li>Quarterly compliance review call</li>
+          <li>Priority WhatsApp support</li>
+        </ul>
+        <a class="btn btn-navy" href="#contact" data-service="Annual compliance plan">Get a quote for Complete</a>
       </div>
     </div>
   </div>
@@ -383,12 +477,22 @@
         <a href="/services/nri-itr-tax-notices">NRI tax &amp; notices</a>
       </div>
       <div>
+        <h4>Registrations</h4>
+        <a href="/services/gst-registration-hyderabad">GST registration</a>
+        <a href="/services/trademark-registration">Trademark registration</a>
+        <a href="/services/fssai-registration-hyderabad">FSSAI licence</a>
+        <a href="/services/udyam-msme-registration">Udyam (MSME)</a>
+        <a href="/services/section-8-company-registration">Section 8 company</a>
+        <a href="/services/registrations-licences-hyderabad">Licences in Hyderabad</a>
+      </div>
+      <div>
         <h4>Free tools</h4>
         <a href="/#calendar">Compliance calendar</a>
         <a href="/#late-fee">Late fee calculator</a>
         <a href="/guides/compliance-calendar-2026-27">Due dates FY 2026-27</a>
+        <a href="/#health-check">Compliance health check</a>
+        <a href="/guides/dir-3-kyc-2026">DIR-3 KYC new rules</a>
         <a href="/services/company-registration-hyderabad">Register a company in Hyderabad</a>
-        <a href="/services/registrations-licences-hyderabad">Licences in Hyderabad</a>
       </div>
       <div>
         <h4>Contact</h4>

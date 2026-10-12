@@ -202,6 +202,77 @@
     renderFee();
   }
 
+  // ── compliance health check ──
+  var hcForm = $('#hc-form');
+  if (hcForm) {
+    var ENT = { pvt: 'private limited company', opc: 'OPC', llp: 'LLP' };
+    var renderHc = function () {
+      var f = hcForm.elements;
+      var v = function (n) { var el = hcForm.querySelector('input[name="' + n + '"]:checked'); return el ? el.value : ''; };
+      var entity = v('entity'), age = v('age');
+      $all('.hc-q', hcForm).forEach(function (q) {
+        var hideFor = (q.getAttribute('data-hide-for') || '').split(' ');
+        q.hidden = hideFor.indexOf(entity) >= 0 || (q.getAttribute('data-hide-age') === age && age !== '');
+      });
+      var level = $('#hc-level'), summary = $('#hc-summary'), list = $('#hc-issues'), lead = $('#hc-lead');
+      if (entity === 'none') {
+        level.className = 'hc-level ok';
+        level.textContent = 'Start with the right structure';
+        summary.innerHTML = 'Private limited, LLP or OPC? Each has different costs, compliance and fundraising options. <a href="/incorporate">Compare and apply online</a>, or ask us which suits you.';
+        list.innerHTML = '';
+        $('#hc-message').value = 'Health check: not registered yet, wants help choosing a structure.';
+        $('#hc-wa').href = waUrl('Hi SthapnaCorp, I want to start a business. Which structure should I choose?');
+        lead.querySelector('h3').textContent = 'Get free advice on the right structure';
+        return;
+      }
+      lead.querySelector('h3').textContent = 'Get a free review of these points';
+      var isCo = entity !== 'llp';
+      var high = [], med = [], check = [];
+      var filings = age === 'new' ? 'na' : v('filings');
+      var formsTxt = isCo ? 'AOC-4 and MGT-7' : 'Form 8 and Form 11';
+      if (filings === 'many') high.push((isCo ? 'Two or more years of ' + formsTxt + ' pending. At three years every director is disqualified under section 164(2) and the Registrar can strike the company off.' : 'Two or more years of ' + formsTxt + ' pending. The LLP can be struck off and the designated partners face penalties.') + ' The late fee grows by ₹100 a day per form.');
+      if (filings === 'one') high.push('One year of ' + formsTxt + ' pending. The additional fee is growing by ₹100 a day for each form.');
+      if (filings === 'late') med.push('Some filings were late. Check that the additional fees were paid and that no adjudication notice is pending.');
+      if (filings === 'unsure') check.push('Whether every past ' + formsTxt + ' was filed');
+      var din = v('din');
+      if (din === 'no') high.push('Deactivated DINs block every MCA filing until DIR-3 KYC is filed with the ₹5,000 fee.');
+      if (din === 'unsure') check.push('The KYC status of each DIN');
+      if (isCo) {
+        var inc = v('inc20a');
+        if (inc === 'no') high.push('Without INC-20A the company cannot start business or borrow, and faces a ₹50,000 penalty.');
+        if (inc === 'unsure') check.push('Whether INC-20A was filed');
+        var aud = v('auditor');
+        if (aud === 'no') high.push('Every company must have a statutory auditor. Without one, the accounts cannot be audited or filed.');
+        if (aud === 'unsure') check.push('The auditor appointment (ADT-1)');
+        var mins = v('minutes');
+        if (mins === 'no') med.push('Board minutes and statutory registers are mandatory. Gaps surface in bank loans, due diligence and funding rounds.');
+        if (mins === 'unsure') check.push('Minutes books and statutory registers');
+      }
+      var gst = v('gst');
+      if (gst === 'pending') high.push('Pending GST returns attract daily late fees and interest, can block e-way bills, and stop your customers from claiming input tax credit.');
+      var cls, head;
+      if (high.length) { cls = 'bad'; head = 'High risk: act now'; }
+      else if (med.length || check.length >= 3) { cls = 'warn'; head = 'Needs attention'; }
+      else { cls = 'ok'; head = check.length ? 'Mostly fine, a few things to confirm' : 'Looks healthy'; }
+      level.className = 'hc-level ' + cls;
+      level.textContent = head;
+      summary.textContent = high.length + med.length
+        ? (high.length + med.length) + ' issue' + (high.length + med.length > 1 ? 's' : '') + ' found for your ' + ENT[entity] + (check.length ? ', and ' + check.length + ' thing' + (check.length > 1 ? 's' : '') + ' to confirm.' : '.')
+        : (check.length ? 'No problems reported. Confirm these from your MCA records:' : 'Keep it that way: get reminders from the compliance calendar below.');
+      list.innerHTML = high.map(function (t) { return '<li class="hi">' + esc(t) + '</li>'; }).join('') +
+        med.map(function (t) { return '<li class="md">' + esc(t) + '</li>'; }).join('') +
+        check.map(function (t) { return '<li class="ck">Check: ' + esc(t) + '</li>'; }).join('');
+      var lines = ['Health check (' + ENT[entity] + ', registered ' + ({ old: 'before Apr 2025', fy26: 'FY 2025-26', 'new': 'Apr 2026 or later' })[age] + '): ' + head]
+        .concat(high.map(function (t) { return 'HIGH: ' + t; }), med.map(function (t) { return 'MEDIUM: ' + t; }), check.map(function (t) { return 'CHECK: ' + t; }));
+      $('#hc-message').value = lines.join('\n').slice(0, 1900);
+      $('#hc-wa').href = waUrl('Hi SthapnaCorp, I did the compliance health check on your website. Result: ' + head + '. ' + (high.length + med.length) + ' issue(s), ' + check.length + ' to confirm. Please review my company.');
+    };
+    hcForm.addEventListener('change', renderHc);
+    renderHc();
+    var hcWa = $('#hc-wa');
+    if (hcWa) { hcWa.target = '_blank'; hcWa.rel = 'noopener'; hcWa.addEventListener('click', function () { track('contact_whatsapp', { label: 'health check' }); }); }
+  }
+
   // ── "enquire about this" buttons fill the contact form ──
   $all('[data-service]').forEach(function (el) {
     el.addEventListener('click', function () {
