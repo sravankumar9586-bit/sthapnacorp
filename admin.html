@@ -112,6 +112,9 @@ tbody tr:last-child td{border-bottom:none}
 .tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:2px solid var(--cream3)}
 .tab{padding:9px 18px;font-size:15px;color:var(--ink3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;font-family:"Crimson Pro",serif}
 .tab.on{color:var(--navy);font-weight:600;border-bottom-color:var(--navy)}
+.health{padding:14px 18px;border-radius:var(--r-lg);margin-bottom:20px;font-size:15px;line-height:1.5}
+.health.ok{background:var(--greenlight);color:var(--green);border:1px solid #A8D5B8}
+.health.bad{background:var(--redlight);color:var(--red);border:1px solid #E8B4B4}
 .lead-msg{max-width:320px;font-size:13px;color:var(--ink2);white-space:pre-wrap}
 .modal-footer{padding:16px 28px;border-top:1px solid var(--cream3);display:flex;align-items:center;justify-content:space-between;background:var(--cream2);border-radius:0 0 var(--r-xl) var(--r-xl)}
 </style>
@@ -156,6 +159,7 @@ tbody tr:last-child td{border-bottom:none}
   </nav>
 
   <div class="admin-body">
+    <div id="health-box" class="health" hidden></div>
     <div class="tabs">
       <button class="tab on" data-tab="apps" onclick="showTab('apps')">Incorporation applications</button>
       <button class="tab" data-tab="leads" onclick="showTab('leads')">Enquiries <span id="lead-new-count"></span></button>
@@ -291,17 +295,22 @@ let currentAppId = null;
 async function doLogin(){
   ADMIN_PASS = document.getElementById('admin-pass').value;
   const err = document.getElementById('login-err');
-  let status = 0;
-  try { status = (await fetch('/api/leads', {headers:{'x-admin-password':ADMIN_PASS}})).status; }
+  let status = 0, health = null;
+  try {
+    const r = await fetch('/api/status', {headers:{'x-admin-password':ADMIN_PASS}});
+    status = r.status;
+    if(status===200) health = await r.json();
+  }
   catch(e){ err.textContent = 'Could not reach the server: ' + e.message; err.style.display='block'; return; }
   if(status===200){
+    showHealth(health);
     err.style.display='none';
     document.getElementById('login-screen').style.display='none';
     document.getElementById('admin-screen').style.display='block';
     loadApplications().catch(e=>{ const es=document.getElementById('empty-state'); es.style.display='block'; es.querySelector('p').textContent='Could not load applications: '+e.message; });
     loadLeads().catch(()=>{});
   } else if(status!==401){
-    err.textContent = 'Server error (HTTP '+status+'). Check DATABASE_URL and ADMIN_PASSWORD in Vercel.';
+    err.textContent = 'Server error (HTTP '+status+'). Check ADMIN_PASSWORD in Vercel.';
     err.style.display='block';
   } else {
     ADMIN_PASS = '';
@@ -333,6 +342,7 @@ async function loadApplications(){
 }
 async function refreshAll(){
   try {
+    fetch('/api/status',{headers:{'x-admin-password':ADMIN_PASS}}).then(r=>r.ok?r.json():null).then(showHealth).catch(()=>{});
     if(!(await loadApplications())) return doLogout();
     await loadLeads();
     if(!document.getElementById('tab-subs').hidden) await loadSubs();
@@ -549,6 +559,19 @@ function exportCSV(){
   a.href=URL.createObjectURL(blob);
   a.download='sthapnacorp_applications_'+new Date().toISOString().slice(0,10)+'.csv';
   a.click();
+}
+
+// ── SYSTEM STATUS ──
+function showHealth(h){
+  const box=document.getElementById('health-box');
+  if(!h){box.hidden=true;return;}
+  const rows=[];
+  const db=h.database||{}, em=h.email||{};
+  if(!db.ok) rows.push('<strong>Database not working.</strong> Enquiries are being emailed to you instead of saved here. '+esc(db.hint||'')+'<br><span class="mono" style="font-size:12px">'+esc(db.error||'')+'</span>');
+  if(!em.ok) rows.push('<strong>Email not working.</strong> You will not get alerts for new enquiries. '+esc(em.hint||'')+'<br><span class="mono" style="font-size:12px">'+esc(em.error||'')+'</span>');
+  if(!rows.length){ box.className='health ok'; box.innerHTML='✓ Database and email are working. New enquiries are saved here and emailed to you.'; }
+  else { box.className='health bad'; box.innerHTML=rows.join('<hr style="border:0;border-top:1px solid rgba(155,28,28,.2);margin:10px 0">'); }
+  box.hidden=false;
 }
 
 // ── TABS ──

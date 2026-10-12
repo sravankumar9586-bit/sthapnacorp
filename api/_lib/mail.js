@@ -45,4 +45,9 @@ SthapnaCorp · Hyderabad · +91 86861 45656 · <a href="https://wa.me/9186861456
 </td></tr></table></td></tr></table></body></html>`;
 }
 
-module.exports = { configured, send, esc, layout };
+function verify() {
+  if (!configured()) return Promise.reject(new Error('SMTP is not configured'));
+  return getTransport().verify();
+}
+
+module.exports = { configured, send, verify, esc, layout };
