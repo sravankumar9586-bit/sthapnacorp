@@ -1,4 +1,5 @@
 const { Client } = require('pg');
+const { isAdmin } = require('./_lib/auth');
 
 module.exports = async function(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -7,7 +8,6 @@ module.exports = async function(req, res) {
 
   if(req.method === 'OPTIONS') return res.status(200).end();
 
-  const ADMIN_PASS = process.env.ADMIN_PASSWORD || 'Welcome@3';
   const id = req.query.id;
 
   const client = new Client({
@@ -77,7 +77,7 @@ module.exports = async function(req, res) {
 
     // GET /api/applications — admin: list all
     if(req.method === 'GET' && !id){
-      if(req.headers['x-admin-password'] !== ADMIN_PASS)
+      if(!isAdmin(req))
         return res.status(401).json({ error: 'Unauthorized' });
       const result = await client.query('SELECT * FROM applications ORDER BY created_at DESC');
       return res.status(200).json(result.rows);
@@ -85,7 +85,7 @@ module.exports = async function(req, res) {
 
     // GET /api/applications?id=xxx — single application
     if(req.method === 'GET' && id){
-      if(req.headers['x-admin-password'] !== ADMIN_PASS)
+      if(!isAdmin(req))
         return res.status(401).json({ error: 'Unauthorized' });
       const result = await client.query('SELECT * FROM applications WHERE id = $1', [id]);
       if(!result.rows.length) return res.status(404).json({ error: 'Not found' });
@@ -94,7 +94,7 @@ module.exports = async function(req, res) {
 
     // DELETE /api/applications?id=xxx
     if(req.method === 'DELETE' && id){
-      if(req.headers['x-admin-password'] !== ADMIN_PASS)
+      if(!isAdmin(req))
         return res.status(401).json({ error: 'Unauthorized' });
       await client.query('DELETE FROM applications WHERE id = $1', [id]);
       return res.status(200).json({ success: true });

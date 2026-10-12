@@ -109,6 +109,10 @@ tbody tr:last-child td{border-bottom:none}
 .subs-mini-table td:first-child{text-align:left;background:var(--cream2);font-size:12px;color:var(--ink2)}
 .notes-area{width:100%;padding:10px 12px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream);font-size:14px;font-family:"Crimson Pro",serif;resize:vertical;min-height:80px}
 .notes-area:focus{outline:none;border-color:var(--navy)}
+.tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:2px solid var(--cream3)}
+.tab{padding:9px 18px;font-size:15px;color:var(--ink3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;font-family:"Crimson Pro",serif}
+.tab.on{color:var(--navy);font-weight:600;border-bottom-color:var(--navy)}
+.lead-msg{max-width:320px;font-size:13px;color:var(--ink2);white-space:pre-wrap}
 .modal-footer{padding:16px 28px;border-top:1px solid var(--cream3);display:flex;align-items:center;justify-content:space-between;background:var(--cream2);border-radius:0 0 var(--r-xl) var(--r-xl)}
 </style>
 </head>
@@ -145,13 +149,19 @@ tbody tr:last-child td{border-bottom:none}
     </div>
     <div class="admin-nav-right">
       <span style="font-size:13px;color:rgba(255,255,255,0.6)" id="last-refresh"></span>
-      <button class="btn btn-sm" style="border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);background:transparent" onclick="loadApplications()">↺ Refresh</button>
+      <button class="btn btn-sm" style="border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);background:transparent" onclick="refreshAll()">↺ Refresh</button>
       <button class="btn btn-sm" style="border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);background:transparent" onclick="exportCSV()">⬇ Export CSV</button>
       <button class="btn btn-sm" style="border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);background:transparent" onclick="doLogout()">Sign out</button>
     </div>
   </nav>
 
   <div class="admin-body">
+    <div class="tabs">
+      <button class="tab on" data-tab="apps" onclick="showTab('apps')">Incorporation applications</button>
+      <button class="tab" data-tab="leads" onclick="showTab('leads')">Enquiries <span id="lead-new-count"></span></button>
+      <button class="tab" data-tab="subs" onclick="showTab('subs')">Reminder subscribers</button>
+    </div>
+    <div id="tab-apps">
     <div class="admin-header">
       <div>
         <h1 style="font-size:26px;color:var(--navy)">Applications</h1>
@@ -199,6 +209,43 @@ tbody tr:last-child td{border-bottom:none}
         <p style="font-size:14px">Applications will appear here once clients complete the name application and payment on sthapnacorp.com</p>
       </div>
     </div>
+    </div>
+
+    <div id="tab-leads" hidden>
+      <div class="admin-header">
+        <div>
+          <h1 style="font-size:26px;color:var(--navy)">Enquiries</h1>
+          <p style="font-size:14px;color:var(--ink3);margin-top:3px">Contact-form leads from the website. Call new ones the same day.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="exportLeadsCSV()">⬇ Export enquiries</button>
+      </div>
+      <div class="admin-stats" style="grid-template-columns:repeat(4,1fr)">
+        <div class="stat-card"><div class="stat-num" id="lead-total">0</div><div class="stat-lbl">Total enquiries</div></div>
+        <div class="stat-card"><div class="stat-num" id="lead-new" style="color:#b8600a">0</div><div class="stat-lbl">New, not contacted</div></div>
+        <div class="stat-card"><div class="stat-num" id="lead-month" style="color:var(--navy)">0</div><div class="stat-lbl">Last 30 days</div></div>
+        <div class="stat-card"><div class="stat-num" id="lead-won" style="color:var(--green)">0</div><div class="stat-lbl">Won</div></div>
+      </div>
+      <div class="table-wrap"><div style="overflow-x:auto"><table>
+        <thead><tr><th>Received</th><th>Name</th><th>Contact</th><th>Service</th><th>Message</th><th>Came from</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody id="leads-tbody"></tbody>
+      </table></div>
+      <div class="empty-state" id="leads-empty" hidden><div class="empty-title">No enquiries yet</div><p style="font-size:14px">Contact-form submissions from sthapnacorp.com appear here.</p></div></div>
+    </div>
+
+    <div id="tab-subs" hidden>
+      <div class="admin-header">
+        <div>
+          <h1 style="font-size:26px;color:var(--navy)">Reminder subscribers</h1>
+          <p style="font-size:14px;color:var(--ink3);margin-top:3px">People who asked for deadline emails. Reminders go out daily at 8 am IST; each one is a chance to offer the filing.</p>
+        </div>
+        <button class="btn btn-navy btn-sm" onclick="runReminders()">Send due reminders now</button>
+      </div>
+      <div class="table-wrap"><div style="overflow-x:auto"><table>
+        <thead><tr><th>Joined</th><th>Name</th><th>Email</th><th>Mobile</th><th>Company</th><th>Entity</th><th>Also</th><th>Active</th></tr></thead>
+        <tbody id="subs-tbody"></tbody>
+      </table></div>
+      <div class="empty-state" id="subs-empty" hidden><div class="empty-title">No subscribers yet</div></div></div>
+    </div>
   </div>
 </div>
 
@@ -235,25 +282,37 @@ tbody tr:last-child td{border-bottom:none}
 </div>
 
 <script>
-const ADMIN_PASS = 'Welcome@3';
+let ADMIN_PASS = '';
 const STORAGE_KEY = 'sthapnacorp_applications';
 let allApps = [];
 let currentAppId = null;
 
 // ── AUTH ──
-function doLogin(){
-  const pass = document.getElementById('admin-pass').value;
-  if(pass === ADMIN_PASS){
+async function doLogin(){
+  ADMIN_PASS = document.getElementById('admin-pass').value;
+  const err = document.getElementById('login-err');
+  let status = 0;
+  try { status = (await fetch('/api/leads', {headers:{'x-admin-password':ADMIN_PASS}})).status; }
+  catch(e){ err.textContent = 'Could not reach the server: ' + e.message; err.style.display='block'; return; }
+  if(status===200){
+    err.style.display='none';
     document.getElementById('login-screen').style.display='none';
     document.getElementById('admin-screen').style.display='block';
-    loadApplications();
+    loadApplications().catch(e=>{ const es=document.getElementById('empty-state'); es.style.display='block'; es.querySelector('p').textContent='Could not load applications: '+e.message; });
+    loadLeads().catch(()=>{});
+  } else if(status!==401){
+    err.textContent = 'Server error (HTTP '+status+'). Check DATABASE_URL and ADMIN_PASSWORD in Vercel.';
+    err.style.display='block';
   } else {
-    document.getElementById('login-err').style.display='block';
+    ADMIN_PASS = '';
+    err.textContent = 'Incorrect password. Please try again.';
+    err.style.display='block';
     document.getElementById('admin-pass').value='';
     document.getElementById('admin-pass').focus();
   }
 }
 function doLogout(){
+  ADMIN_PASS = '';
   document.getElementById('admin-screen').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('admin-pass').value='';
@@ -262,24 +321,22 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
 // ── LOAD DATA ──
 async function loadApplications(){
+  const resp = await fetch('/api/applications', { headers: {'x-admin-password': ADMIN_PASS} });
+  if(resp.status===401) return false;
+  if(!resp.ok) throw new Error('HTTP '+resp.status);
+  allApps = await resp.json();
+  renderTable(allApps);
+  updateStats(allApps);
+  const el=document.getElementById('last-refresh');
+  if(el)el.textContent='Last updated: '+new Date().toLocaleTimeString('en-IN');
+  return true;
+}
+async function refreshAll(){
   try {
-    const resp = await fetch('/api/applications', {
-      headers: {'x-admin-password': ADMIN_PASS}
-    });
-    if(resp.status===401){ doLogout(); return; }
-    allApps = await resp.json();
-    renderTable(allApps);
-    updateStats(allApps);
-    const el=document.getElementById('last-refresh');
-    if(el)el.textContent='Last updated: '+new Date().toLocaleTimeString('en-IN');
-  } catch(e){
-    console.error('Failed to load applications:', e);
-    // Fallback to localStorage
-    const raw = localStorage.getItem(STORAGE_KEY);
-    allApps = raw ? JSON.parse(raw) : [];
-    renderTable(allApps);
-    updateStats(allApps);
-  }
+    if(!(await loadApplications())) return doLogout();
+    await loadLeads();
+    if(!document.getElementById('tab-subs').hidden) await loadSubs();
+  } catch(e){ alert('Refresh failed: '+e.message); }
 }
 
 function updateStats(apps){
@@ -298,7 +355,7 @@ function renderTable(apps){
   if(!apps.length){tbody.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   tbody.innerHTML = apps.map((a,i)=>`
-    <tr onclick="openModal('${a.id}')">
+    <tr onclick="openModal(${esc(JSON.stringify(String(a.id)))})">
       <td class="mono" style="color:var(--ink3)">${String(i+1).padStart(3,'0')}</td>
       <td class="mono" style="font-size:12px">${formatDate(a.created_at)}</td>
       <td>
@@ -314,7 +371,7 @@ function renderTable(apps){
       <td><span class="badge ${statusBadgeClass(a.filing_status)}">${statusLabel(a.filing_status)}</span></td>
       <td class="mono" style="font-size:11px;color:var(--ink3)">${a.razorpay_id||'—'}</td>
       <td onclick="event.stopPropagation()">
-        <button class="btn btn-ghost btn-sm" onclick="openModal('${a.id}')">View →</button>
+        <button class="btn btn-ghost btn-sm" onclick="openModal(${esc(JSON.stringify(String(a.id)))})">View →</button>
       </td>
     </tr>`).join('');
 }
@@ -492,6 +549,95 @@ function exportCSV(){
   a.href=URL.createObjectURL(blob);
   a.download='sthapnacorp_applications_'+new Date().toISOString().slice(0,10)+'.csv';
   a.click();
+}
+
+// ── TABS ──
+function showTab(t){
+  ['apps','leads','subs'].forEach(k=>{ document.getElementById('tab-'+k).hidden = k!==t; });
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on', b.dataset.tab===t));
+  if(t==='leads') loadLeads().catch(e=>alert('Could not load enquiries: '+e.message));
+  if(t==='subs') loadSubs().catch(e=>alert('Could not load subscribers: '+e.message));
+}
+
+// ── LEADS ──
+let allLeads = [];
+const LEAD_STATUSES = {new:'New',contacted:'Contacted',quoted:'Quoted',won:'Won',lost:'Lost'};
+async function loadLeads(){
+  const r = await fetch('/api/leads', {headers:{'x-admin-password':ADMIN_PASS}});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  allLeads = await r.json();
+  renderLeads();
+}
+function waLink(m){ const d=String(m||'').replace(/\D/g,''); return 'https://wa.me/'+(d.length===10?'91'+d:d); }
+function renderLeads(){
+  const tb=document.getElementById('leads-tbody');
+  document.getElementById('leads-empty').hidden = allLeads.length>0;
+  const monthAgo = Date.now()-30*86400000;
+  document.getElementById('lead-total').textContent = allLeads.length;
+  const nNew = allLeads.filter(l=>l.status==='new').length;
+  document.getElementById('lead-new').textContent = nNew;
+  document.getElementById('lead-new-count').textContent = nNew ? '('+nNew+')' : '';
+  document.getElementById('lead-month').textContent = allLeads.filter(l=>new Date(l.created_at).getTime()>monthAgo).length;
+  document.getElementById('lead-won').textContent = allLeads.filter(l=>l.status==='won').length;
+  tb.innerHTML = allLeads.map(l=>{
+    const utm = l.utm && Object.keys(l.utm).length ? Object.entries(l.utm).map(([k,v])=>esc(k.replace('utm_',''))+': '+esc(v)).join('<br>') : '';
+    return `<tr style="cursor:default">
+      <td class="mono" style="font-size:12px">${formatDate(l.created_at)}</td>
+      <td><div style="font-weight:600">${esc(l.name)}</div><div style="font-size:12px;color:var(--ink3)">${esc(l.company||'')}</div></td>
+      <td><a href="${esc(waLink(l.mobile))}" target="_blank" rel="noopener">${esc(l.mobile)}</a><div style="font-size:12px">${l.email?`<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>`:''}</div></td>
+      <td style="font-size:13px">${esc(l.service||'—')}</td>
+      <td><div class="lead-msg">${esc(l.message||'')}</div></td>
+      <td style="font-size:12px;color:var(--ink3)">${esc(l.page||'')}${utm?'<br>'+utm:''}</td>
+      <td><select class="status-select" onchange="setLeadStatus(${Number(l.id)}, this.value)">${Object.entries(LEAD_STATUSES).map(([k,v])=>`<option value="${k}" ${l.status===k?'selected':''}>${v}</option>`).join('')}</select></td>
+      <td><textarea class="notes-area" style="min-height:44px;min-width:180px;font-size:13px" onchange="setLeadNotes(${Number(l.id)}, this.value)">${esc(l.notes||'')}</textarea></td>
+    </tr>`;
+  }).join('');
+}
+async function patchLead(id, body){
+  const r = await fetch('/api/leads?id='+id, {method:'PATCH', headers:{'Content-Type':'application/json','x-admin-password':ADMIN_PASS}, body: JSON.stringify(body)});
+  if(!r.ok){ alert('Could not save: HTTP '+r.status); return; }
+  const l = allLeads.find(x=>x.id===id); if(l) Object.assign(l, body);
+  renderLeads();
+}
+function setLeadStatus(id, status){ patchLead(id, {status}); }
+function setLeadNotes(id, notes){ patchLead(id, {notes}); }
+function exportLeadsCSV(){
+  if(!allLeads.length){alert('No enquiries to export.');return;}
+  const headers=['ID','Received','Name','Mobile','Email','Company','Service','Message','Page','Source','Status','Notes'];
+  const rows=allLeads.map(l=>[l.id,formatDate(l.created_at),l.name,l.mobile,l.email,l.company,l.service,l.message,l.page,JSON.stringify(l.utm||{}),l.status,l.notes].map(v=>'"'+(v==null?'':String(v)).replace(/"/g,'""')+'"'));
+  const csv=[headers.join(','),...rows.map(r=>r.join(','))].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='sthapnacorp_enquiries_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+// ── SUBSCRIBERS ──
+async function loadSubs(){
+  const r = await fetch('/api/subscribe', {headers:{'x-admin-password':ADMIN_PASS}});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const subs = await r.json();
+  document.getElementById('subs-empty').hidden = subs.length>0;
+  document.getElementById('subs-tbody').innerHTML = subs.map(s=>{
+    const p=s.profile||{};
+    const also=['gst','tds','msme','taxAudit'].filter(k=>p[k]).map(k=>({gst:'GST',tds:'TDS',msme:'MSME-1',taxAudit:'Tax audit'})[k]).join(', ');
+    return `<tr style="cursor:default">
+      <td class="mono" style="font-size:12px">${formatDate(s.created_at)}</td>
+      <td style="font-weight:600">${esc(s.name)}</td>
+      <td><a href="mailto:${esc(s.email)}">${esc(s.email)}</a></td>
+      <td>${s.mobile?`<a href="${esc(waLink(s.mobile))}" target="_blank" rel="noopener">${esc(s.mobile)}</a>`:'—'}</td>
+      <td>${esc(s.company||'—')}</td>
+      <td>${entityLabel(p.entity)}</td>
+      <td style="font-size:13px">${esc(also||'—')}</td>
+      <td>${s.active?'<span class="badge badge-paid">Active</span>':'<span class="badge badge-unpaid">Unsubscribed</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+async function runReminders(){
+  if(!confirm('Send all reminders that are due today?')) return;
+  const r = await fetch('/api/cron-reminders', {method:'POST', headers:{'x-admin-password':ADMIN_PASS}});
+  const j = await r.json().catch(()=>({}));
+  alert(r.ok ? `Done: ${j.emails} reminder email(s) sent to ${j.subscribers} active subscriber(s).` : 'Failed: '+(j.error||('HTTP '+r.status)));
 }
 
 // ── HELPERS ──

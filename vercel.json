@@ -1,5 +1,6 @@
 {
-  "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" }
+  "cleanUrls": true,
+  "crons": [
+    { "path": "/api/cron-reminders", "schedule": "30 2 * * *" }
   ]
 }
