@@ -66,6 +66,23 @@
     $all('.nav a', head).forEach(function (a) { a.addEventListener('click', function () { head.classList.remove('open'); }); });
   }
 
+  // ── app bar on phones + installable app ──
+  if (!document.querySelector('.app-bar')) {
+    var here = location.pathname.replace(/\/$/, '') || '/';
+    var items = [['/', '🏠', 'Home'], ['/services', '🗂️', 'Services'], ['/order', '➕', 'Order'], ['/my', '📋', 'My orders']];
+    var barEl = document.createElement('nav');
+    barEl.className = 'app-bar';
+    barEl.setAttribute('aria-label', 'App');
+    barEl.innerHTML = items.map(function (x) {
+      var on = x[0] === '/' ? here === '/' : here.indexOf(x[0]) === 0;
+      return '<a href="' + x[0] + '"' + (on ? ' class="on" aria-current="page"' : '') + '><span class="i" aria-hidden="true">' + x[1] + '</span>' + x[2] + '</a>';
+    }).join('');
+    document.body.appendChild(barEl);
+  }
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js').catch(function () {}); });
+  }
+
   // ── deadline bar + board (re-drawn when official extensions load) ──
   var headline = [];
   function renderTop() {

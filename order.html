@@ -9,6 +9,8 @@
 <meta property="og:title" content="Order a service — company, tax & licence work | SthapnaCorp">
 <meta property="og:description" content="Order DPIIT recognition, company registration, GST, trademarks, licences and annual filings online. A verified CA, CS or lawyer is assigned to your order.">
 <meta name="theme-color" content="#0D1B3E">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/assets/icon-180.png">
 <meta property="og:image" content="https://sthapnacorp.com/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -29,10 +31,10 @@
     <a class="logo" href="/" aria-label="SthapnaCorp home"><span class="logo-mark"><i></i><i></i><i></i><b></b></span><span class="logo-name">SthapnaCorp</span></a>
     <nav class="nav" aria-label="Main">
       <a href="/services">Services</a>
-      <a href="/#calendar">Due dates</a>
       <a href="/order">Order a service</a>
-      <a href="/partners">For professionals</a>
-      <a href="/#contact">Contact</a>
+      <a href="/my">My orders</a>
+      <a href="/#calendar">Due dates</a>
+      <a href="/partners">Become an expert</a>
     </nav>
     <div class="head-cta">
       <a class="btn btn-wa btn-sm" data-wa="Hi SthapnaCorp, I need help with a compliance matter."><svg class="wa-ico" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2C8.3 2 2 8.3 2 16c0 2.4.6 4.7 1.8 6.8L2 30l7.4-1.8C11.4 29.4 13.6 30 16 30c7.7 0 14-6.3 14-14S23.7 2 16 2zm7.5 19.7c-.3.9-1.8 1.7-2.5 1.8-.6.1-1.4.1-2.3-.2-2.8-1-5.9-3.9-7.2-6.6-.7-1.5-.5-2.8.1-3.7.3-.4.6-.6 1-.6h.7c.3 0 .5.1.7.6l1.1 2.6c.2.4 0 .8-.2 1l-.4.5c-.2.2-.2.5 0 .7.7 1.1 1.7 2 2.9 2.6.3.1.5.1.7-.1l.7-.8c.2-.2.5-.3.8-.1l2.5 1.2c.4.2.6.4.6.8 0 .2 0 .5-.2 1.3z"/></svg>WhatsApp</a>
@@ -46,61 +48,61 @@
   <div class="wrap">
     <div class="crumbs"><a href="/">Home</a> / Order a service</div>
     <h1>Order any business registration, licence or filing</h1>
-    <p class="lede">Tell us what you need. We assign it to a verified professional who does that work every day, and you track it here. A written quote comes first; nothing is payable until you approve it.</p>
+    <p class="lede">Pick a service and a verified CA, CS or lawyer who does that work every day is assigned to you. Chat, share documents, pay and track it here.</p>
   </div>
 </section>
 <section class="section">
   <div class="wrap mk-grid">
     <div>
       <form class="panel" id="order-form" novalidate>
-        <h2 style="font-size:24px;margin:0 0 14px">1. What do you need?</h2>
-        <div class="field svc-search"><label for="svc-q">Search 111 services</label>
-          <input class="input" id="svc-q" placeholder="e.g. DPIIT, GST registration, trademark, AOC-4" autocomplete="off">
-          <div class="svc-results" id="svc-results" aria-live="polite"></div>
+        <input type="hidden" name="service_slug">
+        <div id="step-pick">
+          <h2 style="font-size:24px;margin:0 0 14px">What do you need today?</h2>
+          <div class="field"><label for="svc-q">Search 111 services</label>
+            <input class="input input-lg" id="svc-q" type="search" placeholder="Try DPIIT, GST, trademark, AOC-4, FSSAI…" autocomplete="off"></div>
+          <div class="svc-list" id="svc-results" aria-live="polite"></div>
+          <div class="cat-tiles" id="cat-tiles"></div>
+          <div id="cat-list" hidden>
+            <button type="button" class="back" id="cat-back">‹ All categories</button>
+            <h3 id="cat-title" style="margin:6px 0 10px"></h3>
+            <div class="svc-list" id="svc-list"></div>
+          </div>
         </div>
-        <div class="field"><label for="o-svc">Or pick from the list</label><select class="input" id="o-svc" name="service_slug" required></select></div>
-        <div class="svc-picked" id="svc-picked"></div>
-        <div class="field"><label for="o-details">Tell us more (optional)</label>
-          <textarea class="input" id="o-details" name="details" rows="4" maxlength="3000" placeholder="e.g. DPIIT recognition for our private limited company, incorporated in 2025, software product"></textarea></div>
-        <h2 style="font-size:24px;margin:22px 0 14px">2. Your details</h2>
-        <div class="row2">
-          <div class="field"><label for="o-name">Name</label><input class="input" id="o-name" name="name" required maxlength="100" autocomplete="name"></div>
-          <div class="field"><label for="o-mobile">Mobile</label><input class="input" id="o-mobile" name="mobile" type="tel" required maxlength="20" autocomplete="tel"></div>
+        <div id="step-details" hidden>
+          <div class="svc-picked on" id="svc-picked"></div>
+          <div class="field"><label for="o-details">Details for your expert</label>
+            <textarea class="input" id="o-details" name="details" rows="3" maxlength="3000"></textarea></div>
+          <div class="row2">
+            <div class="field"><label for="o-name">Your name</label><input class="input" id="o-name" name="name" required maxlength="100" autocomplete="name"></div>
+            <div class="field"><label for="o-mobile">Mobile</label><input class="input" id="o-mobile" name="mobile" type="tel" required maxlength="20" autocomplete="tel"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="o-email">Email (order updates)</label><input class="input" id="o-email" name="email" type="email" required maxlength="160" autocomplete="email"></div>
+            <div class="field"><label for="o-city">City</label><input class="input" id="o-city" name="city" required maxlength="80" autocomplete="address-level2" placeholder="e.g. Hyderabad"></div>
+          </div>
+          <div class="field"><label for="o-company">Business name (if any)</label><input class="input" id="o-company" name="company" maxlength="160" autocomplete="organization"></div>
+          <div class="hp" aria-hidden="true"><label for="o-website">Website</label><input id="o-website" name="website" tabindex="-1" autocomplete="off"></div>
+          <button class="btn btn-gold btn-lg" type="submit" style="width:100%">Place order</button>
+          <p class="small muted" style="margin-top:10px">Free to place. Pay only after your expert confirms the price. By ordering you agree to our <a href="/terms">terms</a>.</p>
+          <div class="form-msg" role="status"></div>
         </div>
-        <div class="row2">
-          <div class="field"><label for="o-email">Email (for order updates)</label><input class="input" id="o-email" name="email" type="email" required maxlength="160" autocomplete="email"></div>
-          <div class="field"><label for="o-city">City</label><input class="input" id="o-city" name="city" required maxlength="80" autocomplete="address-level2" placeholder="e.g. Hyderabad"></div>
-        </div>
-        <div class="field"><label for="o-company">Business name (if any)</label><input class="input" id="o-company" name="company" maxlength="160" autocomplete="organization"></div>
-        <div class="hp" aria-hidden="true"><label for="o-website">Website</label><input id="o-website" name="website" tabindex="-1" autocomplete="off"></div>
-        <button class="btn btn-gold btn-lg" type="submit" style="width:100%">Place order</button>
-        <p class="small muted" style="margin-top:10px">Free to order. You get a written quote first; nothing is payable until you approve it. By ordering you agree to our <a href="/terms">terms</a>.</p>
-        <div class="form-msg" role="status"></div>
       </form>
-      <div class="panel done-box" id="order-done" hidden>
-        <h2>Order placed</h2>
-        <div class="label">Your order number</div>
-        <div class="ref"></div>
-        <p>We are matching it to a verified professional now. You will get an email with the tracking link, and your professional will contact you with a written quote, usually within one working day.</p>
-        <p><a class="btn btn-navy" id="order-track" href="#">Track this order</a></p>
-        <p><a href="/order">Order another service</a></p>
-      </div>
     </div>
     <aside>
       <div class="panel">
         <h2 style="font-size:21px;margin:0 0 14px">How it works</h2>
         <ol class="side-steps">
-          <li><strong>Place your order</strong>Choose the service and tell us briefly what you need.</li>
-          <li><strong>We assign a verified professional</strong>A CA, CS, lawyer or specialist who handles that work, near you where possible.</li>
-          <li><strong>Approve a written quote</strong>Fee and documents needed, before any work starts.</li>
-          <li><strong>Track it online</strong>Every step is updated on your tracking page and by email.</li>
+          <li><strong>Order in 2 minutes</strong>Pick the service and tell us briefly what you need.</li>
+          <li><strong>A verified expert is assigned</strong>A CA, CS or lawyer who does exactly this work, near you where possible.</li>
+          <li><strong>Confirm the price and pay</strong>Fixed price or a quote from your expert. Pay SthapnaCorp securely.</li>
+          <li><strong>Chat, share documents, track</strong>Everything in one place, live, until it is done.</li>
         </ol>
         <ul class="trust-list">
-          <li>Every professional's membership is verified</li>
-          <li>Your contact details go only to the assigned professional</li>
-          <li>Deadline reminders for your business, free</li>
+          <li>Every expert's membership is verified</li>
+          <li>Your phone and email stay with SthapnaCorp</li>
+          <li>Not happy with your expert? We reassign</li>
         </ul>
-        <p class="small" style="margin-top:16px">Prefer to talk? <a data-wa="Hi SthapnaCorp, I want to order a service.">WhatsApp us</a> or call <a href="tel:+918686145656">+91 86861 45656</a>.</p>
+        <p class="small" style="margin-top:16px">Already ordered? <a href="/my">See my orders</a></p>
       </div>
     </aside>
   </div>
@@ -112,7 +114,7 @@
     <div class="foot-grid">
       <div>
         <div class="foot-brand">SthapnaCorp</div>
-        <p>The platform for company, tax and licensing work. Order any service online and a verified CA, CS or lawyer is assigned to it. Based in Hyderabad, serving businesses across India.</p>
+        <p>Order company, tax, licensing and legal services online. A verified SthapnaCorp expert does the work; you track, chat and pay in one place. Hyderabad, serving all of India.</p>
       </div>
       <div>
         <h4>Services</h4>
@@ -146,8 +148,9 @@
       <div>
         <h4>Platform</h4>
         <a href="/order">Order a service</a>
-        <a href="/partners">Join as a professional</a>
-        <a href="/provider">Professional login</a>
+        <a href="/my">My orders</a>
+        <a href="/partners">Become an expert</a>
+        <a href="/provider">Expert login</a>
         <a href="tel:+918686145656">+91 86861 45656</a>
         <a href="mailto:sthapnacorp@gmail.com">sthapnacorp@gmail.com</a>
         <a href="/terms">Terms of service</a>

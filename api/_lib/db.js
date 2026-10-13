@@ -118,7 +118,63 @@ CREATE TABLE IF NOT EXISTS order_events (
   message    TEXT,
   public     BOOLEAN NOT NULL DEFAULT TRUE
 );
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_id INTEGER;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS quote_note TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_status TEXT NOT NULL DEFAULT 'unpaid';
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_ref TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS rzp_order_id TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS commission_pct NUMERIC;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS payout_status TEXT NOT NULL DEFAULT 'pending';
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS payout_at TIMESTAMPTZ;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS rating INTEGER;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS review TEXT;
+ALTER TABLE providers ADD COLUMN IF NOT EXISTS available BOOLEAN NOT NULL DEFAULT TRUE;
+ALTER TABLE providers ADD COLUMN IF NOT EXISTS commission_pct NUMERIC NOT NULL DEFAULT 20;
+CREATE TABLE IF NOT EXISTS customers (
+  id          SERIAL PRIMARY KEY,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  email       TEXT NOT NULL UNIQUE,
+  name        TEXT NOT NULL,
+  mobile      TEXT
+);
+CREATE TABLE IF NOT EXISTS customer_tokens (
+  token_hash  TEXT PRIMARY KEY,
+  customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  kind        TEXT NOT NULL,
+  expires_at  TIMESTAMPTZ NOT NULL,
+  used        BOOLEAN NOT NULL DEFAULT FALSE,
+  attempts    INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS order_messages (
+  id        SERIAL PRIMARY KEY,
+  order_id  INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  sender    TEXT NOT NULL,
+  body      TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS order_files (
+  id          SERIAL PRIMARY KEY,
+  order_id    INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  uploaded_by TEXT NOT NULL,
+  name        TEXT NOT NULL,
+  mime        TEXT NOT NULL,
+  size        INTEGER NOT NULL,
+  data        BYTEA NOT NULL
+);
+CREATE TABLE IF NOT EXISTS service_settings (
+  slug        TEXT PRIMARY KEY,
+  price       INTEGER,
+  turnaround  TEXT,
+  note        TEXT,
+  active      BOOLEAN NOT NULL DEFAULT TRUE,
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 CREATE INDEX IF NOT EXISTS orders_provider_idx ON orders (provider_id, status);
+CREATE INDEX IF NOT EXISTS orders_customer_idx ON orders (customer_id);
+CREATE INDEX IF NOT EXISTS order_messages_idx ON order_messages (order_id, at);
+CREATE INDEX IF NOT EXISTS order_files_idx ON order_files (order_id);
 CREATE INDEX IF NOT EXISTS order_events_order_idx ON order_events (order_id, at);
 CREATE TABLE IF NOT EXISTS reminder_log (
   subscriber_id INTEGER NOT NULL REFERENCES subscribers(id) ON DELETE CASCADE,

@@ -58,7 +58,8 @@ module.exports = async function (req, res) {
       const r = await query(
         `SELECT p.*,
            (SELECT COUNT(*)::int FROM orders o WHERE o.provider_id = p.id AND o.status = ANY($1)) AS open_count,
-           (SELECT COUNT(*)::int FROM orders o WHERE o.provider_id = p.id AND o.status = 'completed') AS done_count
+           (SELECT COUNT(*)::int FROM orders o WHERE o.provider_id = p.id AND o.status = 'completed') AS done_count,
+           (SELECT ROUND(AVG(o.rating)::numeric, 1) FROM orders o WHERE o.provider_id = p.id AND o.rating IS NOT NULL) AS rating
          FROM providers p ORDER BY (p.status = 'pending') DESC, p.created_at DESC`, [M.OPEN]);
       return res.status(200).json({ providers: r.rows, categories: C.CATS.map((c) => [c.id, c.name]), qualifications: QUALS });
     }
@@ -75,7 +76,8 @@ module.exports = async function (req, res) {
           await M.safeSend({
             to: p.email, replyTo: M.OWNER(), subject: 'You are approved on SthapnaCorp',
             html: mail.layout('Welcome aboard', `<p>Hi ${e(p.name.split(' ')[0])}, your profile is approved. Orders that match your work and city will now be emailed to you.</p>
-              <p>Accept each order within ${M.ACCEPT_HOURS} hours; after that it moves to the next professional. Log in with your email; we send you a one-time link, no password needed.</p>
+              <p>How it works: accept each job within ${M.ACCEPT_HOURS} hours (after that it moves to the next expert), talk to the customer only through the job chat, start once the customer has paid SthapnaCorp, and mark the job completed. We pay you your share after our ${Number(p.commission_pct)}% platform fee. Switch yourself offline on your jobs page when you cannot take new work.</p>
+              <p>Log in with your email; we send you a one-time link, no password needed.</p>
               <p><a href="${M.SITE}/provider" style="display:inline-block;background:#0D1B3E;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:bold">Open my orders</a></p>`),
           });
           // Orders that were waiting for someone in these categories go out now.
@@ -93,8 +95,9 @@ module.exports = async function (req, res) {
       if (b.action === 'update') {
         const cats = Array.isArray(b.categories) ? b.categories.filter((c) => CAT_IDS.includes(c)) : p.categories;
         const cap = Number.isFinite(Number(b.capacity)) ? Math.max(0, Math.min(200, Math.round(Number(b.capacity)))) : p.capacity;
-        await query('UPDATE providers SET categories = $1, capacity = $2, admin_notes = $3, remote_ok = $4 WHERE id = $5',
-          [cats, cap, b.admin_notes !== undefined ? (M.clean(b.admin_notes, 2000) || null) : p.admin_notes, b.remote_ok !== undefined ? !!b.remote_ok : p.remote_ok, id]);
+        const pct = b.commission_pct !== undefined && b.commission_pct !== '' && Number.isFinite(Number(b.commission_pct)) ? Math.max(0, Math.min(80, Number(b.commission_pct))) : Number(p.commission_pct);
+        await query('UPDATE providers SET categories = $1, capacity = $2, admin_notes = $3, remote_ok = $4, commission_pct = $5 WHERE id = $6',
+          [cats, cap, b.admin_notes !== undefined ? (M.clean(b.admin_notes, 2000) || null) : p.admin_notes, b.remote_ok !== undefined ? !!b.remote_ok : p.remote_ok, pct, id]);
         return res.status(200).json({ ok: true });
       }
       return res.status(400).json({ error: 'Unknown action' });
