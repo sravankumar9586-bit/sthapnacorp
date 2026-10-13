@@ -59,6 +59,67 @@ CREATE TABLE IF NOT EXISTS watch_sources (
   matched      INTEGER NOT NULL DEFAULT 0,
   error        TEXT
 );
+CREATE TABLE IF NOT EXISTS providers (
+  id            SERIAL PRIMARY KEY,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  name          TEXT NOT NULL,
+  firm          TEXT,
+  email         TEXT NOT NULL UNIQUE,
+  mobile        TEXT NOT NULL,
+  qualification TEXT NOT NULL,
+  membership_no TEXT,
+  city          TEXT NOT NULL,
+  remote_ok     BOOLEAN NOT NULL DEFAULT TRUE,
+  categories    TEXT[] NOT NULL DEFAULT '{}',
+  about         TEXT,
+  capacity      INTEGER NOT NULL DEFAULT 10,
+  status        TEXT NOT NULL DEFAULT 'pending',
+  last_assigned_at TIMESTAMPTZ,
+  admin_notes   TEXT
+);
+CREATE TABLE IF NOT EXISTS provider_tokens (
+  token_hash  TEXT PRIMARY KEY,
+  provider_id INTEGER NOT NULL REFERENCES providers(id) ON DELETE CASCADE,
+  kind        TEXT NOT NULL,
+  expires_at  TIMESTAMPTZ NOT NULL,
+  used        BOOLEAN NOT NULL DEFAULT FALSE
+);
+CREATE TABLE IF NOT EXISTS orders (
+  id            SERIAL PRIMARY KEY,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  ref           TEXT UNIQUE,
+  token         TEXT NOT NULL UNIQUE,
+  service_slug  TEXT,
+  service       TEXT NOT NULL,
+  category      TEXT,
+  details       TEXT,
+  city          TEXT,
+  name          TEXT NOT NULL,
+  mobile        TEXT NOT NULL,
+  email         TEXT,
+  company       TEXT,
+  page          TEXT,
+  utm           JSONB,
+  status        TEXT NOT NULL DEFAULT 'new',
+  provider_id   INTEGER REFERENCES providers(id) ON DELETE SET NULL,
+  assigned_at   TIMESTAMPTZ,
+  accepted_at   TIMESTAMPTZ,
+  completed_at  TIMESTAMPTZ,
+  declined_by   INTEGER[] NOT NULL DEFAULT '{}',
+  quote_amount  INTEGER,
+  admin_notes   TEXT
+);
+CREATE TABLE IF NOT EXISTS order_events (
+  id         SERIAL PRIMARY KEY,
+  order_id   INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  at         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  actor      TEXT NOT NULL,
+  kind       TEXT NOT NULL,
+  message    TEXT,
+  public     BOOLEAN NOT NULL DEFAULT TRUE
+);
+CREATE INDEX IF NOT EXISTS orders_provider_idx ON orders (provider_id, status);
+CREATE INDEX IF NOT EXISTS order_events_order_idx ON order_events (order_id, at);
 CREATE TABLE IF NOT EXISTS reminder_log (
   subscriber_id INTEGER NOT NULL REFERENCES subscribers(id) ON DELETE CASCADE,
   event_key     TEXT NOT NULL,

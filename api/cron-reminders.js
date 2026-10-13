@@ -3,6 +3,7 @@ const mail = require('./_lib/mail');
 const { isAdmin, safeEqual } = require('./_lib/auth');
 const { loadOverrides } = require('./_lib/overrides');
 const { runWatch } = require('./_lib/watch');
+const { reassignStale } = require('./_lib/market');
 const D = require('../assets/deadlines.js');
 
 const SITE = process.env.SITE_URL || 'https://sthapnacorp.com';
@@ -39,6 +40,9 @@ module.exports = async function (req, res) {
       }).catch((err) => console.error('watch digest failed:', err.message));
     }
   } catch (err) { console.error('watch failed:', err.message); }
+
+  // Orders a professional did not accept in time move to the next match.
+  await reassignStale().catch((err) => console.error('stale orders failed:', err.message));
 
   // 2. Apply approved extensions before working out reminders.
   await loadOverrides();

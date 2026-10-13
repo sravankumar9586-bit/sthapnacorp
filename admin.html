@@ -168,12 +168,50 @@ tbody tr:last-child td{border-bottom:none}
   <div class="admin-body">
     <div id="health-box" class="health" hidden></div>
     <div class="tabs">
-      <button class="tab on" data-tab="apps" onclick="showTab('apps')">Incorporation applications</button>
+      <button class="tab on" data-tab="orders" onclick="showTab('orders')">Orders <span id="order-attn-count"></span></button>
+      <button class="tab" data-tab="pros" onclick="showTab('pros')">Professionals <span id="pro-pending-count"></span></button>
+      <button class="tab" data-tab="apps" onclick="showTab('apps')">Incorporation applications</button>
       <button class="tab" data-tab="leads" onclick="showTab('leads')">Enquiries <span id="lead-new-count"></span></button>
       <button class="tab" data-tab="subs" onclick="showTab('subs')">Reminder subscribers</button>
       <button class="tab" data-tab="dues" onclick="showTab('dues')">Due dates &amp; extensions <span id="watch-new-count"></span></button>
     </div>
-    <div id="tab-apps">
+    <div id="tab-orders">
+      <div class="admin-header">
+        <div>
+          <h1 style="font-size:26px;color:var(--navy)">Orders</h1>
+          <p style="font-size:14px;color:var(--ink3);margin-top:3px">Every order is matched automatically to an approved professional by type of work, city and workload. If they do not accept within 12 hours it moves to the next one. Orders nobody can take are marked <strong>Needs a professional</strong>: assign them yourself.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="exportOrdersCSV()">⬇ Export orders</button>
+      </div>
+      <div class="admin-stats" style="grid-template-columns:repeat(5,1fr)">
+        <div class="stat-card"><div class="stat-num" id="o-total">0</div><div class="stat-lbl">Total orders</div></div>
+        <div class="stat-card"><div class="stat-num" id="o-attn" style="color:#9B1C1C">0</div><div class="stat-lbl">Needs a professional</div></div>
+        <div class="stat-card"><div class="stat-num" id="o-wait" style="color:#b8600a">0</div><div class="stat-lbl">Waiting for acceptance</div></div>
+        <div class="stat-card"><div class="stat-num" id="o-active" style="color:var(--navy)">0</div><div class="stat-lbl">In progress</div></div>
+        <div class="stat-card"><div class="stat-num" id="o-done" style="color:var(--green)">0</div><div class="stat-lbl">Completed · <span id="o-gmv">₹0</span></div></div>
+      </div>
+      <div class="table-wrap"><div style="overflow-x:auto"><table>
+        <thead><tr><th>Order</th><th>Service</th><th>Client</th><th>Status</th><th>Professional</th><th>Fee</th><th>Notes</th></tr></thead>
+        <tbody id="orders-tbody"></tbody>
+      </table></div>
+      <div class="empty-state" id="orders-empty" hidden><div class="empty-title">No orders yet</div><p style="font-size:14px">Orders placed at sthapnacorp.com/order appear here.</p></div></div>
+    </div>
+
+    <div id="tab-pros" hidden>
+      <div class="admin-header">
+        <div>
+          <h1 style="font-size:26px;color:var(--navy)">Professionals</h1>
+          <p style="font-size:14px;color:var(--ink3);margin-top:3px">Verify the membership number with ICSI / ICAI / ICMAI / Bar Council before approving. Approved professionals receive matching orders by email. Register yourself here too (via /partners) so orders in your areas come to you.</p>
+        </div>
+      </div>
+      <div class="table-wrap"><div style="overflow-x:auto"><table>
+        <thead><tr><th>Applied</th><th>Professional</th><th>Contact</th><th>City</th><th>Work types</th><th>Load</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody id="pros-tbody"></tbody>
+      </table></div>
+      <div class="empty-state" id="pros-empty" hidden><div class="empty-title">No professionals yet</div><p style="font-size:14px">Share sthapnacorp.com/partners with CS, CA and legal professionals you trust.</p></div></div>
+    </div>
+
+    <div id="tab-apps" hidden>
     <div class="admin-header">
       <div>
         <h1 style="font-size:26px;color:var(--navy)">Applications</h1>
@@ -372,6 +410,7 @@ async function doLogin(){
     document.getElementById('admin-screen').style.display='block';
     loadApplications().catch(e=>{ const es=document.getElementById('empty-state'); es.style.display='block'; es.querySelector('p').textContent='Could not load applications: '+e.message; });
     loadLeads().catch(()=>{});
+    loadPros().then(loadOrders).catch(e=>alert('Could not load orders: '+e.message));
   } else if(status!==401){
     err.textContent = 'Server error (HTTP '+status+'). Check ADMIN_PASSWORD in Vercel.';
     err.style.display='block';
@@ -408,6 +447,7 @@ async function refreshAll(){
     fetch('/api/status',{headers:{'x-admin-password':ADMIN_PASS}}).then(r=>r.ok?r.json():null).then(showHealth).catch(()=>{});
     if(!(await loadApplications())) return doLogout();
     await loadLeads();
+    await loadPros(); await loadOrders();
     if(!document.getElementById('tab-subs').hidden) await loadSubs();
     await loadDues().catch(()=>{});
   } catch(e){ alert('Refresh failed: '+e.message); }
@@ -640,10 +680,12 @@ function showHealth(h){
 
 // ── TABS ──
 function showTab(t){
-  ['apps','leads','subs','dues'].forEach(k=>{ document.getElementById('tab-'+k).hidden = k!==t; });
+  ['orders','pros','apps','leads','subs','dues'].forEach(k=>{ document.getElementById('tab-'+k).hidden = k!==t; });
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on', b.dataset.tab===t));
   if(t==='leads') loadLeads().catch(e=>alert('Could not load enquiries: '+e.message));
   if(t==='subs') loadSubs().catch(e=>alert('Could not load subscribers: '+e.message));
+  if(t==='orders') loadOrders().catch(e=>alert('Could not load orders: '+e.message));
+  if(t==='pros') loadPros().catch(e=>alert('Could not load professionals: '+e.message));
   if(t==='dues') loadDues().catch(e=>alert('Could not load due dates: '+e.message));
 }
 
@@ -726,6 +768,104 @@ async function runReminders(){
   const r = await fetch('/api/cron-reminders', {method:'POST', headers:{'x-admin-password':ADMIN_PASS}});
   const j = await r.json().catch(()=>({}));
   alert(r.ok ? `Done: ${j.emails} reminder email(s) sent to ${j.subscribers} active subscriber(s).` : 'Failed: '+(j.error||('HTTP '+r.status)));
+}
+
+// ── ORDERS ──
+let allOrders = [], allPros = [], proCats = [];
+const ORDER_STATUS = {new:'Received',unassigned:'Needs a professional',assigned:'Waiting for acceptance',accepted:'Accepted',in_progress:'In progress',completed:'Completed',cancelled:'Cancelled'};
+async function adminApi(url, method, body){
+  const r = await fetch(url, {method:method||'GET', headers:{'Content-Type':'application/json','x-admin-password':ADMIN_PASS}, body: body?JSON.stringify(body):undefined});
+  const j = await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(j.error||('HTTP '+r.status));
+  return j;
+}
+async function loadOrders(){
+  allOrders = await adminApi('/api/orders');
+  const tb=document.getElementById('orders-tbody');
+  document.getElementById('orders-empty').hidden = allOrders.length>0;
+  const c = s=>allOrders.filter(o=>s.includes(o.status)).length;
+  document.getElementById('o-total').textContent = allOrders.length;
+  document.getElementById('o-attn').textContent = c(['unassigned','new']);
+  document.getElementById('o-wait').textContent = c(['assigned']);
+  document.getElementById('o-active').textContent = c(['accepted','in_progress']);
+  document.getElementById('o-done').textContent = c(['completed']);
+  const gmv = allOrders.filter(o=>o.status==='completed').reduce((a,o)=>a+(o.quote_amount||0),0);
+  document.getElementById('o-gmv').textContent = '₹'+gmv.toLocaleString('en-IN');
+  const attn = c(['unassigned','new']);
+  document.getElementById('order-attn-count').textContent = attn ? '('+attn+')' : '';
+  const approved = allPros.filter(p=>p.status==='approved');
+  tb.innerHTML = allOrders.map(o=>{
+    const open = !['completed','cancelled'].includes(o.status);
+    const proSel = open ? `<select class="status-select" onchange="assignOrder(${Number(o.id)}, this.value)" style="max-width:190px">
+        <option value="">${o.provider_name?esc(o.provider_name):'— choose —'}</option>
+        <option value="auto">↻ Auto-assign next match</option>
+        ${approved.filter(p=>p.id!==o.provider_id).map(p=>`<option value="${Number(p.id)}">${esc(p.name)} (${esc(p.city)})</option>`).join('')}
+      </select>` : esc(o.provider_name||'—');
+    const bad = o.status==='unassigned'||o.status==='new';
+    return `<tr style="cursor:default${bad?';background:#FDF3F3':''}">
+      <td><div class="mono" style="font-weight:600">${esc(o.ref||'')}</div><div class="mono" style="font-size:11px;color:var(--ink3)">${formatDate(o.created_at)}</div><a href="/track?t=${esc(o.token)}" target="_blank" rel="noopener" style="font-size:12px">client view</a></td>
+      <td><div style="font-weight:600">${esc(o.service)}</div><div style="font-size:12px;color:var(--ink3)">${esc(o.city||'')}</div><div class="lead-msg" style="font-size:12px">${esc(o.details||'')}</div></td>
+      <td><div>${esc(o.name)}</div><div style="font-size:12px"><a href="${esc(waLink(o.mobile))}" target="_blank" rel="noopener">${esc(o.mobile)}</a></div><div style="font-size:12px">${o.email?`<a href="mailto:${esc(o.email)}">${esc(o.email)}</a>`:''}</div><div style="font-size:12px;color:var(--ink3)">${esc(o.company||'')}</div></td>
+      <td><span class="badge ${bad?'badge-unpaid':o.status==='completed'?'badge-paid':o.status==='assigned'?'badge-pending':'badge-filed'}">${ORDER_STATUS[o.status]||esc(o.status)}</span>
+        ${open?`<div><button class="btn btn-ghost btn-sm" style="margin-top:6px;font-size:12px" onclick="cancelOrder(${Number(o.id)})">Cancel</button></div>`:''}</td>
+      <td>${proSel}</td>
+      <td class="mono">${o.quote_amount!=null?'₹'+Number(o.quote_amount).toLocaleString('en-IN'):'—'}</td>
+      <td><textarea class="notes-area" style="min-height:44px;min-width:160px;font-size:13px" onchange="orderNotes(${Number(o.id)}, this.value)">${esc(o.admin_notes||'')}</textarea></td>
+    </tr>`;
+  }).join('');
+}
+async function assignOrder(id, v){
+  if(!v) return;
+  try { await adminApi('/api/orders','POST',{action:'assign', order_id:id, provider_id: v==='auto'?null:Number(v)}); await loadOrders(); }
+  catch(e){ alert('Could not assign: '+e.message); loadOrders(); }
+}
+async function cancelOrder(id){
+  const m = prompt('Cancel this order? Optional note for the client:');
+  if(m===null) return;
+  try { await adminApi('/api/orders','POST',{action:'cancel', order_id:id, message:m}); await loadOrders(); } catch(e){ alert(e.message); }
+}
+function orderNotes(id, notes){ adminApi('/api/orders','POST',{action:'notes', order_id:id, notes}).catch(e=>alert('Could not save: '+e.message)); }
+function exportOrdersCSV(){
+  if(!allOrders.length){alert('No orders to export.');return;}
+  const headers=['Ref','Placed','Service','City','Details','Name','Mobile','Email','Business','Status','Professional','Fee','Notes'];
+  const rows=allOrders.map(o=>[o.ref,formatDate(o.created_at),o.service,o.city,o.details,o.name,o.mobile,o.email,o.company,ORDER_STATUS[o.status]||o.status,o.provider_name,o.quote_amount,o.admin_notes].map(v=>'"'+(v==null?'':String(v)).replace(/"/g,'""')+'"'));
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([[headers.join(','),...rows.map(r=>r.join(','))].join('\n')],{type:'text/csv;charset=utf-8'}));
+  a.download='sthapnacorp_orders_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+// ── PROFESSIONALS ──
+async function loadPros(){
+  const j = await adminApi('/api/providers');
+  allPros = j.providers; proCats = j.categories;
+  const name = Object.fromEntries(proCats);
+  document.getElementById('pros-empty').hidden = allPros.length>0;
+  const pend = allPros.filter(p=>p.status==='pending').length;
+  document.getElementById('pro-pending-count').textContent = pend ? '('+pend+' to verify)' : '';
+  document.getElementById('pros-tbody').innerHTML = allPros.map(p=>`<tr style="cursor:default">
+    <td class="mono" style="font-size:12px">${formatDate(p.created_at)}</td>
+    <td><div style="font-weight:600">${esc(p.name)}</div><div style="font-size:12px">${esc(p.qualification)}${p.membership_no?' · '+esc(p.membership_no):''}</div><div style="font-size:12px;color:var(--ink3)">${esc(p.firm||'')}</div>${p.about?`<div class="lead-msg" style="font-size:12px">${esc(p.about)}</div>`:''}</td>
+    <td style="font-size:13px"><a href="mailto:${esc(p.email)}">${esc(p.email)}</a><br><a href="${esc(waLink(p.mobile))}" target="_blank" rel="noopener">${esc(p.mobile)}</a></td>
+    <td style="font-size:13px">${esc(p.city)}${p.remote_ok?'<br><span style="color:var(--ink3)">+ online, all India</span>':''}</td>
+    <td style="font-size:12px;min-width:200px">${proCats.map(([id,n])=>`<label style="display:block"><input type="checkbox" ${p.categories.includes(id)?'checked':''} onchange="proCat(${Number(p.id)})" data-pro="${Number(p.id)}" value="${esc(id)}"> ${esc(n)}</label>`).join('')}</td>
+    <td style="font-size:13px">${Number(p.open_count)} open / max <input type="number" min="0" max="200" value="${Number(p.capacity)}" style="width:52px" onchange="proUpdate(${Number(p.id)},{capacity:this.value})"><br>${Number(p.done_count)} completed</td>
+    <td>${p.status==='approved'?'<span class="badge badge-paid">Approved</span>':p.status==='pending'?'<span class="badge badge-pending">To verify</span>':'<span class="badge badge-unpaid">Suspended</span>'}
+      <div style="margin-top:6px">${p.status!=='approved'?`<button class="btn btn-navy btn-sm" onclick="proStatus(${Number(p.id)},'approve')">Approve</button>`:`<button class="btn btn-danger btn-sm" onclick="proStatus(${Number(p.id)},'suspend')">Suspend</button>`}</div></td>
+    <td><textarea class="notes-area" style="min-height:44px;min-width:150px;font-size:13px" onchange="proUpdate(${Number(p.id)},{admin_notes:this.value})">${esc(p.admin_notes||'')}</textarea></td>
+  </tr>`).join('');
+}
+async function proStatus(id, action){
+  if(action==='approve' && !confirm('Approve this professional? Confirm you have verified their membership. They will start receiving matching orders.')) return;
+  if(action==='suspend' && !confirm('Suspend? Orders waiting for their acceptance move to the next professional.')) return;
+  try { await adminApi('/api/providers','POST',{action, provider_id:id}); await loadPros(); await loadOrders(); } catch(e){ alert(e.message); }
+}
+async function proUpdate(id, fields){
+  try { await adminApi('/api/providers','POST',Object.assign({action:'update', provider_id:id}, fields)); await loadPros(); } catch(e){ alert('Could not save: '+e.message); }
+}
+function proCat(id){
+  const cats=[...document.querySelectorAll('input[data-pro="'+id+'"]:checked')].map(x=>x.value);
+  proUpdate(id,{categories:cats});
 }
 
 // ── DUE DATES & EXTENSIONS ──
