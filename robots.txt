@@ -1,4 +1,6 @@
 User-agent: *
 Disallow: /admin
 Disallow: /api/
+Disallow: /provider
+Disallow: /track
 Sitemap: https://sthapnacorp.com/sitemap.xml
