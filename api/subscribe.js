@@ -5,7 +5,7 @@ const { isAdmin } = require('./_lib/auth');
 const { loadOverrides } = require('./_lib/overrides');
 const D = require('../assets/deadlines.js');
 
-const SITE = process.env.SITE_URL || 'https://sthapnacorp.com';
+const SITE = process.env.SITE_URL || 'https://www.sthapnacorp.com';
 
 function clean(v, max) { return String(v == null ? '' : v).trim().slice(0, max); }
 function cleanDate(v) { return /^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? String(v) : ''; }

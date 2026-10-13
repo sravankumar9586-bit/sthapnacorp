@@ -13,5 +13,22 @@
     "api/updates.js": {
       "maxDuration": 60
     }
-  }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "sthapnacorp.vercel.app"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    }
+  ]
 }

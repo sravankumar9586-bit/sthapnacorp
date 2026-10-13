@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const { query } = require('./db');
 const mail = require('./mail');
 
-const SITE = process.env.SITE_URL || 'https://sthapnacorp.com';
+const SITE = process.env.SITE_URL || 'https://www.sthapnacorp.com';
 const OWNER = () => process.env.NOTIFY_EMAIL || process.env.SMTP_USER;
 const ACCEPT_HOURS = 12; // an expert who has not accepted by then loses the order to the next match
 const OPEN = ['assigned', 'accepted', 'quoted', 'approved', 'paid', 'in_progress'];

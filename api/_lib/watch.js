@@ -2,7 +2,7 @@
 // for the admin to review; nothing changes on the website until an extension is approved.
 const { query } = require('./db');
 
-const UA = 'Mozilla/5.0 (compatible; SthapnaCorpDueDateWatch/1.0; +https://sthapnacorp.com)';
+const UA = 'Mozilla/5.0 (compatible; SthapnaCorpDueDateWatch/1.0; +https://www.sthapnacorp.com)';
 
 // `official: true` sources are lists of circulars/notifications, so any item mentioning
 // an extension is relevant. News feeds must also mention a filing or authority.
