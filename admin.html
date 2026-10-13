@@ -170,6 +170,7 @@ tbody tr:last-child td{border-bottom:none}
     <div class="tabs">
       <button class="tab on" data-tab="orders" onclick="showTab('orders')">Orders <span id="order-attn-count"></span></button>
       <button class="tab" data-tab="pros" onclick="showTab('pros')">Professionals <span id="pro-pending-count"></span></button>
+      <button class="tab" data-tab="menu" onclick="showTab('menu')">Services &amp; prices</button>
       <button class="tab" data-tab="apps" onclick="showTab('apps')">Incorporation applications</button>
       <button class="tab" data-tab="leads" onclick="showTab('leads')">Enquiries <span id="lead-new-count"></span></button>
       <button class="tab" data-tab="subs" onclick="showTab('subs')">Reminder subscribers</button>
@@ -179,19 +180,19 @@ tbody tr:last-child td{border-bottom:none}
       <div class="admin-header">
         <div>
           <h1 style="font-size:26px;color:var(--navy)">Orders</h1>
-          <p style="font-size:14px;color:var(--ink3);margin-top:3px">Every order is matched automatically to an approved professional by type of work, city and workload. If they do not accept within 12 hours it moves to the next one. Orders nobody can take are marked <strong>Needs a professional</strong>: assign them yourself.</p>
+          <p style="font-size:14px;color:var(--ink3);margin-top:3px">Orders go automatically to an online, approved expert (work type, city, workload, rating). Not accepted in 12 hours → next expert. <strong>Needs an expert</strong> = nobody available: assign it yourself. Customers pay SthapnaCorp; experts start only after payment. Pay experts their share after completion and click <strong>Paid out</strong>.</p>
         </div>
         <button class="btn btn-ghost btn-sm" onclick="exportOrdersCSV()">⬇ Export orders</button>
       </div>
       <div class="admin-stats" style="grid-template-columns:repeat(5,1fr)">
         <div class="stat-card"><div class="stat-num" id="o-total">0</div><div class="stat-lbl">Total orders</div></div>
-        <div class="stat-card"><div class="stat-num" id="o-attn" style="color:#9B1C1C">0</div><div class="stat-lbl">Needs a professional</div></div>
+        <div class="stat-card"><div class="stat-num" id="o-attn" style="color:#9B1C1C">0</div><div class="stat-lbl">Needs an expert / payment</div></div>
         <div class="stat-card"><div class="stat-num" id="o-wait" style="color:#b8600a">0</div><div class="stat-lbl">Waiting for acceptance</div></div>
         <div class="stat-card"><div class="stat-num" id="o-active" style="color:var(--navy)">0</div><div class="stat-lbl">In progress</div></div>
-        <div class="stat-card"><div class="stat-num" id="o-done" style="color:var(--green)">0</div><div class="stat-lbl">Completed · <span id="o-gmv">₹0</span></div></div>
+        <div class="stat-card"><div class="stat-num" id="o-done" style="color:var(--green)">0</div><div class="stat-lbl">Completed · sales <span id="o-gmv">₹0</span> · your fee <span id="o-fee">₹0</span> · payouts due <span id="o-due">₹0</span></div></div>
       </div>
       <div class="table-wrap"><div style="overflow-x:auto"><table>
-        <thead><tr><th>Order</th><th>Service</th><th>Client</th><th>Status</th><th>Professional</th><th>Fee</th><th>Notes</th></tr></thead>
+        <thead><tr><th>Order</th><th>Service</th><th>Customer</th><th>Status</th><th>Expert</th><th>Money</th><th>Notes &amp; chat</th></tr></thead>
         <tbody id="orders-tbody"></tbody>
       </table></div>
       <div class="empty-state" id="orders-empty" hidden><div class="empty-title">No orders yet</div><p style="font-size:14px">Orders placed at sthapnacorp.com/order appear here.</p></div></div>
@@ -209,6 +210,19 @@ tbody tr:last-child td{border-bottom:none}
         <tbody id="pros-tbody"></tbody>
       </table></div>
       <div class="empty-state" id="pros-empty" hidden><div class="empty-title">No professionals yet</div><p style="font-size:14px">Share sthapnacorp.com/partners with CS, CA and legal professionals you trust.</p></div></div>
+    </div>
+
+    <div id="tab-menu" hidden>
+      <div class="admin-header">
+        <div>
+          <h1 style="font-size:26px;color:var(--navy)">Services &amp; prices</h1>
+          <p style="font-size:14px;color:var(--ink3);margin-top:3px">Your menu. Enter a price to show it on the order page as a fixed price (customer pays it once the expert accepts). Leave the price blank for "Quote in 1 working day": the expert sends a quote. Untick "shown" to hide a service. Changes save automatically and appear on the site within 2 minutes.</p>
+        </div>
+      </div>
+      <div class="table-wrap"><div style="overflow-x:auto"><table>
+        <thead><tr><th>Service</th><th>Price (₹)</th><th>Turnaround</th><th>Note shown to customer</th><th>Visible</th></tr></thead>
+        <tbody id="menu-body"></tbody>
+      </table></div></div>
     </div>
 
     <div id="tab-apps" hidden>
@@ -599,6 +613,7 @@ function openModal(id){
 
 function closeModal(){
   document.getElementById('modal-overlay').classList.remove('open');
+  document.querySelector('.modal-footer').style.display='';
   currentAppId=null;
 }
 
@@ -680,11 +695,12 @@ function showHealth(h){
 
 // ── TABS ──
 function showTab(t){
-  ['orders','pros','apps','leads','subs','dues'].forEach(k=>{ document.getElementById('tab-'+k).hidden = k!==t; });
+  ['orders','pros','menu','apps','leads','subs','dues'].forEach(k=>{ document.getElementById('tab-'+k).hidden = k!==t; });
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on', b.dataset.tab===t));
   if(t==='leads') loadLeads().catch(e=>alert('Could not load enquiries: '+e.message));
   if(t==='subs') loadSubs().catch(e=>alert('Could not load subscribers: '+e.message));
   if(t==='orders') loadOrders().catch(e=>alert('Could not load orders: '+e.message));
+  if(t==='menu') loadMenu().catch(e=>alert('Could not load services: '+e.message));
   if(t==='pros') loadPros().catch(e=>alert('Could not load professionals: '+e.message));
   if(t==='dues') loadDues().catch(e=>alert('Could not load due dates: '+e.message));
 }
@@ -772,48 +788,120 @@ async function runReminders(){
 
 // ── ORDERS ──
 let allOrders = [], allPros = [], proCats = [];
-const ORDER_STATUS = {new:'Received',unassigned:'Needs a professional',assigned:'Waiting for acceptance',accepted:'Accepted',in_progress:'In progress',completed:'Completed',cancelled:'Cancelled'};
+const ORDER_STATUS = {new:'Received',unassigned:'Needs an expert',assigned:'Waiting for expert to accept',accepted:'Expert to send quote',quoted:'Quote sent · awaiting payment',approved:'Customer accepted · COLLECT PAYMENT',paid:'Paid · expert to start',in_progress:'In progress',completed:'Completed',cancelled:'Cancelled'};
 async function adminApi(url, method, body){
   const r = await fetch(url, {method:method||'GET', headers:{'Content-Type':'application/json','x-admin-password':ADMIN_PASS}, body: body?JSON.stringify(body):undefined});
   const j = await r.json().catch(()=>({}));
   if(!r.ok) throw new Error(j.error||('HTTP '+r.status));
   return j;
 }
+const inr = n => '₹'+Number(n||0).toLocaleString('en-IN');
 async function loadOrders(){
   allOrders = await adminApi('/api/orders');
   const tb=document.getElementById('orders-tbody');
   document.getElementById('orders-empty').hidden = allOrders.length>0;
   const c = s=>allOrders.filter(o=>s.includes(o.status)).length;
   document.getElementById('o-total').textContent = allOrders.length;
-  document.getElementById('o-attn').textContent = c(['unassigned','new']);
+  document.getElementById('o-attn').textContent = c(['unassigned','new','approved']);
   document.getElementById('o-wait').textContent = c(['assigned']);
-  document.getElementById('o-active').textContent = c(['accepted','in_progress']);
+  document.getElementById('o-active').textContent = c(['accepted','quoted','paid','in_progress']);
   document.getElementById('o-done').textContent = c(['completed']);
-  const gmv = allOrders.filter(o=>o.status==='completed').reduce((a,o)=>a+(o.quote_amount||0),0);
-  document.getElementById('o-gmv').textContent = '₹'+gmv.toLocaleString('en-IN');
-  const attn = c(['unassigned','new']);
+  const done = allOrders.filter(o=>o.status==='completed' && o.payment_status==='paid');
+  document.getElementById('o-gmv').textContent = inr(done.reduce((a,o)=>a+o.money.price,0));
+  document.getElementById('o-fee').textContent = inr(done.reduce((a,o)=>a+o.money.platform_fee,0));
+  document.getElementById('o-due').textContent = inr(done.filter(o=>o.payout_status!=='paid').reduce((a,o)=>a+o.money.expert_earning,0));
+  const attn = c(['unassigned','new','approved']);
   document.getElementById('order-attn-count').textContent = attn ? '('+attn+')' : '';
   const approved = allPros.filter(p=>p.status==='approved');
   tb.innerHTML = allOrders.map(o=>{
-    const open = !['completed','cancelled'].includes(o.status);
-    const proSel = open ? `<select class="status-select" onchange="assignOrder(${Number(o.id)}, this.value)" style="max-width:190px">
+    const pre = ['new','unassigned','assigned'].includes(o.status);
+    const proSel = pre ? `<select class="status-select" onchange="assignOrder(${Number(o.id)}, this.value)" style="max-width:190px">
         <option value="">${o.provider_name?esc(o.provider_name):'— choose —'}</option>
         <option value="auto">↻ Auto-assign next match</option>
-        ${approved.filter(p=>p.id!==o.provider_id).map(p=>`<option value="${Number(p.id)}">${esc(p.name)} (${esc(p.city)})</option>`).join('')}
+        ${approved.filter(p=>p.id!==o.provider_id).map(p=>`<option value="${Number(p.id)}">${esc(p.name)} (${esc(p.city)})${p.available?'':' · offline'}</option>`).join('')}
       </select>` : esc(o.provider_name||'—');
-    const bad = o.status==='unassigned'||o.status==='new';
+    const bad = ['unassigned','new','approved'].includes(o.status);
+    const m = o.money;
+    let money = o.quote_amount!=null ? `<div class="mono">${inr(m.price)}</div><div style="font-size:11px;color:var(--ink3)">fee ${inr(m.platform_fee)} (${m.pct}%) · expert ${inr(m.expert_earning)}</div>` : '<div style="font-size:12px;color:var(--ink3)">no price yet</div>';
+    money += `<div style="font-size:12px;margin-top:4px">${o.payment_status==='paid'?'<span class="badge badge-paid">Paid</span>':'<span class="badge badge-unpaid">Unpaid</span>'}${o.status==='completed'&&o.payment_status==='paid'?(o.payout_status==='paid'?' <span class="badge badge-paid">Paid out</span>':` <button class="btn btn-navy btn-sm" style="font-size:11px" onclick="payoutOrder(${Number(o.id)})">Paid out</button>`):''}</div>`;
+    if(o.payment_status!=='paid' && !['completed','cancelled'].includes(o.status)) money += `<div style="margin-top:4px"><button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="setPrice(${Number(o.id)})">Set price</button> ${o.quote_amount!=null?`<button class="btn btn-navy btn-sm" style="font-size:11px" onclick="markPaid(${Number(o.id)})">Mark paid</button>`:''}</div>`;
     return `<tr style="cursor:default${bad?';background:#FDF3F3':''}">
-      <td><div class="mono" style="font-weight:600">${esc(o.ref||'')}</div><div class="mono" style="font-size:11px;color:var(--ink3)">${formatDate(o.created_at)}</div><a href="/track?t=${esc(o.token)}" target="_blank" rel="noopener" style="font-size:12px">client view</a></td>
-      <td><div style="font-weight:600">${esc(o.service)}</div><div style="font-size:12px;color:var(--ink3)">${esc(o.city||'')}</div><div class="lead-msg" style="font-size:12px">${esc(o.details||'')}</div></td>
+      <td><div class="mono" style="font-weight:600">${esc(o.ref||'')}</div><div class="mono" style="font-size:11px;color:var(--ink3)">${formatDate(o.created_at)}</div><a href="/my?t=${esc(o.token)}" target="_blank" rel="noopener" style="font-size:12px">customer view</a></td>
+      <td><div style="font-weight:600">${esc(o.service)}</div><div style="font-size:12px;color:var(--ink3)">${esc(o.city||'')}</div><div class="lead-msg" style="font-size:12px">${esc(o.details||'')}</div>${o.rating?`<div style="font-size:12px;color:#b8860b">${'★'.repeat(o.rating)} ${esc(o.review||'')}</div>`:''}</td>
       <td><div>${esc(o.name)}</div><div style="font-size:12px"><a href="${esc(waLink(o.mobile))}" target="_blank" rel="noopener">${esc(o.mobile)}</a></div><div style="font-size:12px">${o.email?`<a href="mailto:${esc(o.email)}">${esc(o.email)}</a>`:''}</div><div style="font-size:12px;color:var(--ink3)">${esc(o.company||'')}</div></td>
       <td><span class="badge ${bad?'badge-unpaid':o.status==='completed'?'badge-paid':o.status==='assigned'?'badge-pending':'badge-filed'}">${ORDER_STATUS[o.status]||esc(o.status)}</span>
-        ${open?`<div><button class="btn btn-ghost btn-sm" style="margin-top:6px;font-size:12px" onclick="cancelOrder(${Number(o.id)})">Cancel</button></div>`:''}</td>
+        ${!['completed','cancelled'].includes(o.status)?`<div><button class="btn btn-ghost btn-sm" style="margin-top:6px;font-size:12px" onclick="cancelOrder(${Number(o.id)})">Cancel</button></div>`:''}</td>
       <td>${proSel}</td>
-      <td class="mono">${o.quote_amount!=null?'₹'+Number(o.quote_amount).toLocaleString('en-IN'):'—'}</td>
-      <td><textarea class="notes-area" style="min-height:44px;min-width:160px;font-size:13px" onchange="orderNotes(${Number(o.id)}, this.value)">${esc(o.admin_notes||'')}</textarea></td>
+      <td>${money}</td>
+      <td><textarea class="notes-area" style="min-height:40px;min-width:160px;font-size:13px" placeholder="Private notes" onchange="orderNotes(${Number(o.id)}, this.value)">${esc(o.admin_notes||'')}</textarea>
+        <button class="btn btn-ghost btn-sm" style="font-size:12px;margin-top:4px" onclick="openChat(${Number(o.id)})">💬 Chat & files${o.message_count?' ('+o.message_count+')':''}</button></td>
     </tr>`;
   }).join('');
 }
+async function setPrice(id){
+  const v = prompt('Price for the customer in ₹ (expert fee included):');
+  if(!v) return;
+  try { await adminApi('/api/orders','POST',{action:'price', order_id:id, amount:v}); await loadOrders(); } catch(e){ alert(e.message); }
+}
+async function markPaid(id){
+  const ref = prompt('Payment received? Enter the UPI / bank reference (or leave blank):');
+  if(ref===null) return;
+  try { await adminApi('/api/orders','POST',{action:'mark_paid', order_id:id, ref}); await loadOrders(); } catch(e){ alert(e.message); }
+}
+async function payoutOrder(id){
+  const o = allOrders.find(x=>x.id===id);
+  if(!confirm(`Mark ${inr(o.money.expert_earning)} as paid to ${o.provider_name}?`)) return;
+  try { await adminApi('/api/orders','POST',{action:'payout', order_id:id}); await loadOrders(); } catch(e){ alert(e.message); }
+}
+async function openChat(id){
+  const o = allOrders.find(x=>x.id===id);
+  const j = await adminApi('/api/orders?id='+id);
+  const who = {client:'Customer',expert:'Expert',admin:'SthapnaCorp'};
+  document.getElementById('modal-company-name').textContent = (o.ref||'')+' · '+o.service;
+  document.getElementById('modal-app-date').textContent = o.name+' · '+(o.provider_name||'no expert yet');
+  document.getElementById('modal-body').innerHTML =
+    '<h4 style="margin-bottom:8px">Chat</h4>' + (j.messages.length ? j.messages.map(m=>`<div style="margin-bottom:8px;padding:8px 10px;border-radius:8px;background:${m.sender==='admin'?'#FFF7E6':m.sender==='client'?'#E8EDF5':'#F2EEE6'}"><div style="font-size:11px;color:var(--ink3)">${who[m.sender]} · ${formatDate(m.at)}</div><div style="white-space:pre-wrap">${esc(m.body)}</div></div>`).join('') : '<p style="color:var(--ink3)">No messages.</p>') +
+    `<textarea id="admin-msg" class="notes-area" placeholder="Message customer and expert as SthapnaCorp" style="width:100%;min-height:60px"></textarea><button class="btn btn-navy btn-sm" style="margin-top:6px" onclick="adminMsg(${Number(id)})">Send as SthapnaCorp</button>` +
+    '<h4 style="margin:16px 0 8px">Documents</h4>' + (j.files.length ? j.files.map(f=>`<div><a href="#" onclick="adminFile(${Number(f.id)}, '${esc(f.name).replace(/'/g,'')}');return false">${esc(f.name)}</a> <span style="font-size:12px;color:var(--ink3)">${Math.round(f.size/1024)} KB · ${esc(f.uploaded_by)} · ${formatDate(f.at)}</span></div>`).join('') : '<p style="color:var(--ink3)">No documents.</p>') +
+    '<h4 style="margin:16px 0 8px">History</h4>' + j.events.map(e=>`<div style="font-size:13px"><span class="mono" style="font-size:11px;color:var(--ink3)">${formatDate(e.at)}</span> ${e.public?'':'🔒 '}${esc(e.message||e.kind)}</div>`).join('');
+  document.getElementById('modal-overlay').classList.add('open');
+  document.querySelector('.modal-footer').style.display='none';
+}
+async function adminMsg(id){
+  const body = document.getElementById('admin-msg').value.trim();
+  if(!body) return;
+  try { await adminApi('/api/orders','POST',{action:'message', order_id:id, body}); await openChat(id); loadOrders(); } catch(e){ alert(e.message); }
+}
+async function adminFile(id, name){
+  const r = await fetch('/api/files?id='+id, {headers:{'x-admin-password':ADMIN_PASS}});
+  if(!r.ok){ alert('Could not download'); return; }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(await r.blob()); a.download=name; a.click();
+}
+
+// ── SERVICES & PRICES ──
+async function loadMenu(){
+  const [cat, j] = await Promise.all([fetch('/assets/catalogue.js').then(r=>r.text()), adminApi('/api/services')]);
+  const CATS = JSON.parse(cat.match(/var CATS = (\[.*?\]);\n/s)[1]);
+  const st = j.settings||{};
+  document.getElementById('menu-body').innerHTML = CATS.map(c=>`<tr><td colspan="5" style="background:var(--cream2);font-weight:600">${esc(c.name)}</td></tr>`+c.services.map(s=>{
+    const v = st[s.slug]||{};
+    return `<tr style="cursor:default" data-slug="${esc(s.slug)}">
+      <td style="font-size:14px">${esc(s.name)}</td>
+      <td><input type="number" min="1" step="1" placeholder="Quote" value="${v.price!=null?v.price:''}" style="width:100px" data-f="price"></td>
+      <td><input placeholder="e.g. 7–10 days" value="${esc(v.turnaround||'')}" style="width:130px" data-f="turnaround"></td>
+      <td><input placeholder="e.g. + govt fee at actuals" value="${esc(v.note||'')}" style="width:220px" data-f="note"></td>
+      <td><label style="font-size:13px"><input type="checkbox" data-f="active" ${v.active===false?'':'checked'}> shown</label></td>
+    </tr>`;}).join('')).join('');
+}
+document.addEventListener('change', async (ev)=>{
+  const tr = ev.target.closest && ev.target.closest('#menu-body tr[data-slug]');
+  if(!tr) return;
+  const g = f=>tr.querySelector('[data-f="'+f+'"]');
+  try {
+    await adminApi('/api/services','POST',{slug:tr.dataset.slug, price:g('price').value, turnaround:g('turnaround').value, note:g('note').value, active:g('active').checked});
+    tr.style.background='#E6F2EA'; setTimeout(()=>tr.style.background='',800);
+  } catch(e){ alert(e.message); }
+});
 async function assignOrder(id, v){
   if(!v) return;
   try { await adminApi('/api/orders','POST',{action:'assign', order_id:id, provider_id: v==='auto'?null:Number(v)}); await loadOrders(); }
@@ -849,7 +937,7 @@ async function loadPros(){
     <td style="font-size:13px"><a href="mailto:${esc(p.email)}">${esc(p.email)}</a><br><a href="${esc(waLink(p.mobile))}" target="_blank" rel="noopener">${esc(p.mobile)}</a></td>
     <td style="font-size:13px">${esc(p.city)}${p.remote_ok?'<br><span style="color:var(--ink3)">+ online, all India</span>':''}</td>
     <td style="font-size:12px;min-width:200px">${proCats.map(([id,n])=>`<label style="display:block"><input type="checkbox" ${p.categories.includes(id)?'checked':''} onchange="proCat(${Number(p.id)})" data-pro="${Number(p.id)}" value="${esc(id)}"> ${esc(n)}</label>`).join('')}</td>
-    <td style="font-size:13px">${Number(p.open_count)} open / max <input type="number" min="0" max="200" value="${Number(p.capacity)}" style="width:52px" onchange="proUpdate(${Number(p.id)},{capacity:this.value})"><br>${Number(p.done_count)} completed</td>
+    <td style="font-size:13px">${Number(p.open_count)} open / max <input type="number" min="0" max="200" value="${Number(p.capacity)}" style="width:52px" onchange="proUpdate(${Number(p.id)},{capacity:this.value})"><br>${Number(p.done_count)} completed${p.rating?'<br>★ '+p.rating:''}<br>Commission <input type="number" min="0" max="80" value="${Number(p.commission_pct)}" style="width:48px" onchange="proUpdate(${Number(p.id)},{commission_pct:this.value})">%<br>${p.available?'🟢 online':'⚪ offline'}</td>
     <td>${p.status==='approved'?'<span class="badge badge-paid">Approved</span>':p.status==='pending'?'<span class="badge badge-pending">To verify</span>':'<span class="badge badge-unpaid">Suspended</span>'}
       <div style="margin-top:6px">${p.status!=='approved'?`<button class="btn btn-navy btn-sm" onclick="proStatus(${Number(p.id)},'approve')">Approve</button>`:`<button class="btn btn-danger btn-sm" onclick="proStatus(${Number(p.id)},'suspend')">Suspend</button>`}</div></td>
     <td><textarea class="notes-area" style="min-height:44px;min-width:150px;font-size:13px" onchange="proUpdate(${Number(p.id)},{admin_notes:this.value})">${esc(p.admin_notes||'')}</textarea></td>
