@@ -3,4 +3,4 @@ Disallow: /admin
 Disallow: /api/
 Disallow: /provider
 Disallow: /track
-Sitemap: https://sthapnacorp.com/sitemap.xml
+Sitemap: https://www.sthapnacorp.com/sitemap.xml

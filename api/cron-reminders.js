@@ -6,7 +6,7 @@ const { runWatch } = require('./_lib/watch');
 const { reassignStale } = require('./_lib/market');
 const D = require('../assets/deadlines.js');
 
-const SITE = process.env.SITE_URL || 'https://sthapnacorp.com';
+const SITE = process.env.SITE_URL || 'https://www.sthapnacorp.com';
 
 // Pick the tightest reminder window the deadline has entered, e.g. leads [30,7,1] and 5 days left → 7.
 function dueWindow(lead, daysLeft) {

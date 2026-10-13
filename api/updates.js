@@ -5,7 +5,7 @@ const { loadOverrides } = require('./_lib/overrides');
 const { SOURCES, runWatch } = require('./_lib/watch');
 const D = require('../assets/deadlines.js');
 
-const SITE = process.env.SITE_URL || 'https://sthapnacorp.com';
+const SITE = process.env.SITE_URL || 'https://www.sthapnacorp.com';
 const FORM_LABEL = Object.fromEntries(D.FORMS);
 
 function isoOrNull(v) { return /^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) && D.parse(v) ? String(v) : null; }
