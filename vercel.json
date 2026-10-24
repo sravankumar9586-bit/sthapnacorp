@@ -29,6 +29,25 @@
           "value": "noindex"
         }
       ]
+    },
+    {
+      "source": "/expense",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/expense",
+      "destination": "/api/services?x=expense"
     }
   ]
 }

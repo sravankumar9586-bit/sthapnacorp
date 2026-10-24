@@ -176,6 +176,72 @@ CREATE INDEX IF NOT EXISTS orders_customer_idx ON orders (customer_id);
 CREATE INDEX IF NOT EXISTS order_messages_idx ON order_messages (order_id, at);
 CREATE INDEX IF NOT EXISTS order_files_idx ON order_files (order_id);
 CREATE INDEX IF NOT EXISTS order_events_order_idx ON order_events (order_id, at);
+CREATE TABLE IF NOT EXISTS exp_companies (
+  id          SERIAL PRIMARY KEY,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  name        TEXT NOT NULL,
+  address     TEXT,
+  gstin       TEXT,
+  cash_limit  INTEGER NOT NULL DEFAULT 10000,
+  nobill_limit INTEGER NOT NULL DEFAULT 0,
+  active      BOOLEAN NOT NULL DEFAULT TRUE
+);
+CREATE TABLE IF NOT EXISTS exp_sites (
+  id          SERIAL PRIMARY KEY,
+  company_id  INTEGER NOT NULL REFERENCES exp_companies(id) ON DELETE CASCADE,
+  code        TEXT NOT NULL,
+  name        TEXT NOT NULL,
+  active      BOOLEAN NOT NULL DEFAULT TRUE
+);
+CREATE TABLE IF NOT EXISTS exp_people (
+  id          SERIAL PRIMARY KEY,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  company_id  INTEGER NOT NULL REFERENCES exp_companies(id) ON DELETE CASCADE,
+  site_id     INTEGER REFERENCES exp_sites(id) ON DELETE SET NULL,
+  name        TEXT NOT NULL,
+  mobile      TEXT,
+  role        TEXT NOT NULL DEFAULT 'employee',
+  link_hash   TEXT UNIQUE,
+  active      BOOLEAN NOT NULL DEFAULT TRUE
+);
+CREATE TABLE IF NOT EXISTS exp_tokens (
+  token_hash  TEXT PRIMARY KEY,
+  person_id   INTEGER NOT NULL REFERENCES exp_people(id) ON DELETE CASCADE,
+  expires_at  TIMESTAMPTZ NOT NULL
+);
+CREATE TABLE IF NOT EXISTS exp_photos (
+  id          SERIAL PRIMARY KEY,
+  company_id  INTEGER NOT NULL REFERENCES exp_companies(id) ON DELETE CASCADE,
+  mime        TEXT NOT NULL,
+  data        BYTEA NOT NULL
+);
+CREATE TABLE IF NOT EXISTS exp_claims (
+  id            SERIAL PRIMARY KEY,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  company_id    INTEGER NOT NULL REFERENCES exp_companies(id) ON DELETE CASCADE,
+  site_id       INTEGER REFERENCES exp_sites(id) ON DELETE SET NULL,
+  person_id     INTEGER NOT NULL REFERENCES exp_people(id) ON DELETE CASCADE,
+  entered_by    INTEGER REFERENCES exp_people(id) ON DELETE SET NULL,
+  ev_no         INTEGER NOT NULL,
+  spent_on      DATE NOT NULL,
+  head          TEXT NOT NULL,
+  amount        NUMERIC(12,2) NOT NULL,
+  litres        NUMERIC(10,2),
+  vehicle       TEXT,
+  bill          BOOLEAN NOT NULL,
+  bill_no       TEXT,
+  payee         TEXT,
+  pay_mode      TEXT,
+  note          TEXT,
+  photo_id      INTEGER REFERENCES exp_photos(id) ON DELETE SET NULL,
+  status        TEXT NOT NULL DEFAULT 'submitted',
+  passed_amount NUMERIC(12,2),
+  reason        TEXT,
+  reviewed_by   INTEGER REFERENCES exp_people(id) ON DELETE SET NULL,
+  reviewed_at   TIMESTAMPTZ
+);
+CREATE UNIQUE INDEX IF NOT EXISTS exp_claims_ev_idx ON exp_claims (company_id, ev_no);
+CREATE INDEX IF NOT EXISTS exp_claims_month_idx ON exp_claims (company_id, spent_on);
 CREATE TABLE IF NOT EXISTS reminder_log (
   subscriber_id INTEGER NOT NULL REFERENCES subscribers(id) ON DELETE CASCADE,
   event_key     TEXT NOT NULL,
