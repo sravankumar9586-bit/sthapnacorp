@@ -4,11 +4,8 @@ const { query } = require('./_lib/db');
 const { isAdmin } = require('./_lib/auth');
 const M = require('./_lib/market');
 const C = require('../assets/catalogue.js');
-const expense = require('./_lib/expense');
 
 module.exports = async function (req, res) {
-  // /api/expense is rewritten here (vercel.json) so the field expense app needs no extra function.
-  if (req.query && req.query.x === 'expense') return expense(req, res);
   try {
     if (req.method === 'GET') {
       const r = await query('SELECT slug, price, turnaround, note, active FROM service_settings');
